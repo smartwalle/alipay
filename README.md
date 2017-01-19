@@ -37,7 +37,7 @@ AliPay SDK for Golang
 
 请参考 [如何生成 RSA 密钥](https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105971&docType=1)。
 
-#### 支付
+#### 创建 Wap 支付
 
 ``` Golang
 var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
