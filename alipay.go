@@ -9,6 +9,9 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"io/ioutil"
+	"encoding/json"
+	"io"
 )
 
 const (
@@ -71,6 +74,36 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	p.Add("sign", sign_rsa2(keys, p, this.privateKey))
 
 	return p
+}
+
+func (this *AliPay) doRequest(method string, param AliPayParam, results interface{}) (err error) {
+	var buf io.Reader
+	if param != nil {
+		buf = strings.NewReader(this.URLValues(param).Encode())
+	}
+
+	req, err := http.NewRequest(method, this.apiDomain, buf)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rep, err := this.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer rep.Body.Close()
+
+	data, err := ioutil.ReadAll(rep.Body)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(data, results)
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
