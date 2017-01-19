@@ -9,8 +9,6 @@ import (
 	"sort"
 	"time"
 	"net/http"
-	"io/ioutil"
-	"io"
 )
 
 const (
@@ -19,17 +17,21 @@ const (
 )
 
 type AliPay struct {
-	appId string
-	apiDomain string
-	publickKey []byte
+	appId      string
+	apiDomain  string
+	partnerId  string
+	publicKey  []byte
 	privateKey []byte
+	client     *http.Client
 }
 
-func New(appId string, publicKey, privateKey []byte, isProduction bool) (client *AliPay) {
+func New(appId, partnerId string, publicKey, privateKey []byte, isProduction bool) (client *AliPay) {
 	client = &AliPay{}
 	client.appId = appId
+	client.partnerId = partnerId
 	client.privateKey = privateKey
-	client.publickKey = publicKey
+	client.publicKey = publicKey
+	client.client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
 	} else {
@@ -68,36 +70,7 @@ func (this *AliPay)URLValues(param AliPayParam) url.Values {
 	p.Add("sign", sign(keys, p, this.privateKey))
 
 	return p
-	//return http.JSONRequest("POST", K_ALI_PAY_SANDBOX_API_URL, p)
 }
-
-func (this *AliPay) CreateWapPayment(param AliPayTradeWapPay) (html string, err error) {
-	var body io.Reader
-	body = strings.NewReader(this.URLValues(param).Encode())
-
-	var request *http.Request
-	request, err = http.NewRequest("POST", this.apiDomain, body)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	if err != nil {
-		return "", err
-	}
-
-	rep, err := http.DefaultClient.Do(request)
-	if err != nil {
-		return "", err
-	}
-	defer rep.Body.Close()
-
-	data, err := ioutil.ReadAll(rep.Body)
-	if err != nil {
-		return "", err
-	}
-	html = string(data)
-	return html, err
-}
-
-//var request = http.NewRequest("POST", this.)
 
 
 func sign(keys []string, param url.Values, privateKey []byte) (s string) {

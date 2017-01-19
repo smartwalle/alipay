@@ -71,17 +71,15 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 `)
 
 
-	var client = New("2016073100129537", publickKey, privateKey, false)
+	var client = New("2016073100129537", "2088102169227503", publickKey, privateKey, false)
 
 
 	var p = AliPayTradeWapPay{}
+	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.Subject = "aa"
-	p.OutTradeNo = "eeee"
+	p.OutTradeNo = "eeeee1e"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "eeeeee"
 
-
-
-
-	fmt.Println(client.CreateWapPayment(p))
+	fmt.Println(client.TradeWapPay(p))
 }
