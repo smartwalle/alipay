@@ -4,11 +4,11 @@ import (
 	"crypto"
 	"encoding/base64"
 	"github.com/smartwalle/going/encoding"
-	"net/url"
-	"strings"
-	"sort"
-	"time"
 	"net/http"
+	"net/url"
+	"sort"
+	"strings"
+	"time"
 )
 
 const (
@@ -17,12 +17,13 @@ const (
 )
 
 type AliPay struct {
-	appId      string
-	apiDomain  string
-	partnerId  string
-	publicKey  []byte
-	privateKey []byte
-	client     *http.Client
+	appId           string
+	apiDomain       string
+	partnerId       string
+	publicKey       []byte
+	privateKey      []byte
+	AliPayPublicKey []byte
+	client          *http.Client
 }
 
 func New(appId, partnerId string, publicKey, privateKey []byte, isProduction bool) (client *AliPay) {
@@ -40,7 +41,7 @@ func New(appId, partnerId string, publicKey, privateKey []byte, isProduction boo
 	return client
 }
 
-func (this *AliPay)URLValues(param AliPayParam) url.Values {
+func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
@@ -67,13 +68,12 @@ func (this *AliPay)URLValues(param AliPayParam) url.Values {
 	}
 
 	sort.Strings(keys)
-	p.Add("sign", sign(keys, p, this.privateKey))
+	p.Add("sign", sign_rsa2(keys, p, this.privateKey))
 
 	return p
 }
 
-
-func sign(keys []string, param url.Values, privateKey []byte) (s string) {
+func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
 		var value = strings.TrimSpace(param.Get(key))
@@ -88,4 +88,55 @@ func sign(keys []string, param url.Values, privateKey []byte) (s string) {
 	}
 	s = base64.StdEncoding.EncodeToString(sig)
 	return s
+}
+
+func sign_rsa(keys []string, param url.Values, privateKey []byte) (s string) {
+	var pList = make([]string, 0, 0)
+	for _, key := range keys {
+		var value = strings.TrimSpace(param.Get(key))
+		if len(value) > 0 {
+			pList = append(pList, key+"="+value)
+		}
+	}
+	var src = strings.Join(pList, "&")
+	var sig, err = encoding.SignPKCS1v15([]byte(src), privateKey, crypto.SHA1)
+	if err != nil {
+		return ""
+	}
+	s = base64.StdEncoding.EncodeToString(sig)
+	return s
+}
+
+func verify_rsa2(req *http.Request, key []byte) (ok bool, err error) {
+	sign, err := base64.StdEncoding.DecodeString(req.PostForm.Get("sign"))
+	if err != nil {
+		return false, err
+	}
+
+	var keys = make([]string, 0, 0)
+	for key, value := range req.PostForm {
+		if key == "sign" || key == "sign_type" {
+			continue
+		}
+		if len(value) > 0 {
+			keys = append(keys, key)
+		}
+	}
+
+	sort.Strings(keys)
+
+	var pList = make([]string, 0, 0)
+	for _, key := range keys {
+		var value = strings.TrimSpace(req.PostForm.Get(key))
+		if len(value) > 0 {
+			pList = append(pList, key+"="+value)
+		}
+	}
+	var s = strings.Join(pList, "&")
+
+	err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA256)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

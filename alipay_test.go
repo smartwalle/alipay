@@ -41,6 +41,7 @@ uRFnKlZuFoEKPWyMGYtbvK9AWIfC8ubn30O5F9kfLMIHwAHCh0UipPSbKDwQ2BnW
 swIDAQAB
 -----END PUBLIC KEY-----`)
 
+
 	var privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAv8dXxi8wNAOqBNOh8Dv5rh0BTb5KNgk62jDaS536Z1cDqq2J
 mpBYkBnzJXHAXEgBwPXgX8bGruMMjZKW8P4uv3Rvj8Am9ewWwUK2U7m2ZB3Oo9MW
@@ -70,14 +71,12 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 -----END RSA PRIVATE KEY-----
 `)
 
-
 	var client = New("2016073100129537", "2088102169227503", publickKey, privateKey, false)
-
 
 	var p = AliPayTradeWapPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.Subject = "aa"
-	p.OutTradeNo = "eeeee1e"
+	p.OutTradeNo = "eeeee1ee"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "eeeeee"
 

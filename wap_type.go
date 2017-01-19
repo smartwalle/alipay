@@ -50,11 +50,3 @@ func (this AliPayTradeWapPay) ExtJSONParamValue() string {
 	}
 	return string(bytes)
 }
-
-func marshal(obj interface{}) string {
-	var bytes, err = json.Marshal(obj)
-	if err != nil {
-		return ""
-	}
-	return string(bytes)
-}

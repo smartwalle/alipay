@@ -1,6 +1,9 @@
 package alipay
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+)
 
 const (
 	K_ALI_PAY_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" // 交易创建，等待买家付款
@@ -45,9 +48,9 @@ type TradeNotification struct {
 	VoucherDetailList string `json:"voucher_detail_list"` // 优惠券信息
 }
 
-func GetTradeNotification(req *http.Request) (noti *TradeNotification) {
+func (this *AliPay) GetTradeNotification(req *http.Request) (noti *TradeNotification, err error) {
 	if req == nil {
-		return nil
+		return nil, errors.New("request 参数不能为空")
 	}
 	req.ParseForm()
 
@@ -86,7 +89,12 @@ func GetTradeNotification(req *http.Request) (noti *TradeNotification) {
 	noti.VoucherDetailList = req.PostFormValue("voucher_detail_list")
 
 	if len(noti.NotifyId) == 0 {
-		return nil
+		return nil, errors.New("不是有效的 Notfiy")
 	}
-	return noti
+
+	ok, err := verify_rsa2(req, this.AliPayPublicKey)
+	if ok {
+		return noti, nil
+	}
+	return nil, err
 }

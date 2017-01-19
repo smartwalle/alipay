@@ -1,5 +1,10 @@
 package alipay
 
+import (
+	"encoding/json"
+)
+
+
 type AliPayParam interface {
 	// 用于提供访问的 method
 	APIName() string
@@ -11,4 +16,12 @@ type AliPayParam interface {
 	ExtJSONParamName() string
 	// 返回扩展 JSON 参数的字段值
 	ExtJSONParamValue() string
+}
+
+func marshal(obj interface{}) string {
+	var bytes, err = json.Marshal(obj)
+	if err != nil {
+		return ""
+	}
+	return string(bytes)
 }
