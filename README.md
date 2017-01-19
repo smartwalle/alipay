@@ -71,5 +71,5 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 如果 **client.NotifyVerify()** 方法返回的是 **true**，则表示是支付宝发送的通知，为了安全，切记这一步流程不可少。
 
 
-此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机支付还是 Wap 支付。
+此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
