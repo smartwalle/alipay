@@ -12,6 +12,10 @@ AliPay SDK for Golang
 	
 	alipay.trade.query
 	
+* **统一收单交易支付接口**
+	
+	alipay.trade.pay
+	
 * **统一收单交易关闭接口**
 
 	alipay.trade.close

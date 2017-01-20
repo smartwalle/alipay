@@ -23,3 +23,9 @@ func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery)
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
+
+// TradeCreate https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.CkYNiG&docType=4&apiId=1046
+func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}

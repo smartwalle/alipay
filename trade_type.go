@@ -80,7 +80,7 @@ func (this *AliPayTradeQueryResponse) IsSuccess() bool {
 // https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=1058&docType=4
 type AliPayTradeClose struct {
 	AppAuthToken string `json:"-"`                      // 可选
-	NotifyURL    string `json:"notify_url"`             // 可选
+	NotifyURL    string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
 	TradeNo      string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
 	OperatorId   string `json:"operator_id,omitempty"`  // 可选
@@ -224,6 +224,158 @@ type AliPayFastpayTradeRefundQueryResponse struct {
 
 func (this *AliPayFastpayTradeRefundQueryResponse) IsSuccess() bool {
 	if this.AliPayTradeFastpayRefundQueryResponse.Msg == "Success" {
+		return true
+	}
+	return false
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+//// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.CkYNiG&docType=4&apiId=1046
+//type AliPayTradeCreate struct {
+//	AppAuthToken         string `json:"-"`                     // 可选
+//	NotifyURL            string `json:"-"`                     // 可选
+//	OutTradeNo           string `json:"out_trade_no"`          // 必须
+//	TotalAmount          string `json:"total_amount"`          // 必须
+//	SellerId             string `json:"seller_id"`             // 可选 卖家支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+//	BuyerLogonId         string `json:"buyer_logon_id"`        // 买家支付宝账号，和buyer_id不能同时为空
+//	BuyerId              string `json:"buyer_id"`              // 买家的支付宝唯一用户号（2088开头的16位纯数字）,和buyer_logon_id不能同时为空
+//	DiscountableAmount   string `json:"discountable_amount"`   // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】，【不可打折金额】则该值默认为【订单总金额】-【不可打折金额】
+//	UnDiscountableAmount string `json:"undiscountable_amount"` // 不可打折金额. 不参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】,【打折金额】，则该值默认为【订单总金额】-【打折金额】
+//	Subject              string `json:"subject"`               // 订单标题
+//	Body                 string `json:"body"`                  // 对交易或商品的描述
+//	GoodsDetail          []struct {
+//		GoodsId       string `json:"goods_id"`        // 商品的编号
+//		AliPayGoodsId string `json:"alipay_goods_id"` // 支付宝定义的统一商品编号
+//		GoodsName     string `json:"goods_name"`      // 商品名称
+//		Quantity      string `json:"quantity"`        // 商品数量
+//		Price         string `json:"price"`           // 商品单价，单位为元
+//		GoodsCategory string `json:"goods_category"`  // 商品类目
+//		Body          string `json:"body"`            // 商品描述信息
+//		ShowURL       string `json:"show_url"`        // 商品的展示地址
+//	} `json:"goods_detail"`
+//	OperatorId   string `json:"operator_id"` // 商户操作员编号
+//	StoreId      string `json:"store_id"`    // 商户门店编号
+//	TerminalId   string `json:"terminal_id"` // 商户机具终端编号
+//	ExtendParams struct {
+//		SysServiceProviderId string `json:"sys_service_provider_id"` // 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
+//		HBFQNum              string `json:"hb_fq_num"`               // 使用花呗分期要进行的分期数
+//		HBFQSellerPercent    string `json:"hb_fq_seller_percent"`    // 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
+//	} `json:"extend_params"`
+//	TimeoutExpress  string `json:"timeout_express"`   // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+//	AliPayStoreId   string `json:"alipay_store_id"`   // 支付宝的店铺编号
+//	MerchantOrderNo string `json:"merchant_order_no"` // 商户原始订单号，最大长度限制32位
+//}
+//
+//func (this AliPayTradeCreate) APIName() string {
+//	return "alipay.trade.create"
+//}
+//
+//func (this AliPayTradeCreate) Params() map[string]string {
+//	var m = make(map[string]string)
+//	m["app_auth_token"] = this.AppAuthToken
+//	m["notify_url"] = this.NotifyURL
+//	return m
+//}
+//
+//func (this AliPayTradeCreate) ExtJSONParamName() string {
+//	return "biz_content"
+//}
+//
+//func (this AliPayTradeCreate) ExtJSONParamValue() string {
+//	return marshal(this)
+//}
+
+//////////////////////////////////////////////////////////////////////////////////
+// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.IGVsS6&docType=4&apiId=850
+type AliPayTradePay struct {
+	AppAuthToken string `json:"-"` // 可选
+	NotifyURL    string `json:"-"` // 可选
+
+	OutTradeNo           string `json:"out_trade_no"`          // 必须 商户订单号,64个字符以内、可包含字母、数字、下划线；需保证在商户端不重复
+	Scene                string `json:"scene"`                 // 必须 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code	bar_code,wave_code
+	AuthCode             string `json:"auth_code"`             // 必须 支付授权码
+	Subject              string `json:"subject"`               // 必须 订单标题
+	SellerId             string `json:"seller_id"`             // 可选 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+	TotalAmount          string `json:"total_amount"`          // 可选 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。 如果同时传入【可打折金额】和【不可打折金额】，该参数可以不用传入； 如果同时传入了【可打折金额】，【不可打折金额】，【订单总金额】三者，则必须满足如下条件：【订单总金额】=【可打折金额】+【不可打折金额】
+	DiscountableAmount   string `json:"discountable_amount"`   // 可选 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。 如果该值未传入，但传入了【订单总金额】和【不可打折金额】，则该值默认为【订单总金额】-【不可打折金额】
+	UnDiscountableAmount string `json:"undiscountable_amount"` // 可选 不参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。如果该值未传入，但传入了【订单总金额】和【可打折金额】，则该值默认为【订单总金额】-【可打折金额】
+	Body                 string `json:"body"`                  // 可选 订单描述
+	GoodsDetail          struct {
+		goods_id      string `json:"goods_id"`        // 必填 商品的编号
+		AliPayGoodsId string `json:"alipay_goods_id"` // 可选 支付宝定义的统一商品编号
+		GoodsName     string `json:"goods_name"`      // 必填 商品名称
+		Quantity      string `json:"quantity"`        // 必填 商品数量
+		Price         string `json:"price"`           // 必填 商品单价，单位为元
+		GoodsCategory string `json:"goods_category"`  // 可选 商品类目
+		Body          string `json:"body"`            // 可选 商品描述信息
+		ShowURL       string `json:"show_url"`        // 可选 商品的展示地址
+	} `json:"goods_detail"`
+	OperatorId     string `json:"operator_id"`     // 可选 商户操作员编号
+	StoreId        string `json:"store_id"`        // 可选 商户门店编号
+	TerminalId     string `json:"terminal_id"`     // 可选 商户机具终端编号
+	AliPayStoreId  string `json:"alipay_store_id"` // 可选 支付宝的店铺编号
+	TimeoutExpress string `json:"timeout_express"` // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m
+	AuthNo         string `json:"auth_no"`         // 预授权号，预授权转交易请求中传入
+}
+
+func (this AliPayTradePay) APIName() string {
+	return "alipay.trade.pay"
+}
+
+func (this AliPayTradePay) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
+	return m
+}
+
+func (this AliPayTradePay) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayTradePay) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayTradePayResponse struct {
+	AliPayTradePay struct {
+		Code                string `json:"code"`
+		Msg                 string `json:"msg"`
+		SubCode             string `json:"sub_code"`
+		SubMsg              string `json:"sub_msg"`
+		BuyerLogonId        string `json:"buyer_logon_id"`        // 买家支付宝账号
+		BuyerPayAmount      string `json:"buyer_pay_amount"`      // 买家实付金额，单位为元，两位小数。
+		BuyerUserId         string `json:"buyer_user_id"`         // 买家在支付宝的用户id
+		CardBalance         string `json:"card_balance"`          // 支付宝卡余额
+		DiscountGoodsDetail string `json:"discount_goods_detail"` // 本次交易支付所使用的单品券优惠的商品优惠信息
+		FundBillList        []struct {
+			FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 支付渠道列表
+			Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
+			RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
+		} `json:"fund_bill_list"` // 交易支付使用的资金渠道
+		GmtPayment          string `json:"gmt_payment"`
+		InvoiceAmount       string `json:"invoice_amount"` // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
+		OutTradeNo          string `json:"out_trade_no"`   // 创建交易传入的商户订单号
+		TradeNo             string `json:"trade_no"`       // 支付宝交易号
+		PointAmount         string `json:"point_amount"`   // 积分支付的金额，单位为元，两位小数。
+		ReceiptAmount       string `json:"receipt_amount"` // 实收金额，单位为元，两位小数
+		StoreName           string `json:"store_name"`     // 发生支付交易的商户门店名称
+		TotalAmount         string `json:"total_amount"`   // 发该笔退款所对应的交易的订单金额
+		voucher_detail_list []struct {
+			Id                 string `json:"id"`
+			Amount             string `json:"amount"`
+			Memo               string `json:"memo"`
+			MerchantContribute string `json:"merchant_contribute"`
+			Name               string `json:"name"`
+			OtherContribute    string `json:"other_contribute"`
+			Type               string `json:"type"`
+		} `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
+	} `json:"alipay_trade_pay_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *AliPayTradePayResponse) IsSuccess() bool {
+	if this.AliPayTradePay.Msg == "Success" {
 		return true
 	}
 	return false
