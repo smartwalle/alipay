@@ -105,6 +105,18 @@ func (this AliPayTradeClose) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
+type AliPayTradeCloseResponse struct {
+	AliPayTradeClose struct {
+		Code       string `json:"code"`
+		Msg        string `json:"msg"`
+		SubCode    string `json:"sub_code"`
+		SubMsg     string `json:"sub_msg"`
+		OutTradeNo string `json:"out_trade_no"`
+		TradeNo    string `json:"trade_no"`
+	} `json:"alipay_trade_close_response"`
+	Sign string `json:"sign"`
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.5zkPUI&docType=4&apiId=759
 type AliPayTradeRefund struct {

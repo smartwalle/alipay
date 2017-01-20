@@ -8,9 +8,13 @@ AliPay SDK for Golang
 	
 	alipay.trade.wap.pay
 
-* **交易查询接口**
+* **统一收单线下交易查询**
 	
 	alipay.trade.query
+	
+* **统一收单交易关闭接口**
+
+	alipay.trade.close
 
 * **统一收单交易退款接口**
 
@@ -74,8 +78,11 @@ var html, _ = client.TradeWapPay(p)
 
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti = alipay.GetTradeNotification(req)
-	fmt.Println(noti)
-	fmt.Println(client.NotifyVerify(noti.NotifyId))
+	if noti != nil && client.NotifyVerify(noti.NotifyId) == true {
+		fmt.Println("支付成功")
+	} else {
+		fmt.Println("支付失败")
+	}
 })
 ```
 
