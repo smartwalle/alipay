@@ -12,11 +12,13 @@ func (this *AliPay) TradeClose() {
 }
 
 // TradeRefund https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=759&docType=4
-func (this *AliPay) TradeRefund() {
-
+func (this *AliPay) TradeRefund(param AliPayTradeRefund) (results *AliPayTradeRefundResponse , err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
 }
 
 // TradeFastpayRefundQuery https://doc.open.alipay.com/doc2/apiDetail.htm?docType=4&apiId=1049
-func (this *AliPay) TradeFastpayRefundQuery() {
-
+func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery) (results *AliPayFastpayTradeRefundQueryResponse, err error){
+	err = this.doRequest("POST", param, &results)
+	return results, err
 }

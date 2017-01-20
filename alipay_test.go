@@ -73,18 +73,25 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 
 	var client = New("2016073100129537", "2088102169227503", publickKey, privateKey, false)
 
-	var p = AliPayTradeQuery{}
-	p.OutTradeNo = "b4d83b26-9215-4567-befa-c04880c76b99"
-	p.TradeNo = "2017011921001004310200140925"
+	var p = AliPayFastpayTradeRefundQuery{}
+	p.OutTradeNo = "1111111"
+	p.OutRequestNo = "1111111"
 
-	var r, err = client.TradeQuery(p)
-	fmt.Println(r.IsSuccess(), err)
+	var r, err = client.TradeFastpayRefundQuery(p)
+	fmt.Println(r.IsSuccess(), err, r)
+
+	//var p = AliPayTradeRefund{}
+	//p.RefundAmount = "10.00"
+	//p.OutTradeNo = "1111111"
+	//
+	//var r, err = client.TradeRefund(p)
+	//fmt.Println(r.IsSuccess(), err, r)
 
 	//var p = AliPayTradeWapPay{}
 	//p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	//p.ReturnURL = "http://203.86.24.181:3000"
 	//p.Subject = "aa"
-	//p.OutTradeNo = "eeeee1ee"
+	//p.OutTradeNo = "1111111"
 	//p.TotalAmount = "10.00"
 	//p.ProductCode = "eeeeee"
 	//
