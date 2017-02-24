@@ -151,19 +151,19 @@ func (this AliPayTradeRefund) ExtJSONParamValue() string {
 
 type AliPayTradeRefundResponse struct {
 	AliPayTradeRefund struct {
-		Code                    string `json:"code"`
-		Msg                     string `json:"msg"`
-		SubCode                 string `json:"sub_code"`
-		SubMsg                  string `json:"sub_msg"`
-		TradeNo                 string `json:"trade_no"`       // 支付宝交易号
-		OutTradeNo              string `json:"out_trade_no"`   // 商户订单号
-		BuyerLogonId            string `json:"buyer_logon_id"` // 用户的登录id
-		BuyerUserId             string `json:"buyer_user_id"`  // 买家在支付宝的用户id
-		FundChange              string `json:"fund_change"`    // 本次退款是否发生了资金变化
-		RefundFee               string `json:"refund_fee"`     // 退款总金额
-		GmtRefundPay            string `json:"gmt_refund_pay"` // 退款支付时间
-		StoreName               string `json:"store_name"`     // 交易在支付时候的门店名称
-		refund_detail_item_list []struct {
+		Code                 string `json:"code"`
+		Msg                  string `json:"msg"`
+		SubCode              string `json:"sub_code"`
+		SubMsg               string `json:"sub_msg"`
+		TradeNo              string `json:"trade_no"`       // 支付宝交易号
+		OutTradeNo           string `json:"out_trade_no"`   // 商户订单号
+		BuyerLogonId         string `json:"buyer_logon_id"` // 用户的登录id
+		BuyerUserId          string `json:"buyer_user_id"`  // 买家在支付宝的用户id
+		FundChange           string `json:"fund_change"`    // 本次退款是否发生了资金变化
+		RefundFee            string `json:"refund_fee"`     // 退款总金额
+		GmtRefundPay         string `json:"gmt_refund_pay"` // 退款支付时间
+		StoreName            string `json:"store_name"`     // 交易在支付时候的门店名称
+		RefundDetailItemList []struct {
 			FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 支付渠道列表
 			Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 			RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
@@ -301,7 +301,7 @@ type AliPayTradePay struct {
 	UnDiscountableAmount string `json:"undiscountable_amount"` // 可选 不参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。如果该值未传入，但传入了【订单总金额】和【可打折金额】，则该值默认为【订单总金额】-【可打折金额】
 	Body                 string `json:"body"`                  // 可选 订单描述
 	GoodsDetail          struct {
-		goods_id      string `json:"goods_id"`        // 必填 商品的编号
+		GoodsId       string `json:"goods_id"`        // 必填 商品的编号
 		AliPayGoodsId string `json:"alipay_goods_id"` // 可选 支付宝定义的统一商品编号
 		GoodsName     string `json:"goods_name"`      // 必填 商品名称
 		Quantity      string `json:"quantity"`        // 必填 商品数量
