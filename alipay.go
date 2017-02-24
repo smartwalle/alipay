@@ -3,15 +3,16 @@ package alipay
 import (
 	"crypto"
 	"encoding/base64"
-	"github.com/smartwalle/going/encoding"
+	"encoding/json"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
-	"io/ioutil"
-	"encoding/json"
-	"io"
+
+	"github.com/smartwalle/going/encoding"
 )
 
 const (
