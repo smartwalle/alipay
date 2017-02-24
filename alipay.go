@@ -15,11 +15,6 @@ import (
 	"github.com/smartwalle/going/encoding"
 )
 
-const (
-	K_ALI_PAY_SANDBOX_API_URL    = "https://openapi.alipaydev.com/gateway.do"
-	K_ALI_PAY_PRODUCTION_API_URL = "https://openapi.alipay.com/gateway.do"
-)
-
 type AliPay struct {
 	appId           string
 	apiDomain       string
@@ -49,11 +44,11 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
-	p.Add("format", "JSON")
-	p.Add("charset", "utf-8")
-	p.Add("sign_type", "RSA2")
-	p.Add("timestamp", time.Now().Format("2006-01-02 15:04:05"))
-	p.Add("version", "1.0")
+	p.Add("format", FixFormat)
+	p.Add("charset", FixCharset)
+	p.Add("sign_type", FixSignType)
+	p.Add("timestamp", time.Now().Format(TimeForamt))
+	p.Add("version", FixVersion)
 
 	if len(param.ExtJSONParamName()) > 0 {
 		p.Add(param.ExtJSONParamName(), param.ExtJSONParamValue())
