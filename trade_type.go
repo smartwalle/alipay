@@ -55,7 +55,7 @@ type AliPayTradeQueryResponse struct {
 			Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 			RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
 		} `json:"fund_bill_list"` // 交易支付使用的资金渠道
-		voucher_detail_list []VoucherDetail `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
+		VoucherDetailList []VoucherDetail `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
 	} `json:"alipay_trade_query_response"`
 	Sign string `json:"sign"`
 }
@@ -394,15 +394,15 @@ type AliPayTradePayResponse struct {
 			Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 			RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
 		} `json:"fund_bill_list"` // 交易支付使用的资金渠道
-		GmtPayment          string          `json:"gmt_payment"`
-		InvoiceAmount       string          `json:"invoice_amount"`      // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
-		OutTradeNo          string          `json:"out_trade_no"`        // 创建交易传入的商户订单号
-		TradeNo             string          `json:"trade_no"`            // 支付宝交易号
-		PointAmount         string          `json:"point_amount"`        // 积分支付的金额，单位为元，两位小数。
-		ReceiptAmount       string          `json:"receipt_amount"`      // 实收金额，单位为元，两位小数
-		StoreName           string          `json:"store_name"`          // 发生支付交易的商户门店名称
-		TotalAmount         string          `json:"total_amount"`        // 发该笔退款所对应的交易的订单金额
-		voucher_detail_list []VoucherDetail `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
+		GmtPayment        string          `json:"gmt_payment"`
+		InvoiceAmount     string          `json:"invoice_amount"`      // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
+		OutTradeNo        string          `json:"out_trade_no"`        // 创建交易传入的商户订单号
+		TradeNo           string          `json:"trade_no"`            // 支付宝交易号
+		PointAmount       string          `json:"point_amount"`        // 积分支付的金额，单位为元，两位小数。
+		ReceiptAmount     string          `json:"receipt_amount"`      // 实收金额，单位为元，两位小数
+		StoreName         string          `json:"store_name"`          // 发生支付交易的商户门店名称
+		TotalAmount       string          `json:"total_amount"`        // 发该笔退款所对应的交易的订单金额
+		VoucherDetailList []VoucherDetail `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
 	} `json:"alipay_trade_pay_response"`
 	Sign string `json:"sign"`
 }
