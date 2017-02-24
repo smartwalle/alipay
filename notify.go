@@ -1,9 +1,10 @@
 package alipay
 
 import (
-	"github.com/smartwalle/going/request"
-	"net/url"
 	"io/ioutil"
+	"net/url"
+
+	"github.com/smartwalle/going/request"
 )
 
 func (this *AliPay) NotifyVerify(notifyId string) bool {
