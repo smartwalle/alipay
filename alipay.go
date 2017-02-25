@@ -103,6 +103,10 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 }
 
 func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
+	if param == nil {
+		param = make(url.Values, 0)
+	}
+
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
 		var value = strings.TrimSpace(param.Get(key))
@@ -120,6 +124,10 @@ func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
 }
 
 func sign_rsa(keys []string, param url.Values, privateKey []byte) (s string) {
+	if param == nil {
+		param = make(url.Values, 0)
+	}
+
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
 		var value = strings.TrimSpace(param.Get(key))
