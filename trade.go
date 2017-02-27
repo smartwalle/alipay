@@ -35,9 +35,3 @@ func (this *AliPay) TradeCreate(param AliPayTradeCreate) (results *AliPayTradeCr
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
-
-// BillDownloadurlQuery https://doc.open.alipay.com/docs/api.htm?spm=a219a.7386797.0.0.LwCBuJ&docType=4&apiId=1054
-func (this *AliPay) BillDownloadurlQuery(param BillDownloadurlQuery) (results *BillDownloadurlQueryResponse, err error) {
-	err = this.doRequest("POST", param, &results)
-	return results, err
-}
