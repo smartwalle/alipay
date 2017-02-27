@@ -47,7 +47,7 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	p.Add("format", FixFormat)
 	p.Add("charset", FixCharset)
 	p.Add("sign_type", FixSignType)
-	p.Add("timestamp", time.Now().Format(TimeForamt))
+	p.Add("timestamp", time.Now().Format(TimeFormat))
 	p.Add("version", FixVersion)
 
 	if len(param.ExtJSONParamName()) > 0 {

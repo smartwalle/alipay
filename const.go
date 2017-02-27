@@ -1,7 +1,7 @@
 package alipay
 
 const (
-	TimeForamt = "2006-01-02 15:04:05"
+	TimeFormat = "2006-01-02 15:04:05"
 
 	K_ALI_PAY_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" // 交易创建，等待买家付款
 	K_ALI_PAY_TRADE_STATUS_TRADE_CLOSED   = "TRADE_CLOSED"   // 未付款交易超时关闭，或支付完成后全额退款
