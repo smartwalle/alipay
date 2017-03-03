@@ -82,7 +82,7 @@ var html, _ = client.TradeWapPay(p)
 
 var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
-	var noti = client.GetTradeNotification(req)
+	var noti, _ = client.GetTradeNotification(req)
 	if noti != nil && client.NotifyVerify(noti.NotifyId) == true {
 		fmt.Println("支付成功")
 	} else {
