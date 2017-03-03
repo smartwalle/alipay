@@ -1,8 +1,8 @@
 package alipay
 
 import (
-	"fmt"
 	"testing"
+	"os"
 )
 
 var publicKey = []byte(`-----BEGIN PUBLIC KEY-----
@@ -94,10 +94,15 @@ func TestSign(t *testing.T) {
 	var p = AliPayTradeWapPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.ReturnURL = "http://203.86.24.181:3000"
-	p.Subject = "aa"
-	p.OutTradeNo = "1111111"
+	p.Subject = "修正了中文的 Bug"
+	p.OutTradeNo = "随机号"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "eeeeee"
 
-	fmt.Println(client.TradeWapPay(p))
+	var html, _ = client.TradeWapPay(p)
+
+	var f, _ = os.Create("test.html")
+
+	f.WriteString(html)
+	f.Close()
 }
