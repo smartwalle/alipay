@@ -44,11 +44,11 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
-	p.Add("format", FixFormat)
-	p.Add("charset", FixCharset)
-	p.Add("sign_type", FixSignType)
-	p.Add("timestamp", time.Now().Format(TimeFormat))
-	p.Add("version", FixVersion)
+	p.Add("format", K_FORMAT)
+	p.Add("charset", K_CHARSET)
+	p.Add("sign_type", K_SIGN_TYPE)
+	p.Add("timestamp", time.Now().Format(K_TIME_FORMAT))
+	p.Add("version", K_VERSION)
 
 	if len(param.ExtJSONParamName()) > 0 {
 		p.Add(param.ExtJSONParamName(), param.ExtJSONParamValue())

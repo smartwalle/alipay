@@ -95,7 +95,7 @@ func TestSign(t *testing.T) {
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.ReturnURL = "http://203.86.24.181:3000"
 	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "随机号"
+	p.OutTradeNo = "trade_no_1234"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "eeeeee"
 
