@@ -85,16 +85,13 @@ client.AliPayPublicKey = xxx // 从支付宝管理后台获取支付宝提供的
  
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
-	if noti != nil && client.NotifyVerify(noti.NotifyId) == true {
+	if noti != nil {
 		fmt.Println("支付成功")
 	} else {
 		fmt.Println("支付失败")
 	}
 })
 ```
-
-如果 **client.NotifyVerify()** 方法返回的是 **true**，则表示是支付宝发送的通知，为了安全，切记这一步流程不可少。
-
 
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
