@@ -28,5 +28,6 @@ func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (html string, url *url.
 		return "", nil, err
 	}
 	html = string(data)
-	return html, rep.Request.URL, err
+	url = rep.Request.URL
+	return html, url, err
 }

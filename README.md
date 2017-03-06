@@ -68,8 +68,8 @@ p.OutTradeNo = "传递一个唯一单号"
 p.TotalAmount = "10.00"
 p.ProductCode = "商品编码"
 
-var html, _ = client.TradeWapPay(p)
-// 将html输出到浏览器
+var html, url, _ = client.TradeWapPay(p)
+// 直接访问该 URL 就可以了
 ```
 
 #### 验证支付结果
