@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestBillDownloadurlQuery(t *testing.T) {
+func TestBillDownloadURLQuery(t *testing.T) {
 	type arg struct {
 		param  BillDownloadURLQuery
 		wanted string

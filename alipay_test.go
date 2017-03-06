@@ -3,6 +3,7 @@ package alipay
 import (
 	"testing"
 	"os"
+	"fmt"
 )
 
 var publicKey = []byte(`-----BEGIN PUBLIC KEY-----
@@ -71,7 +72,7 @@ func TestSign(t *testing.T) {
 	//pFwKUHMh+rm4/Asgy126+rS6Hr0QuNuoJuQbAr3Q28h7PQ==
 	//-----END RSA PRIVATE KEY-----`)
 
-	var client = New("2016073100129537", "2088102169227503", publicKey, privateKey, false)
+	var client = New(appID, "2088102169227503", publicKey, privateKey, false)
 
 	//var p = AliPayFastpayTradeRefundQuery{}
 	//p.OutTradeNo = "1111111"
@@ -99,7 +100,8 @@ func TestSign(t *testing.T) {
 	p.TotalAmount = "10.00"
 	p.ProductCode = "eeeeee"
 
-	var html, _ = client.TradeWapPay(p)
+	var html, url, _ = client.TradeWapPay(p)
+	fmt.Println(url)
 
 	var f, _ = os.Create("test.html")
 
