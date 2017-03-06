@@ -29,14 +29,10 @@ AliPay SDK for Golang
 	alipay.trade.fastpay.refund.query
 	
 #### 通知
-
-* **验证是否是支付宝发来的通知**
 	
-	notify_verify
+* **通知内容转换及签名验证**
 	
-* **通知内容转换**
-	
-	将支付宝的通知内容转换为 Golang 的结构体
+	将支付宝的通知内容转换为 Golang 的结构体，并且验证其合法性。
 	
 ## 集成流程
 
