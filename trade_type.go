@@ -28,32 +28,32 @@ func (this AliPayTradeQuery) ExtJSONParamValue() string {
 
 type AliPayTradeQueryResponse struct {
 	AliPayTradeQuery struct {
-		Code                string `json:"code"`
-		Msg                 string `json:"msg"`
-		SubCode             string `json:"sub_code"`
-		SubMsg              string `json:"sub_msg"`
-		BuyerLogonId        string `json:"buyer_logon_id"`        // 买家支付宝账号
-		BuyerPayAmount      string `json:"buyer_pay_amount"`      // 买家实付金额，单位为元，两位小数。
-		BuyerUserId         string `json:"buyer_user_id"`         // 买家在支付宝的用户id
-		InvoiceAmount       string `json:"invoice_amount"`        // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
-		Openid              string `json:"open_id"`               // 买家支付宝用户号，该字段将废弃，不要使用
-		OutTradeNo          string `json:"out_trade_no"`          // 商家订单号
-		PointAmount         string `json:"point_amount"`          // 积分支付的金额，单位为元，两位小数。
-		ReceiptAmount       string `json:"receipt_amount"`        // 实收金额，单位为元，两位小数
-		SendPayDate         string `json:"send_pay_date"`         // 本次交易打款给卖家的时间
-		TotalAmount         string `json:"total_amount"`          // 交易的订单金额
-		TradeNo             string `json:"trade_no"`              // 支付宝交易号
-		TradeStatus         string `json:"trade_status"`          // 交易状态
-		AliPayStoreId       string `json:"alipay_store_id"`       // 支付宝店铺编号
-		StoreId             string `json:"store_id"`              // 商户门店编号
-		TerminalId          string `json:"terminal_id"`           // 商户机具终端编号
-		StoreName           string `json:"store_name"`            // 请求交易支付中的商户店铺的名称
-		DiscountGoodsDetail string `json:"discount_goods_detail"` // 本次交易支付所使用的单品券优惠的商品优惠信息
-		IndustrySepcDetail  string `json:"industry_sepc_detail"`  // 行业特殊信息（例如在医保卡支付业务中，向用户返回医疗信息）。
+		Code                string  `json:"code"`
+		Msg                 string  `json:"msg"`
+		SubCode             string  `json:"sub_code"`
+		SubMsg              string  `json:"sub_msg"`
+		BuyerLogonId        string  `json:"buyer_logon_id"`          // 买家支付宝账号
+		BuyerPayAmount      float64 `json:"buyer_pay_amount,string"` // 买家实付金额，单位为元，两位小数。
+		BuyerUserId         string  `json:"buyer_user_id"`           // 买家在支付宝的用户id
+		InvoiceAmount       float64 `json:"invoice_amount,string"`   // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
+		Openid              string  `json:"open_id"`                 // 买家支付宝用户号，该字段将废弃，不要使用
+		OutTradeNo          string  `json:"out_trade_no"`            // 商家订单号
+		PointAmount         float64 `json:"point_amount,string"`     // 积分支付的金额，单位为元，两位小数。
+		ReceiptAmount       float64 `json:"receipt_amount,string"`   // 实收金额，单位为元，两位小数
+		SendPayDate         string  `json:"send_pay_date"`           // 本次交易打款给卖家的时间
+		TotalAmount         float64 `json:"total_amount,string"`     // 交易的订单金额
+		TradeNo             string  `json:"trade_no"`                // 支付宝交易号
+		TradeStatus         string  `json:"trade_status"`            // 交易状态
+		AliPayStoreId       string  `json:"alipay_store_id"`         // 支付宝店铺编号
+		StoreId             string  `json:"store_id"`                // 商户门店编号
+		TerminalId          string  `json:"terminal_id"`             // 商户机具终端编号
+		StoreName           string  `json:"store_name"`              // 请求交易支付中的商户店铺的名称
+		DiscountGoodsDetail string  `json:"discount_goods_detail"`   // 本次交易支付所使用的单品券优惠的商品优惠信息
+		IndustrySepcDetail  string  `json:"industry_sepc_detail"`    // 行业特殊信息（例如在医保卡支付业务中，向用户返回医疗信息）。
 		FundBillList        []struct {
-			FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 支付渠道列表
-			Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
-			RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
+			FundChannel string  `json:"fund_channel"`       // 交易使用的资金渠道，详见 支付渠道列表
+			Amount      string  `json:"amount"`             // 该支付工具类型所使用的金额
+			RealAmount  float64 `json:"real_amount,string"` // 渠道实际付款金额
 		} `json:"fund_bill_list"` // 交易支付使用的资金渠道
 		VoucherDetailList []VoucherDetail `json:"voucher_detail_list"` // 本交易支付时使用的所有优惠券信息
 	} `json:"alipay_trade_query_response"`

@@ -5,7 +5,11 @@ import (
 	"testing"
 )
 
-var publicKey = []byte(`-----BEGIN PUBLIC KEY-----
+var (
+	appID     = "2016073100129537"
+	partnerID = "2088102169227503"
+
+	publicKey = []byte(`-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv8dXxi8wNAOqBNOh8Dv5
 rh0BTb5KNgk62jDaS536Z1cDqq2JmpBYkBnzJXHAXEgBwPXgX8bGruMMjZKW8P4u
 v3Rvj8Am9ewWwUK2U7m2ZB3Oo9MWtyYoiLGX1IA4FFenXzpPgm0WyzaeLX4yJ8j+
@@ -15,7 +19,7 @@ uRFnKlZuFoEKPWyMGYtbvK9AWIfC8ubn30O5F9kfLMIHwAHCh0UipPSbKDwQ2BnW
 swIDAQAB
 -----END PUBLIC KEY-----`)
 
-var privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
+	privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAv8dXxi8wNAOqBNOh8Dv5rh0BTb5KNgk62jDaS536Z1cDqq2J
 mpBYkBnzJXHAXEgBwPXgX8bGruMMjZKW8P4uv3Rvj8Am9ewWwUK2U7m2ZB3Oo9MW
 tyYoiLGX1IA4FFenXzpPgm0WyzaeLX4yJ8j+hVrRbgwbZzb9Aq0MyepnK5PVoSPL
@@ -43,8 +47,7 @@ Uzd+FwKBgHW9Nur4eTxK1nIOZyGgCqL1duYsJQcPWyIcRMTSjOoQZ5ZUhQZTw1Hd
 vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 -----END RSA PRIVATE KEY-----
 `)
-
-var appID = "2016073100129537"
+)
 
 func TestSign(t *testing.T) {
 
@@ -100,4 +103,32 @@ func TestSign(t *testing.T) {
 	p.ProductCode = "eeeeee"
 
 	fmt.Println(client.TradeWapPay(p))
+}
+
+func TestAliPayTradeQuery(t *testing.T) {
+	client := New(appID, partnerID, publicKey, privateKey, false)
+
+	type arg struct {
+		outTradeNo string
+		wanted     error
+		name       string
+	}
+
+	testCaes := []arg{
+		{"1111111", nil, "query success"},
+		//TODO:add more test case
+	}
+
+	for _, tc := range testCaes {
+		req := AliPayTradeQuery{
+			OutTradeNo: tc.outTradeNo,
+		}
+		resp, err := client.TradeQuery(req)
+		if err != tc.wanted {
+			t.Errorf("%s input:%s wanted:%v get:%v", tc.name, tc.outTradeNo, tc.wanted, err)
+		} else {
+			t.Log(resp)
+		}
+	}
+
 }
