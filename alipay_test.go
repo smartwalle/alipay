@@ -49,8 +49,6 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 `)
 )
 
-var partnerID = "2088102169227503"
-
 func TestSign(t *testing.T) {
 
 	var client = New(appID, partnerID, publicKey, privateKey, false)
