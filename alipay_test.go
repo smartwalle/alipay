@@ -1,10 +1,5 @@
 package alipay
 
-import (
-	"testing"
-	"fmt"
-)
-
 var (
 	appID     = "2016073100129537"
 	partnerID = "2088102169227503"
@@ -49,46 +44,5 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 `)
 )
 
-func TestSign(t *testing.T) {
+var client = New(appID, partnerID, publicKey, privateKey, false)
 
-	var client = New(appID, partnerID, publicKey, privateKey, false)
-
-	var p = AliPayTradeWapPay{}
-	p.NotifyURL = "http://203.86.24.181:3000/alipay"
-	p.ReturnURL = "http://203.86.24.181:3000"
-	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_12341"
-	p.TotalAmount = "10.00"
-	p.ProductCode = "eeeeee"
-
-	var url, _ = client.TradeWapPay(p)
-	fmt.Println(url)
-}
-
-func TestAliPayTradeQuery(t *testing.T) {
-	client := New(appID, partnerID, publicKey, privateKey, false)
-
-	type arg struct {
-		outTradeNo string
-		wanted     error
-		name       string
-	}
-
-	testCaes := []arg{
-		{"1111111", nil, "query success"},
-		//TODO:add more test case
-	}
-
-	for _, tc := range testCaes {
-		req := AliPayTradeQuery{
-			OutTradeNo: tc.outTradeNo,
-		}
-		resp, err := client.TradeQuery(req)
-		if err != tc.wanted {
-			t.Errorf("%s input:%s wanted:%v get:%v", tc.name, tc.outTradeNo, tc.wanted, err)
-		} else {
-			t.Log(resp)
-		}
-	}
-
-}

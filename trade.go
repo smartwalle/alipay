@@ -30,8 +30,14 @@ func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayRespo
 	return results, err
 }
 
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.x39G6l&docType=4&apiId=1046
+// TradeCreate https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.x39G6l&docType=4&apiId=1046
 func (this *AliPay) TradeCreate(param AliPayTradeCreate) (results *AliPayTradeCreateResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
+}
+
+// TradeAppPay https://doc.open.alipay.com/doc2/detail.htm?treeId=204&articleId=105462&docType=1
+func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err error) {
+	results = this.URLValues(param).Encode()
+	return results, nil
 }

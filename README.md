@@ -23,6 +23,10 @@ AliPay SDK for Golang
 * **统一收单交易退款接口**
 
 	alipay.trade.refund
+	
+* **外部商户App唤起快捷SDK创建订单并支付**
+
+	alipay.trade.app.pay
 
 * **统一收单交易退款查询**
 

@@ -3,9 +3,11 @@ package alipay
 import (
 	"testing"
 	"time"
+	"fmt"
 )
 
-func TestBillDownloadURLQuery(t *testing.T) {
+func TestAliPay_BillDownloadURLQuery(t *testing.T) {
+	fmt.Println("========== BillDownloadURLQuery ==========")
 	type arg struct {
 		param  BillDownloadURLQuery
 		wanted string
