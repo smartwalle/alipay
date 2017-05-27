@@ -41,7 +41,12 @@ type TradeNotification struct {
 	VoucherDetailList string `json:"voucher_detail_list"` // 优惠券信息
 }
 
-func (this *AliPay) GetTradeNotification(req *http.Request) (noti *TradeNotification, err error) {
+func (this *AliPay) GetTradeNotification(req *http.Request) (*TradeNotification, error) {
+	return GetTradeNotification(req, this.AliPayPublicKey)
+}
+
+
+func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *TradeNotification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
@@ -85,7 +90,7 @@ func (this *AliPay) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 		return nil, errors.New("不是有效的 Notfiy")
 	}
 
-	ok, err := verify_rsa2(req, this.AliPayPublicKey)
+	ok, err := verify_rsa2(req, aliPayPublicKey)
 	if ok {
 		return noti, nil
 	}

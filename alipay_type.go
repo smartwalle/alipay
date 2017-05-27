@@ -14,6 +14,7 @@ type AliPayParam interface {
 
 	// 返回扩展 JSON 参数的字段名称
 	ExtJSONParamName() string
+
 	// 返回扩展 JSON 参数的字段值
 	ExtJSONParamValue() string
 }

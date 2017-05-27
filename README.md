@@ -23,20 +23,20 @@ AliPay SDK for Golang
 * **统一收单交易退款接口**
 
 	alipay.trade.refund
+	
+* **App支付接口**
+
+	alipay.trade.app.pay
 
 * **统一收单交易退款查询**
 
 	alipay.trade.fastpay.refund.query
 	
 #### 通知
-
-* **验证是否是支付宝发来的通知**
 	
-	notify_verify
+* **通知内容转换及签名验证**
 	
-* **通知内容转换**
-	
-	将支付宝的通知内容转换为 Golang 的结构体
+	将支付宝的通知内容转换为 Golang 的结构体，并且验证其合法性。
 	
 ## 集成流程
 
@@ -68,8 +68,8 @@ p.OutTradeNo = "传递一个唯一单号"
 p.TotalAmount = "10.00"
 p.ProductCode = "商品编码"
 
-var html, _ = client.TradeWapPay(p)
-// 将html输出到浏览器
+var url, _ = client.TradeWapPay(p)
+// 直接访问该 URL 就可以了
 ```
 
 #### 验证支付结果
@@ -80,9 +80,12 @@ var html, _ = client.TradeWapPay(p)
 
 ```Golang
 
+var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
+client.AliPayPublicKey = xxx // 从支付宝管理后台获取支付宝提供的公钥
+ 
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
-	var noti = alipay.GetTradeNotification(req)
-	if noti != nil && client.NotifyVerify(noti.NotifyId) == true {
+	var noti, _ = client.GetTradeNotification(req)
+	if noti != nil {
 		fmt.Println("支付成功")
 	} else {
 		fmt.Println("支付失败")
@@ -90,8 +93,7 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 })
 ```
 
-如果 **client.NotifyVerify()** 方法返回的是 **true**，则表示是支付宝发送的通知，为了安全，切记这一步流程不可少。
-
-
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
+#### 鸣谢
+感谢 [@wusphinx](https://github.com/wusphinx) 对本项目的支持。

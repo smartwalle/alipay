@@ -44,11 +44,11 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
-	p.Add("format", FixFormat)
-	p.Add("charset", FixCharset)
-	p.Add("sign_type", FixSignType)
-	p.Add("timestamp", time.Now().Format(TimeForamt))
-	p.Add("version", FixVersion)
+	p.Add("format", K_FORMAT)
+	p.Add("charset", K_CHARSET)
+	p.Add("sign_type", K_SIGN_TYPE)
+	p.Add("timestamp", time.Now().Format(K_TIME_FORMAT))
+	p.Add("version", K_VERSION)
 
 	if len(param.ExtJSONParamName()) > 0 {
 		p.Add(param.ExtJSONParamName(), param.ExtJSONParamValue())
@@ -82,7 +82,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 
 	rep, err := this.client.Do(req)
 	if err != nil {
