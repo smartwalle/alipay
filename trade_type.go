@@ -71,7 +71,7 @@ type VoucherDetail struct {
 }
 
 func (this *AliPayTradeQueryResponse) IsSuccess() bool {
-	if this.AliPayTradeQuery.Code == SUCCESS_CODE {
+	if this.AliPayTradeQuery.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -174,7 +174,7 @@ type AliPayTradeRefundResponse struct {
 }
 
 func (this *AliPayTradeRefundResponse) IsSuccess() bool {
-	if this.AliPayTradeRefund.Code == SUCCESS_CODE {
+	if this.AliPayTradeRefund.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -224,7 +224,7 @@ type AliPayFastpayTradeRefundQueryResponse struct {
 }
 
 func (this *AliPayFastpayTradeRefundQueryResponse) IsSuccess() bool {
-	if this.AliPayTradeFastpayRefundQueryResponse.Code == SUCCESS_CODE {
+	if this.AliPayTradeFastpayRefundQueryResponse.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -400,7 +400,7 @@ type AliPayTradePayResponse struct {
 }
 
 func (this *AliPayTradePayResponse) IsSuccess() bool {
-	if this.AliPayTradePay.Code == SUCCESS_CODE {
+	if this.AliPayTradePay.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
