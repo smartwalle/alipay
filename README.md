@@ -1,5 +1,9 @@
 AliPay SDK for Golang
 
+
+## 鸣谢
+感谢 [@wusphinx](https://github.com/wusphinx) 和 [@clearluo](https://github.com/clearluo) 对本项目的支持。
+
 ## 已实现接口
 
 #### 手机网站支付API
@@ -103,5 +107,3 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
-#### 鸣谢
-感谢 [@wusphinx](https://github.com/wusphinx) 和 [@clearluo](https://github.com/clearluo) 对本项目的支持。
