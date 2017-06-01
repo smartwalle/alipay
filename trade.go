@@ -41,15 +41,3 @@ func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err er
 	results = this.URLValues(param).Encode()
 	return results, nil
 }
-
-// 单笔转账到支付宝账户接口
-func (this *AliPay) FundTransToaccountTransfer(param AlipayFundTransToaccountTransfer) (results *AlipayFundTransToaccountTransferResponse, err error) {
-	err = this.doRequest("POST", param, &results)
-	return results, err
-}
-
-// 查询转账订单接口fund.trans.order.query
-func (this *AliPay) FundTransOrderQuery(param AlipayFundTransOrderQuery) (results *AlipayFundTransOrderQueryResponse, err error) {
-	err = this.doRequest("POST", param, &results)
-	return results, err
-}

@@ -31,6 +31,14 @@ AliPay SDK for Golang
 * **统一收单交易退款查询**
 
 	alipay.trade.fastpay.refund.query
+
+* **单笔转账到支付宝账户接口**
+
+	alipay.fund.trans.toaccount.transfer
+	
+* **查询转账订单接口**
+
+	alipay.fund.trans.order.query 
 	
 #### 通知
 	
@@ -96,4 +104,4 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
 #### 鸣谢
-感谢 [@wusphinx](https://github.com/wusphinx) 对本项目的支持。
+感谢 [@wusphinx](https://github.com/wusphinx) 和 [@clearluo](https://github.com/clearluo) 对本项目的支持。
