@@ -15,4 +15,8 @@ const (
 	K_CHARSET   = "utf-8"
 	K_VERSION   = "1.0"
 	K_SIGN_TYPE = "RSA2"
+
+	// https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
+	// TODO:返回码根据文档统一处理,供外部调用解析
+	SUCCESS_CODE = "10000"
 )
