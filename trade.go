@@ -4,8 +4,6 @@ import (
 	"strings"
 	"net/url"
 	"net/http"
-	"fmt"
-	"io/ioutil"
 )
 
 // TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
@@ -23,11 +21,6 @@ func (this *AliPay) TradePagePay(param AliPayTradePagePay) (url *url.URL, err er
 		return nil, err
 	}
 	defer rep.Body.Close()
-
-	data, err := ioutil.ReadAll(rep.Body)
-	fmt.Println(string(data))
-
-
 
 	if err != nil {
 		return nil, err
