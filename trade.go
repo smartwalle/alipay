@@ -1,5 +1,41 @@
 package alipay
 
+import (
+	"strings"
+	"net/url"
+	"net/http"
+	"fmt"
+	"io/ioutil"
+)
+
+// TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
+func (this *AliPay) TradePagePay(param AliPayTradePagePay) (url *url.URL, err error) {
+	var buf = strings.NewReader(this.URLValues(param).Encode())
+
+	req, err := http.NewRequest("POST", this.apiDomain, buf)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+
+	rep, err := this.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer rep.Body.Close()
+
+	data, err := ioutil.ReadAll(rep.Body)
+	fmt.Println(string(data))
+
+
+
+	if err != nil {
+		return nil, err
+	}
+	url = rep.Request.URL
+	return url, err
+}
+
 // TradeQuery https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=757&docType=4
 func (this *AliPay) TradeQuery(param AliPayTradeQuery) (results *AliPayTradeQueryResponse, err error) {
 	err = this.doRequest("POST", param, &results)

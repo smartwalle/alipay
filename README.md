@@ -11,6 +11,10 @@ AliPay SDK for Golang
 * **手机网站支付接口**
 	
 	alipay.trade.wap.pay
+	
+* **电脑网站支付**
+
+	alipay.trade.page.pay
 
 * **统一收单线下交易查询**
 	

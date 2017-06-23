@@ -42,3 +42,16 @@ func TestAliPay_TradeAppPay(t *testing.T) {
 	p.ProductCode = "p_1010101"
 	fmt.Println(client.TradeAppPay(p))
 }
+
+
+func TestAliPay_TradePagePay(t *testing.T) {
+	fmt.Println("========== TradePagePay ==========")
+	var p = AliPayTradePagePay{}
+	p.NotifyURL = "http://203.86.24.181:3000/alipay"
+	p.ReturnURL = "http://203.86.24.181:3000"
+	p.Subject = "修正了中文的 Bug"
+	p.OutTradeNo = "trade_no_2017062301"
+	p.TotalAmount = "10.00"
+	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+	fmt.Println(client.TradePagePay(p))
+}
