@@ -111,7 +111,7 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
-**需要特别注意，从支付宝后台获取到支付宝的公钥之后，需要将其装换成标准的公钥格式，如下所示：**
+**需要特别注意，从支付宝后台获取到支付宝的公钥之后，需要将其转换成标准的公钥格式，如下所示：**
 
 ```
 -----BEGIN PUBLIC KEY-----
