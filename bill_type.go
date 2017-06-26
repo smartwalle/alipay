@@ -34,5 +34,5 @@ type BillDownloadURLQueryResponse struct {
 		SubMsg          string `json:"sub_msg"`
 		BillDownloadUrl string `json:"bill_download_url"`
 	} `json:"alipay_data_dataservice_bill_downloadurl_query_response"`
-	Sign                                          string `json:"sign"`
+	Sign string `json:"sign"`
 }
