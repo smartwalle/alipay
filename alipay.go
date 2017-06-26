@@ -95,11 +95,55 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 		return err
 	}
 
+	if len(this.AliPayPublicKey) > 0 {
+		var dataStr = string(data)
+
+		var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + k_RESPONSE_SUFFIX
+
+		var rootIndex = strings.LastIndex(dataStr, rootNodeName)
+		var errorIndex = strings.LastIndex(dataStr, k_ERROR_RESPONSE)
+
+		var content string
+		var sign string
+
+		if rootIndex > 0 {
+			content, sign = parserJSONSource(dataStr, rootNodeName, rootIndex)
+		} else if errorIndex > 0 {
+			content, sign = parserJSONSource(dataStr, k_ERROR_RESPONSE, errorIndex)
+		} else {
+			return nil
+		}
+
+		if ok, err := verify_response_rsa2([]byte(content), sign, this.AliPayPublicKey); ok == false {
+			return err
+		}
+	}
+
 	err = json.Unmarshal(data, results)
 	if err != nil {
 		return err
 	}
+
 	return err
+}
+
+func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
+	var dataStartIndex = nodeIndex + len(nodeName) + 2
+	var signIndex = strings.LastIndex(rawData, "\"" + k_SIGN_NODE_NAME + "\"")
+	var dataEndIndex = signIndex - 1
+
+	var indexLen = dataEndIndex - dataStartIndex
+	if indexLen < 0 {
+		return "", ""
+	}
+	content = rawData[dataStartIndex:dataEndIndex]
+
+	var signStartIndex = signIndex + len(k_SIGN_NODE_NAME) + 4
+	sign = rawData[signStartIndex:]
+	var signEndIndex = strings.LastIndex(sign, "\"}")
+	sign = sign[:signEndIndex]
+
+	return content, sign
 }
 
 func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
@@ -172,6 +216,20 @@ func verify_rsa2(req *http.Request, key []byte) (ok bool, err error) {
 	var s = strings.Join(pList, "&")
 
 	err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA256)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+
+func verify_response_rsa2(data []byte, sign string, key []byte) (ok bool, err error) {
+	signBytes, err := base64.StdEncoding.DecodeString(sign)
+	if err != nil {
+		return false, err
+	}
+
+	err = encoding.VerifyPKCS1v15(data, signBytes, key, crypto.SHA256)
 	if err != nil {
 		return false, err
 	}

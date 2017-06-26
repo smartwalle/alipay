@@ -88,6 +88,17 @@ var url, _ = client.TradeWapPay(p)
 // 直接访问该 URL 就可以了
 ```
 
+#### 同步返回验签
+
+支持自动对支付宝返回的数据进行签名验证，详细信息请参考[自行实现验签](https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120).
+
+如果需要开启自动验签，只需要在初始化 AliPay 对象之后给 **AliPayPublicKey** 属性设置从支付宝管理后台获取到的支付宝公钥即可，如下：
+
+``` Golang
+var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
+client.AliPayPublicKey = xxx  // 从支付宝管理后台获取支付宝提供的公钥
+```
+
 #### 验证支付结果
 
 有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递会相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。

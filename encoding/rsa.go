@@ -114,7 +114,7 @@ func VerifyPKCS1v15(src, sig, key []byte, hash crypto.Hash) error {
 	var block *pem.Block
 	block, _ = pem.Decode(key)
 	if block == nil {
-		return errors.New("publick key error")
+		return errors.New("public key error")
 	}
 
 	var pubInterface interface{}

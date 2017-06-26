@@ -19,3 +19,10 @@ const (
 	// https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
 	K_SUCCESS_CODE = "10000"
 )
+
+
+const (
+	k_RESPONSE_SUFFIX = "_response"
+	k_ERROR_RESPONSE  = "error_response"
+	k_SIGN_NODE_NAME = "sign"
+)

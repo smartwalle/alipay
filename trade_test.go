@@ -14,7 +14,7 @@ func TestAliPay_TradeQuery(t *testing.T) {
 	}
 
 	testCaes := []arg{
-		{"1111111", nil, "query success"},
+		{"trade_no_20170623022111", nil, "query success"},
 		//TODO:add more test case
 	}
 
@@ -22,6 +22,7 @@ func TestAliPay_TradeQuery(t *testing.T) {
 		req := AliPayTradeQuery{
 			OutTradeNo: tc.outTradeNo,
 		}
+		client.AliPayPublicKey = aliPublicKey
 		resp, err := client.TradeQuery(req)
 		if err != tc.wanted {
 			t.Errorf("%s input:%s wanted:%v get:%v", tc.name, tc.outTradeNo, tc.wanted, err)

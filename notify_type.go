@@ -87,7 +87,7 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 	noti.VoucherDetailList = req.PostFormValue("voucher_detail_list")
 
 	if len(noti.NotifyId) == 0 {
-		return nil, errors.New("不是有效的 Notfiy")
+		return nil, errors.New("不是有效的 Notify")
 	}
 
 	ok, err := verify_rsa2(req, aliPayPublicKey)
