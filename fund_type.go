@@ -6,11 +6,11 @@ package alipay
 type AliPayFundTransToAccountTransfer struct {
 	AppAuthToken  string `json:"-"`               // 可选
 	OutBizNo      string `json:"out_biz_no"`      // 必选 商户转账唯一订单号
-	PayeeType     string `json:"payee_type"`      // 必须 收款方账户类型,"ALIPAY_LOGONID":支付宝帐号
-	PayeeAccount  string `json:"payee_account"`   // 可选 收款方账户。与payee_type配合使用
-	Amount        string `json:"amount"`          // 可选 转账金额,元
+	PayeeType     string `json:"payee_type"`      // 必选 收款方账户类型,"ALIPAY_LOGONID":支付宝帐号
+	PayeeAccount  string `json:"payee_account"`   // 必选 收款方账户。与payee_type配合使用
+	Amount        string `json:"amount"`          // 必选 转账金额,元
 	PayerShowName string `json:"payer_show_name"` // 可选 付款方显示姓名
-	PayeeRealName string `json:"payee_real_name"` // 必选 收款方真实姓名,必填,避免转错
+	PayeeRealName string `json:"payee_real_name"` // 可选 收款方真实姓名,如果本参数不为空，则会校验该账户在支付宝登记的实名是否与收款方真实姓名一致。
 	Remark        string `json:"remark"`          // 可选 转账备注,金额大于50000时必填
 }
 
