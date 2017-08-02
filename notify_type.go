@@ -90,7 +90,7 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 		return nil, errors.New("不是有效的 Notify")
 	}
 
-	ok, err := verify_rsa2(req, aliPayPublicKey)
+	ok, err := verify_sign(req, aliPayPublicKey)
 	if ok {
 		return noti, nil
 	}

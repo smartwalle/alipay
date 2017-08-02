@@ -22,7 +22,6 @@ func TestAliPay_TradeQuery(t *testing.T) {
 		req := AliPayTradeQuery{
 			OutTradeNo: tc.outTradeNo,
 		}
-		client.AliPayPublicKey = aliPublicKey
 		resp, err := client.TradeQuery(req)
 		if err != tc.wanted {
 			t.Errorf("%s input:%s wanted:%v get:%v", tc.name, tc.outTradeNo, tc.wanted, err)
@@ -51,7 +50,7 @@ func TestAliPay_TradePagePay(t *testing.T) {
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.ReturnURL = "http://203.86.24.181:3000"
 	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_2017062301"
+	p.OutTradeNo = "trade_no_20170623011"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
 	fmt.Println(client.TradePagePay(p))

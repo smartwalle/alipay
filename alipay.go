@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/smartwalle/alipay/encoding"
+	"fmt"
 )
 
 type AliPay struct {
@@ -23,6 +24,7 @@ type AliPay struct {
 	privateKey      []byte
 	AliPayPublicKey []byte
 	client          *http.Client
+	SignType        string
 }
 
 func New(appId, partnerId string, publicKey, privateKey []byte, isProduction bool) (client *AliPay) {
@@ -37,6 +39,7 @@ func New(appId, partnerId string, publicKey, privateKey []byte, isProduction boo
 	} else {
 		client.apiDomain = K_ALI_PAY_SANDBOX_API_URL
 	}
+	client.SignType = K_SIGN_TYPE_RSA2
 	return client
 }
 
@@ -46,7 +49,7 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	p.Add("method", param.APIName())
 	p.Add("format", K_FORMAT)
 	p.Add("charset", K_CHARSET)
-	p.Add("sign_type", K_SIGN_TYPE)
+	p.Add("sign_type", this.SignType)
 	p.Add("timestamp", time.Now().Format(K_TIME_FORMAT))
 	p.Add("version", K_VERSION)
 
@@ -67,7 +70,11 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 	}
 
 	sort.Strings(keys)
-	p.Add("sign", sign_rsa2(keys, p, this.privateKey))
+	if this.SignType == K_SIGN_TYPE_RSA {
+		p.Add("sign", sign_rsa(keys, p, this.privateKey))
+	} else {
+		p.Add("sign", sign_rsa2(keys, p, this.privateKey))
+	}
 
 	return p
 }
@@ -114,7 +121,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return nil
 		}
 
-		if ok, err := verify_response_rsa2([]byte(content), sign, this.AliPayPublicKey); ok == false {
+		if ok, err := verify_response_data([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
 			return err
 		}
 	}
@@ -188,11 +195,13 @@ func sign_rsa(keys []string, param url.Values, privateKey []byte) (s string) {
 	return s
 }
 
-func verify_rsa2(req *http.Request, key []byte) (ok bool, err error) {
+func verify_sign(req *http.Request, key []byte) (ok bool, err error) {
 	sign, err := base64.StdEncoding.DecodeString(req.PostForm.Get("sign"))
+	signType := req.PostForm.Get("sign_type")
 	if err != nil {
 		return false, err
 	}
+	fmt.Println(signType)
 
 	var keys = make([]string, 0, 0)
 	for key, value := range req.PostForm {
@@ -215,7 +224,11 @@ func verify_rsa2(req *http.Request, key []byte) (ok bool, err error) {
 	}
 	var s = strings.Join(pList, "&")
 
-	err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA256)
+	if signType == K_SIGN_TYPE_RSA {
+		err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA1)
+	} else {
+		err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA256)
+	}
 	if err != nil {
 		return false, err
 	}
@@ -223,13 +236,17 @@ func verify_rsa2(req *http.Request, key []byte) (ok bool, err error) {
 }
 
 
-func verify_response_rsa2(data []byte, sign string, key []byte) (ok bool, err error) {
+func verify_response_data(data []byte, signType, sign string, key []byte) (ok bool, err error) {
 	signBytes, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return false, err
 	}
 
-	err = encoding.VerifyPKCS1v15(data, signBytes, key, crypto.SHA256)
+	if signType == K_SIGN_TYPE_RSA {
+		err = encoding.VerifyPKCS1v15(data, signBytes, key, crypto.SHA1)
+	} else {
+		err = encoding.VerifyPKCS1v15(data, signBytes, key, crypto.SHA256)
+	}
 	if err != nil {
 		return false, err
 	}

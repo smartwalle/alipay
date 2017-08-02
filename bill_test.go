@@ -29,7 +29,6 @@ func TestAliPay_BillDownloadURLQuery(t *testing.T) {
 			wanted: "40004",
 		},
 	}
-	client := New(appID, "", publicKey, privateKey, false)
 	for _, tc := range testCases {
 		r, err := client.BillDownloadURLQuery(tc.param)
 		t.Log(r, err)

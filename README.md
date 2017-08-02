@@ -136,3 +136,12 @@ hwIDAQAB
 -----END PUBLIC KEY-----
 ```
 
+#### 支持 RSA 签名及验证
+默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:
+
+```Golang
+var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
+client.SignType = alipay.K_SIGN_TYPE_RSA
+```
+
+当然，相关的 Key 也要注意替换。
