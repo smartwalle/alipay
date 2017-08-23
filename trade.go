@@ -1,9 +1,9 @@
 package alipay
 
 import (
-	"strings"
-	"net/url"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
@@ -55,6 +55,18 @@ func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery)
 
 // TradePay https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.6jrv8J&docType=4&apiId=850
 func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
+
+// TradePreCreate https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.EnCSXC&docType=4&apiId=862
+func (this *AliPay) TradePreCreate(param AliPayTradePreCreate) (results *AliPayTradePreCreateResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
+
+// TradeCancel https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.UKvJeT&docType=4&apiId=866
+func (this *AliPay) TradeCancel(param AliPayTradeCancel) (results *AliPayTradeCancelResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
