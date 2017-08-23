@@ -494,3 +494,111 @@ func (this AliPayTradeAppPay) ExtJSONParamName() string {
 func (this AliPayTradeAppPay) ExtJSONParamValue() string {
 	return marshal(this)
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.L57zdH&docType=4&apiId=862
+type AliPayTradePreCreate struct {
+	AppAuthToken string `json:"-"` // 可选
+	NotifyURL    string `json:"-"` // 可选
+
+	OutTradeNo         string             `json:"out_trade_no"`            // 必须 商户订单号,64个字符以内、只能包含字母、数字、下划线；需保证在商户端不重复
+	Subject            string             `json:"subject"`                 // 必须 订单标题
+	SellerId           string             `json:"seller_id"`               // 可选 卖家支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+	TotalAmount        string             `json:"total_amount"`            // 必须 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果同时传入了【打折金额】，【不可打折金额】，【订单总金额】三者，则必须满足如下条件：【订单总金额】=【打折金额】+【不可打折金额】
+	DiscountableAmount string             `json:"discountable_amount"`     // 可选 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】，【不可打折金额】则该值默认为【订单总金额】-【不可打折金额】
+	Body               string             `json:"body"`                    // 可选 对交易或商品的描述
+	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"`  // 可选 订单包含的商品列表信息.Json格式. 其它说明详见：“商品明细说明”
+	ExtendParams       string             `json:"extend_params,omitempty"` // 业务扩展参数，详见业务扩展参数说明
+	OperatorId         string             `json:"operator_id"`             // 可选 商户操作员编号
+	StoreId            string             `json:"store_id"`                // 可选 商户门店编号
+	TerminalId         string             `json:"terminal_id"`             // 可选 商户机具终端编号
+	TimeoutExpress     string             `json:"timeout_express"`         // 可选 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+}
+
+func (this AliPayTradePreCreate) APIName() string {
+	return "alipay.trade.precreate"
+}
+
+func (this AliPayTradePreCreate) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
+	return m
+}
+
+func (this AliPayTradePreCreate) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayTradePreCreate) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayTradePreCreateResponse struct {
+	AliPayPreCreateResponse struct {
+		Code       string `json:"code"`
+		Msg        string `json:"msg"`
+		SubCode    string `json:"sub_code"`
+		SubMsg     string `json:"sub_msg"`
+		OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
+		QRCode     string `json:"qr_code"`      // 当前预下单请求生成的二维码码串，可以用二维码生成工具根据该码串值生成对应的二维码
+	} `json:"alipay_trade_precreate_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *AliPayTradePreCreateResponse) IsSuccess() bool {
+	if this.AliPayPreCreateResponse.Code == K_SUCCESS_CODE {
+		return true
+	}
+	return false
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.UKvJeT&docType=4&apiId=866
+type AliPayTradeCancel struct {
+	AppAuthToken string `json:"-"` // 可选
+	NotifyURL    string `json:"-"` // 可选
+
+	OutTradeNo string `json:"out_trade_no"` // 原支付请求的商户订单号,和支付宝交易号不能同时为空
+	TradeNo    string `json:"trade_no"`     // 支付宝交易号，和商户订单号不能同时为空
+}
+
+func (this AliPayTradeCancel) APIName() string {
+	return "alipay.trade.cancel"
+}
+
+func (this AliPayTradeCancel) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
+	return m
+}
+
+func (this AliPayTradeCancel) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayTradeCancel) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayTradeCancelResponse struct {
+	AliPayTradeCancelResponse struct {
+		Code       string `json:"code"`
+		Msg        string `json:"msg"`
+		SubCode    string `json:"sub_code"`
+		SubMsg     string `json:"sub_msg"`
+		TradeNo    string `json:"trade_no"`     // 支付宝交易号
+		OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
+		RetryFlag  string `json:"retry_flag"`   // 是否需要重试
+		Action     string `json:"action"`       // 本次撤销触发的交易动作 close：关闭交易，无退款 refund：产生了退款
+	} `json:"alipay_trade_cancel_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *AliPayTradeCancelResponse) IsSuccess() bool {
+	if this.AliPayTradeCancelResponse.Code == K_SUCCESS_CODE {
+		return true
+	}
+	return false
+}
