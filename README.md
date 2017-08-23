@@ -2,7 +2,14 @@ AliPay SDK for Golang
 
 
 ## 鸣谢
-感谢 [@wusphinx](https://github.com/wusphinx) 和 [@clearluo](https://github.com/clearluo) 对本项目的支持。
+
+感谢下列人员对本项目的支持：
+
+[@wusphinx](https://github.com/wusphinx)
+
+[@clearluo](https://github.com/clearluo)
+
+[@zwh8800](https://github.com/zwh8800) 
 
 ## 已实现接口
 
@@ -23,6 +30,18 @@ AliPay SDK for Golang
 * **统一收单交易支付接口**
 	
 	alipay.trade.pay
+	
+* **统一收单交易创建接口**
+
+	alipay.trade.create
+	
+* **统一收单线下交易预创建**
+
+	alipay.trade.precreate
+	
+* **统一收单交易撤销接口**
+
+	alipay.trade.cancel
 	
 * **统一收单交易关闭接口**
 
