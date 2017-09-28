@@ -1,32 +1,18 @@
 package alipay
 
 import (
-	"net/http"
 	"net/url"
-	"strings"
 )
 
 // TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
-func (this *AliPay) TradePagePay(param AliPayTradePagePay) (url *url.URL, err error) {
-	var buf = strings.NewReader(this.URLValues(param).Encode())
+func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, err error) {
+	var p = this.URLValues(param).Encode()
 
-	req, err := http.NewRequest("POST", this.apiDomain, buf)
+	results, err = url.Parse(this.apiDomain+"?"+p)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-
-	rep, err := this.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer rep.Body.Close()
-
-	if err != nil {
-		return nil, err
-	}
-	url = rep.Request.URL
-	return url, err
+	return results, err
 }
 
 // TradeQuery https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=757&docType=4
