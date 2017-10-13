@@ -1,5 +1,11 @@
 package alipay
 
+import (
+	"testing"
+	"flag"
+	"os"
+)
+
 var (
 	appID     = "2016073100129537"
 	partnerID = "2088102169227503"
@@ -91,7 +97,10 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 
 var client = New(appID, partnerID, publicKey, privateKey, false)
 
-func init() {
+func TestMain(m *testing.M) {
 	client.AliPayPublicKey = aliPublicKey
-	//client.SignType = K_SIGN_TYPE_RSA
+
+	flag.Parse()
+	exitCode := m.Run()
+	os.Exit(exitCode)
 }
