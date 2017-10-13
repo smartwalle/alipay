@@ -2,7 +2,6 @@ package alipay
 
 import (
 	"testing"
-	"flag"
 	"os"
 )
 
@@ -100,7 +99,6 @@ var client = New(appID, partnerID, publicKey, privateKey, false)
 func TestMain(m *testing.M) {
 	client.AliPayPublicKey = aliPublicKey
 
-	flag.Parse()
 	exitCode := m.Run()
 	os.Exit(exitCode)
 }
