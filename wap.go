@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-// TradeWapPay https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.stK0ff&docType=4&apiId=1046
+// https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1
 func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (url *url.URL, err error) {
 	var buf = strings.NewReader(this.URLValues(param).Encode())
 
