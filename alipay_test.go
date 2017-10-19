@@ -94,9 +94,10 @@ vTlWbWwZHVDP85dioLE9mfo5+Hh3SmHDi3TaVXjxeJsUgHkRgOX7
 //`)
 )
 
-var client = New(appID, partnerID, publicKey, privateKey, false)
+var client *AliPay
 
 func TestMain(m *testing.M) {
+	client = New(appID, partnerID, publicKey, privateKey, false)
 	client.AliPayPublicKey = aliPublicKey
 
 	exitCode := m.Run()
