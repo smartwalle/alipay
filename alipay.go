@@ -91,13 +91,15 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 
-	rep, err := this.client.Do(req)
+	resp, err := this.client.Do(req)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer rep.Body.Close()
 
-	data, err := ioutil.ReadAll(rep.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
