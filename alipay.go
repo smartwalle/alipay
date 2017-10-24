@@ -71,9 +71,9 @@ func (this *AliPay) URLValues(param AliPayParam) url.Values {
 
 	sort.Strings(keys)
 	if this.SignType == K_SIGN_TYPE_RSA {
-		p.Add("sign", sign_rsa(keys, p, this.privateKey))
+		p.Add("sign", signRSA(keys, p, this.privateKey))
 	} else {
-		p.Add("sign", sign_rsa2(keys, p, this.privateKey))
+		p.Add("sign", signRSA2(keys, p, this.privateKey))
 	}
 
 	return p
@@ -123,7 +123,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return nil
 		}
 
-		if ok, err := verify_response_data([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
+		if ok, err := verifyResponseData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
 			return err
 		}
 	}
@@ -134,6 +134,10 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	}
 
 	return err
+}
+
+func (this *AliPay) DoRequest(method string, param AliPayParam, results interface{}) (err error) {
+	return this.doRequest(method, param, results)
 }
 
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
@@ -155,7 +159,7 @@ func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content s
 	return content, sign
 }
 
-func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
+func signRSA2(keys []string, param url.Values, privateKey []byte) (s string) {
 	if param == nil {
 		param = make(url.Values, 0)
 	}
@@ -176,7 +180,7 @@ func sign_rsa2(keys []string, param url.Values, privateKey []byte) (s string) {
 	return s
 }
 
-func sign_rsa(keys []string, param url.Values, privateKey []byte) (s string) {
+func signRSA(keys []string, param url.Values, privateKey []byte) (s string) {
 	if param == nil {
 		param = make(url.Values, 0)
 	}
@@ -197,7 +201,7 @@ func sign_rsa(keys []string, param url.Values, privateKey []byte) (s string) {
 	return s
 }
 
-func verify_sign(req *http.Request, key []byte) (ok bool, err error) {
+func verifySign(req *http.Request, key []byte) (ok bool, err error) {
 	sign, err := base64.StdEncoding.DecodeString(req.PostForm.Get("sign"))
 	signType := req.PostForm.Get("sign_type")
 	if err != nil {
@@ -237,8 +241,7 @@ func verify_sign(req *http.Request, key []byte) (ok bool, err error) {
 	return true, nil
 }
 
-
-func verify_response_data(data []byte, signType, sign string, key []byte) (ok bool, err error) {
+func verifyResponseData(data []byte, signType, sign string, key []byte) (ok bool, err error) {
 	signBytes, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return false, err
