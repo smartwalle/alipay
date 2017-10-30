@@ -6,9 +6,12 @@ import (
 
 // TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
 func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, err error) {
-	var p = this.URLValues(param).Encode()
+	p, err := this.URLValues(param)
+	if err != nil {
+		return nil, err
+	}
 
-	results, err = url.Parse(this.apiDomain+"?"+p)
+	results, err = url.Parse(this.apiDomain+"?"+p.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +68,9 @@ func (this *AliPay) TradeCreate(param AliPayTradeCreate) (results *AliPayTradeCr
 
 // TradeAppPay https://doc.open.alipay.com/doc2/detail.htm?treeId=204&articleId=105462&docType=1
 func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err error) {
-	results = this.URLValues(param).Encode()
-	return results, nil
+	p, err := this.URLValues(param)
+	if err != nil {
+		return "", err
+	}
+	return p.Encode(), err
 }

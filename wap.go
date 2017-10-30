@@ -8,7 +8,11 @@ import (
 
 // https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1
 func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (url *url.URL, err error) {
-	var buf = strings.NewReader(this.URLValues(param).Encode())
+	p, err := this.URLValues(param)
+	if err != nil {
+		return nil, err
+	}
+	var buf = strings.NewReader(p.Encode())
 
 	req, err := http.NewRequest("POST", this.apiDomain, buf)
 	if err != nil {
