@@ -45,7 +45,6 @@ func (this *AliPay) GetTradeNotification(req *http.Request) (*TradeNotification,
 	return GetTradeNotification(req, this.AliPayPublicKey)
 }
 
-
 func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *TradeNotification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")

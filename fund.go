@@ -1,6 +1,5 @@
 package alipay
 
-
 // FundTransToAccountTransfer https://doc.open.alipay.com/docs/api.htm?apiId=1321&docType=4
 // 单笔转账到支付宝账户接口
 func (this *AliPay) FundTransToAccountTransfer(param AliPayFundTransToAccountTransfer) (results *AliPayFundTransToAccountTransferResponse, err error) {

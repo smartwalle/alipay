@@ -1,8 +1,8 @@
 package alipay
 
 import (
-	"testing"
 	"os"
+	"testing"
 )
 
 var (

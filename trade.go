@@ -11,7 +11,7 @@ func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, er
 		return nil, err
 	}
 
-	results, err = url.Parse(this.apiDomain+"?"+p.Encode())
+	results, err = url.Parse(this.apiDomain + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}
