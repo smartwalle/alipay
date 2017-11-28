@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"fmt"
 	"github.com/smartwalle/alipay/encoding"
 )
 
@@ -217,7 +216,6 @@ func verifySign(req *http.Request, key []byte) (ok bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(signType)
 
 	var keys = make([]string, 0, 0)
 	for key, value := range req.PostForm {
