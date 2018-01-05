@@ -164,3 +164,6 @@ client.SignType = alipay.K_SIGN_TYPE_RSA
 ```
 
 当然，相关的 Key 也要注意替换。
+
+## License
+This project is licensed under the MIT License.
