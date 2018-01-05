@@ -43,7 +43,6 @@ func TestAliPay_TradeAppPay(t *testing.T) {
 	fmt.Println(client.TradeAppPay(p))
 }
 
-
 func TestAliPay_TradePagePay(t *testing.T) {
 	fmt.Println("========== TradePagePay ==========")
 	var p = AliPayTradePagePay{}

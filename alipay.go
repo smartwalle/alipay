@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/smartwalle/alipay/encoding"
-	"fmt"
 )
 
 type AliPay struct {
@@ -152,7 +151,7 @@ func (this *AliPay) DoRequest(method string, param AliPayParam, results interfac
 
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
-	var signIndex = strings.LastIndex(rawData, "\"" + k_SIGN_NODE_NAME + "\"")
+	var signIndex = strings.LastIndex(rawData, "\""+k_SIGN_NODE_NAME+"\"")
 	var dataEndIndex = signIndex - 1
 
 	var indexLen = dataEndIndex - dataStartIndex
@@ -217,7 +216,6 @@ func verifySign(req *http.Request, key []byte) (ok bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(signType)
 
 	var keys = make([]string, 0, 0)
 	for key, value := range req.PostForm {

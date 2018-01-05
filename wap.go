@@ -1,9 +1,9 @@
 package alipay
 
 import (
-	"strings"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1

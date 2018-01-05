@@ -1,9 +1,9 @@
 package alipay
 
 import (
+	"fmt"
 	"testing"
 	"time"
-	"fmt"
 )
 
 func TestAliPay_BillDownloadURLQuery(t *testing.T) {
