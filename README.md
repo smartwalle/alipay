@@ -87,7 +87,7 @@ AliPay SDK for Golang
 
 参考[官网文档](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.5pgfxp&treeId=200&articleId=105894&docType=1) 进行应用的配置。
 
-本 SDK 中的签名方法为 RSA2，所以请注意配置 **RSA2(SHA256)密钥**。
+本 SDK 中的签名方法为 **RSA2**，秘钥的格式为 **PKCS1**，所以请注意配置 **RSA2(SHA256)密钥**。
 
 请参考 [如何生成 RSA 密钥](https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105971&docType=1)。
 
