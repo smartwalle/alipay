@@ -97,12 +97,27 @@ func SignPKCS1v15(src, key []byte, hash crypto.Hash) ([]byte, error) {
 		return nil, errors.New("private key error")
 	}
 
-	var pri *rsa.PrivateKey
-	pri, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	pri, err := parsePrivateKey(block.Bytes)
 	if err != nil {
 		return nil, err
 	}
+
 	return rsa.SignPKCS1v15(rand.Reader, pri, hash, hashed)
+}
+
+func parsePrivateKey(der []byte) (*rsa.PrivateKey, error) {
+	if key, err := x509.ParsePKCS1PrivateKey(der); err == nil {
+		return key, nil
+	}
+	if key, err := x509.ParsePKCS8PrivateKey(der); err == nil {
+		switch key := key.(type) {
+		case *rsa.PrivateKey:
+			return key, nil
+		default:
+			return nil, errors.New("tls: found unknown private key type in PKCS#8 wrapping")
+		}
+	}
+	return nil, errors.New("tls: failed to parse private key")
 }
 
 func VerifyPKCS1v15(src, sig, key []byte, hash crypto.Hash) error {
