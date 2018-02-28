@@ -22,7 +22,7 @@ type AliPay struct {
 	publicKey       []byte
 	privateKey      []byte
 	AliPayPublicKey []byte
-	client          *http.Client
+	Client          *http.Client
 	SignType        string
 }
 
@@ -32,7 +32,7 @@ func New(appId, partnerId string, publicKey, privateKey []byte, isProduction boo
 	client.partnerId = partnerId
 	client.privateKey = privateKey
 	client.publicKey = publicKey
-	client.client = http.DefaultClient
+	client.Client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
 	} else {
@@ -100,7 +100,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 
-	resp, err := this.client.Do(req)
+	resp, err := this.Client.Do(req)
 	if resp != nil {
 		defer resp.Body.Close()
 	}

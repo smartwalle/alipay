@@ -35,7 +35,7 @@ func (this *AliPay) NotifyVerify(notifyId string) bool {
 		return false
 	}
 
-	rep, err := this.client.Do(req)
+	rep, err := this.Client.Do(req)
 	if err != nil {
 		return false
 	}
