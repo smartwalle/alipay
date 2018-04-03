@@ -94,7 +94,7 @@ AliPay SDK for Golang
 #### 创建 Wap 支付
 
 ``` Golang
-var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
+var client = alipay.New(appId, partnerId, "", privateKey, false)
 
 var p = AliPayTradeWapPay{}
 p.NotifyURL = "xxx"
@@ -111,11 +111,10 @@ var url, _ = client.TradeWapPay(p)
 
 支持自动对支付宝返回的数据进行签名验证，详细信息请参考[自行实现验签](https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120).
 
-如果需要开启自动验签，只需要在初始化 AliPay 对象之后给 **AliPayPublicKey** 属性设置从支付宝管理后台获取到的支付宝公钥即可，如下：
+如果需要开启自动验签，只需要在初始化 AliPay 对象的时候提供 **aliPublickKey** 参数，该参数的值为支付宝管理后台获取到的支付宝公钥，如下：
 
 ``` Golang
-var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
-client.AliPayPublicKey = xxx  // 从支付宝管理后台获取支付宝提供的公钥
+var client = alipay.New(appId, partnerId, aliPublickKey, privateKey, false)
 ```
 
 #### 验证支付结果
@@ -126,8 +125,7 @@ client.AliPayPublicKey = xxx  // 从支付宝管理后台获取支付宝提供�
 
 ```Golang
 
-var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
-client.AliPayPublicKey = xxx // 从支付宝管理后台获取支付宝提供的公钥
+var client = alipay.New(appId, partnerId, aliPublickKey, privateKey, false)
  
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
@@ -159,7 +157,7 @@ hwIDAQAB
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:
 
 ```Golang
-var client = alipay.New(appId, partnerId, publickKey, privateKey, false)
+var client = alipay.New(...)
 client.SignType = alipay.K_SIGN_TYPE_RSA
 ```
 
