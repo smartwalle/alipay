@@ -19,19 +19,18 @@ type AliPay struct {
 	appId           string
 	apiDomain       string
 	partnerId       string
-	publicKey       []byte
 	privateKey      []byte
 	AliPayPublicKey []byte
 	Client          *http.Client
 	SignType        string
 }
 
-func New(appId, partnerId string, publicKey, privateKey []byte, isProduction bool) (client *AliPay) {
+func New(appId, partnerId string, aliPublicKey, privateKey []byte, isProduction bool) (client *AliPay) {
 	client = &AliPay{}
 	client.appId = appId
 	client.partnerId = partnerId
 	client.privateKey = privateKey
-	client.publicKey = publicKey
+	client.AliPayPublicKey = aliPublicKey
 	client.Client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
