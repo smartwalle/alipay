@@ -66,11 +66,11 @@ func (this AliPayTradePagePay) ExtJSONParamValue() string {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.t3A8tQ&docType=4&apiId=757
+// https://docs.open.alipay.com/api_1/alipay.trade.query/
 type AliPayTradeQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
-	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
-	TradeNo      string `json:"trade_no,omitempty"`
+	OutTradeNo   string `json:"out_trade_no,omitempty"` // 订单支付时传入的商户订单号, 与 TradeNo 二选一
+	TradeNo      string `json:"trade_no,omitempty"`     // 支付宝交易号
 }
 
 func (this AliPayTradeQuery) APIName() string {
