@@ -117,7 +117,7 @@ type AliPayTradeQueryResponse struct {
 		StoreId          string      `json:"store_id"`                 // 商户门店编号
 		StoreName        string      `json:"store_name"`               // 请求交易支付中的商户店铺的名称
 		TerminalId       string      `json:"terminal_id"`              // 商户机具终端编号
-		TotalAmount      float64     `json:"total_amount,string"`      // 交易的订单金额
+		TotalAmount      string      `json:"total_amount"`             // 交易的订单金额
 		TradeNo          string      `json:"trade_no"`                 // 支付宝交易号
 		TradeStatus      string      `json:"trade_status"`             // 交易状态
 		TransCurrency    string      `json:"trans_currency"`           // 标价币种
