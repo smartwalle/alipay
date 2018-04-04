@@ -63,7 +63,7 @@ func (this *AliPay) TradePreCreate(param AliPayTradePreCreate) (results *AliPayT
 	return results, err
 }
 
-// TradeQuery https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=757&docType=4
+// TradeQuery https://docs.open.alipay.com/api_1/alipay.trade.query/
 func (this *AliPay) TradeQuery(param AliPayTradeQuery) (results *AliPayTradeQueryResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
