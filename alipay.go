@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/smartwalle/alipay/encoding"
-	"fmt"
 )
 
 type AliPay struct {
@@ -136,8 +135,6 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return err
 		}
 	}
-
-	fmt.Println(string(data))
 
 	err = json.Unmarshal(data, results)
 	if err != nil {
