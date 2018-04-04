@@ -148,6 +148,10 @@ func (this *AliPay) DoRequest(method string, param AliPayParam, results interfac
 	return this.doRequest(method, param, results)
 }
 
+func (this *AliPay) VerifySign(req *http.Request) (ok bool, err error) {
+	return verifySign(req, this.AliPayPublicKey)
+}
+
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
 	var signIndex = strings.LastIndex(rawData, "\""+k_SIGN_NODE_NAME+"\"")
@@ -210,14 +214,14 @@ func signRSA(keys []string, param url.Values, privateKey []byte) (s string, err 
 }
 
 func verifySign(req *http.Request, key []byte) (ok bool, err error) {
-	sign, err := base64.StdEncoding.DecodeString(req.PostForm.Get("sign"))
-	signType := req.PostForm.Get("sign_type")
+	sign, err := base64.StdEncoding.DecodeString(req.FormValue("sign"))
+	signType := req.FormValue("sign_type")
 	if err != nil {
 		return false, err
 	}
 
 	var keys = make([]string, 0, 0)
-	for key, value := range req.PostForm {
+	for key, value := range req.Form {
 		if key == "sign" || key == "sign_type" {
 			continue
 		}
@@ -230,7 +234,7 @@ func verifySign(req *http.Request, key []byte) (ok bool, err error) {
 
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
-		var value = strings.TrimSpace(req.PostForm.Get(key))
+		var value = strings.TrimSpace(req.FormValue(key))
 		if len(value) > 0 {
 			pList = append(pList, key+"="+value)
 		}
