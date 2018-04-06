@@ -2,7 +2,7 @@ package alipay
 
 import (
 	"errors"
-	"net/http"
+	"net/url"
 )
 
 // https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.8AmJwg&treeId=203&articleId=105286&docType=1
@@ -41,57 +41,56 @@ type TradeNotification struct {
 	VoucherDetailList string `json:"voucher_detail_list"` // 优惠券信息
 }
 
-func (this *AliPay) GetTradeNotification(req *http.Request) (*TradeNotification, error) {
-	return GetTradeNotification(req, this.AliPayPublicKey)
+func (this *AliPay) GetTradeNotification(form url.Values) (*TradeNotification, error) {
+	return GetTradeNotification(form, this.AliPayPublicKey)
 }
 
-func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *TradeNotification, err error) {
-	if req == nil {
-		return nil, errors.New("request 参数不能为空")
-	}
-	req.ParseForm()
+func GetTradeNotification(form url.Values, aliPayPublicKey []byte) (noti *TradeNotification, err error) {
+	//if req == nil {
+	//	return nil, errors.New("request 参数不能为空")
+	//}
 
 	noti = &TradeNotification{}
-	noti.AppId = req.PostFormValue("app_id")
-	noti.AuthAppId = req.PostFormValue("auth_app_id")
-	noti.NotifyId = req.PostFormValue("notify_id")
-	noti.NotifyType = req.PostFormValue("notify_type")
-	noti.NotifyTime = req.PostFormValue("notify_time")
-	noti.TradeNo = req.PostFormValue("trade_no")
-	noti.TradeStatus = req.PostFormValue("trade_status")
-	noti.TotalAmount = req.PostFormValue("total_amount")
-	noti.ReceiptAmount = req.PostFormValue("receipt_amount")
-	noti.InvoiceAmount = req.PostFormValue("invoice_amount")
-	noti.BuyerPayAmount = req.PostFormValue("buyer_pay_amount")
-	noti.SellerId = req.PostFormValue("seller_id")
-	noti.SellerEmail = req.PostFormValue("seller_email")
-	noti.BuyerId = req.PostFormValue("buyer_id")
-	noti.BuyerLogonId = req.PostFormValue("buyer_logon_id")
-	noti.FundBillList = req.PostFormValue("fund_bill_list")
-	noti.Charset = req.PostFormValue("charset")
-	noti.PointAmount = req.PostFormValue("point_amount")
-	noti.OutTradeNo = req.PostFormValue("out_trade_no")
-	noti.OutBizNo = req.PostFormValue("out_biz_no")
-	noti.GmtCreate = req.PostFormValue("gmt_create")
-	noti.GmtPayment = req.PostFormValue("gmt_payment")
-	noti.GmtRefund = req.PostFormValue("gmt_refund")
-	noti.GmtClose = req.PostFormValue("gmt_close")
-	noti.Subject = req.PostFormValue("subject")
-	noti.Body = req.PostFormValue("body")
-	noti.RefundFee = req.PostFormValue("refund_fee")
-	noti.Version = req.PostFormValue("version")
-	noti.SignType = req.PostFormValue("sign_type")
-	noti.Sign = req.PostFormValue("sign")
-	noti.PassbackParams = req.PostFormValue("passback_params")
-	noti.VoucherDetailList = req.PostFormValue("voucher_detail_list")
+	noti.AppId = form.Get("app_id")
+	noti.AuthAppId = form.Get("auth_app_id")
+	noti.NotifyId = form.Get("notify_id")
+	noti.NotifyType = form.Get("notify_type")
+	noti.NotifyTime = form.Get("notify_time")
+	noti.TradeNo = form.Get("trade_no")
+	noti.TradeStatus = form.Get("trade_status")
+	noti.TotalAmount = form.Get("total_amount")
+	noti.ReceiptAmount = form.Get("receipt_amount")
+	noti.InvoiceAmount = form.Get("invoice_amount")
+	noti.BuyerPayAmount = form.Get("buyer_pay_amount")
+	noti.SellerId = form.Get("seller_id")
+	noti.SellerEmail = form.Get("seller_email")
+	noti.BuyerId = form.Get("buyer_id")
+	noti.BuyerLogonId = form.Get("buyer_logon_id")
+	noti.FundBillList = form.Get("fund_bill_list")
+	noti.Charset = form.Get("charset")
+	noti.PointAmount = form.Get("point_amount")
+	noti.OutTradeNo = form.Get("out_trade_no")
+	noti.OutBizNo = form.Get("out_biz_no")
+	noti.GmtCreate = form.Get("gmt_create")
+	noti.GmtPayment = form.Get("gmt_payment")
+	noti.GmtRefund = form.Get("gmt_refund")
+	noti.GmtClose = form.Get("gmt_close")
+	noti.Subject = form.Get("subject")
+	noti.Body = form.Get("body")
+	noti.RefundFee = form.Get("refund_fee")
+	noti.Version = form.Get("version")
+	noti.SignType = form.Get("sign_type")
+	noti.Sign = form.Get("sign")
+	noti.PassbackParams = form.Get("passback_params")
+	noti.VoucherDetailList = form.Get("voucher_detail_list")
 
 	if len(noti.NotifyId) == 0 {
 		return nil, errors.New("不是有效的 Notify")
 	}
 
-	ok, err := verifySign(req, aliPayPublicKey)
-	if ok {
-		return noti, nil
+	ok, err := verifySign(form, aliPayPublicKey)
+	if ok == false {
+		return nil, err
 	}
-	return nil, err
+	return noti, err
 }
