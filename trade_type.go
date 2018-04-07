@@ -66,6 +66,13 @@ func (this AliPayTradePagePay) ExtJSONParamValue() string {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+const (
+	K_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" //（交易创建，等待买家付款）
+	K_TRADE_STATUS_TRADE_CLOSED   = "TRADE_CLOSED"   //（未付款交易超时关闭，或支付完成后全额退款）
+	K_TRADE_STATUS_TRADE_SUCCESS  = "TRADE_SUCCESS"  //（交易支付成功）
+	K_TRADE_STATUS_TRADE_FINISHED = "TRADE_FINISHED" //（交易结束，不可退款）
+)
+
 // https://docs.open.alipay.com/api_1/alipay.trade.query/
 type AliPayTradeQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
