@@ -148,8 +148,8 @@ func (this *AliPay) DoRequest(method string, param AliPayParam, results interfac
 	return this.doRequest(method, param, results)
 }
 
-func (this *AliPay) VerifySign(form url.Values) (ok bool, err error) {
-	return verifySign(form, this.AliPayPublicKey)
+func (this *AliPay) VerifySign(data url.Values) (ok bool, err error) {
+	return verifySign(data, this.AliPayPublicKey)
 }
 
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
@@ -213,19 +213,19 @@ func signRSA(keys []string, param url.Values, privateKey []byte) (s string, err 
 	return s, nil
 }
 
-func VerifySign(form url.Values, key []byte) (ok bool, err error) {
-	return verifySign(form, key)
+func VerifySign(data url.Values, key []byte) (ok bool, err error) {
+	return verifySign(data, key)
 }
 
-func verifySign(form url.Values, key []byte) (ok bool, err error) {
-	sign, err := base64.StdEncoding.DecodeString(form.Get("sign"))
-	signType := form.Get("sign_type")
+func verifySign(data url.Values, key []byte) (ok bool, err error) {
+	sign, err := base64.StdEncoding.DecodeString(data.Get("sign"))
+	signType := data.Get("sign_type")
 	if err != nil {
 		return false, err
 	}
 
 	var keys = make([]string, 0, 0)
-	for key, value := range form {
+	for key, value := range data {
 		if key == "sign" || key == "sign_type" {
 			continue
 		}
@@ -238,7 +238,7 @@ func verifySign(form url.Values, key []byte) (ok bool, err error) {
 
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
-		var value = strings.TrimSpace(form.Get(key))
+		var value = strings.TrimSpace(data.Get(key))
 		if len(value) > 0 {
 			pList = append(pList, key+"="+value)
 		}
