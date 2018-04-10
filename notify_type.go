@@ -1,5 +1,9 @@
 package alipay
 
+const (
+	K_NOTIFY_TYPE_TRADE_STATUS_SYNC = "trade_status_sync"
+)
+
 // https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.8AmJwg&treeId=203&articleId=105286&docType=1
 type TradeNotification struct {
 	AuthAppId         string `json:"auth_app_id"`         // App Id
