@@ -1,7 +1,7 @@
 package alipay
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?apiId=1321&docType=4
+// https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
 // 单笔转账到支付宝账户接口请求结构
 type AliPayFundTransToAccountTransfer struct {
 	AppAuthToken  string `json:"-"`               // 可选
@@ -54,7 +54,7 @@ func (this *AliPayFundTransToAccountTransferResponse) IsSuccess() bool {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.SIkNrH&docType=4&apiId=1322
+// https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
 // 查询转账订单接口请求参数
 type AliPayFundTransOrderQuery struct {
 	AppAuthToken string `json:"-"`                    // 可选

@@ -162,7 +162,7 @@ func (this *AliPayTradeQueryResponse) IsSuccess() bool {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=1058&docType=4
+// https://docs.open.alipay.com/api_1/alipay.trade.close/
 type AliPayTradeClose struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	NotifyURL    string `json:"-"`                      // 可选
@@ -203,7 +203,7 @@ type AliPayTradeCloseResponse struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.5zkPUI&docType=4&apiId=759
+// https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type AliPayTradeRefund struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -267,7 +267,7 @@ type RefundDetailItem struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.chC7PJ&docType=4&apiId=1049
+// https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 type AliPayFastpayTradeRefundQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -317,7 +317,7 @@ func (this *AliPayFastpayTradeRefundQueryResponse) IsSuccess() bool {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.kqrPAp&docType=4&apiId=1147
+// https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 type AliPayTradeOrderSettle struct {
 	AppAuthToken      string              `json:"-"`                  // 可选
 	OutRequestNo      string              `json:"out_request_no"`     // 必须 结算请求流水号 开发者自行生成并保证唯一性
@@ -583,7 +583,7 @@ func (this *AliPayTradePreCreateResponse) IsSuccess() bool {
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.UKvJeT&docType=4&apiId=866
+// https://docs.open.alipay.com/api_1/alipay.trade.cancel/
 type AliPayTradeCancel struct {
 	AppAuthToken string `json:"-"` // 可选
 	NotifyURL    string `json:"-"` // 可选

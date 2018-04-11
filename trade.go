@@ -4,7 +4,7 @@ import (
 	"net/url"
 )
 
-// TradePagePay https://doc.open.alipay.com/doc2/detail.htm?treeId=270&articleId=105901&docType=1
+// TradePagePay https://docs.open.alipay.com/270/alipay.trade.page.pay
 func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
@@ -18,7 +18,7 @@ func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, er
 	return results, err
 }
 
-// TradeAppPay https://doc.open.alipay.com/doc2/detail.htm?treeId=204&articleId=105462&docType=1
+// TradeAppPay https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
@@ -27,37 +27,37 @@ func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err er
 	return p.Encode(), err
 }
 
-// TradeFastpayRefundQuery https://doc.open.alipay.com/doc2/apiDetail.htm?docType=4&apiId=1049
+// TradeFastpayRefundQuery https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery) (results *AliPayFastpayTradeRefundQueryResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradeOrderSettle https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.kqrPAp&docType=4&apiId=1147
+// TradeOrderSettle https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 func (this *AliPay) TradeOrderSettle(param AliPayTradeOrderSettle) (results interface{}, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradeClose https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=1058&docType=4
+// TradeClose https://docs.open.alipay.com/api_1/alipay.trade.close/
 func (this *AliPay) TradeClose(param AliPayTradeClose) (results *AliPayTradeCloseResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradeCancel https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.UKvJeT&docType=4&apiId=866
+// TradeCancel https://docs.open.alipay.com/api_1/alipay.trade.cancel/
 func (this *AliPay) TradeCancel(param AliPayTradeCancel) (results *AliPayTradeCancelResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradeRefund https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=759&docType=4
+// TradeRefund https://docs.open.alipay.com/api_1/alipay.trade.refund/
 func (this *AliPay) TradeRefund(param AliPayTradeRefund) (results *AliPayTradeRefundResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradePreCreate https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.EnCSXC&docType=4&apiId=862
+// TradePreCreate https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 func (this *AliPay) TradePreCreate(param AliPayTradePreCreate) (results *AliPayTradePreCreateResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
@@ -69,13 +69,13 @@ func (this *AliPay) TradeQuery(param AliPayTradeQuery) (results *AliPayTradeQuer
 	return results, err
 }
 
-// TradeCreate https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.x39G6l&docType=4&apiId=1046
+// TradeCreate https://docs.open.alipay.com/api_1/alipay.trade.create/
 func (this *AliPay) TradeCreate(param AliPayTradeCreate) (results *AliPayTradeCreateResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradePay https://doc.open.alipay.com/docs/api.htm?spm=a219a.7395905.0.0.6jrv8J&docType=4&apiId=850
+// TradePay https://docs.open.alipay.com/api_1/alipay.trade.pay/
 func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err

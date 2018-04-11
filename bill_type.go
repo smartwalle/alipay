@@ -1,7 +1,6 @@
-// 查询对账单下载地址
-
 package alipay
 
+// https://docs.open.alipay.com/api_15/alipay.data.dataservice.bill.downloadurl.query
 type BillDownloadURLQuery struct {
 	AppAuthToken string `json:"-"` // 可选
 	BillType     string `json:"bill_type"`

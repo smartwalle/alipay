@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1
+// https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
 func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (url *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
