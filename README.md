@@ -105,7 +105,8 @@ var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生�
 var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
 
 var p = AliPayTradeWapPay{}
-p.NotifyURL = "xxx"
+p.NotifyURL = "http://xxx"
+p.ReturnURL = "http://xxx"
 p.Subject = "标题"
 p.OutTradeNo = "传递一个唯一单号"
 p.TotalAmount = "10.00"
