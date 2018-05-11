@@ -132,6 +132,28 @@ fmt.Println(payURL)
 var client = alipay.New(appId, partnerId, aliPublickKey, privateKey, false)
 ```
 
+#### Return URL
+
+发起支付的时候，当我们有提供 Return URL 参数，那么支付成功之后，支付宝将会重定向到该 URL，并附带上相关的参数。
+
+```Golang
+var p = AliPayTradeWapPay{}
+p.ReturnURL = "http://xxx/return"
+```
+
+这时候我们需要对支付宝提供的参数进行签名验证，当然，前提是我们在 alipay.New(...) 初始化方法中有正确提供 **支付宝公钥**：
+
+
+```Golang
+var client = alipay.New(appId, partnerId, aliPublickKey, privateKey, false)
+
+http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
+	req.ParseForm()
+	ok, err := client.VerifySign(req.Form)
+	fmt.Println(ok, err)
+}
+```
+
 #### 验证支付结果
 
 有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递会相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
