@@ -102,7 +102,7 @@ AliPay SDK for Golang
 ``` Golang
 var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的公钥，通过支付宝管理后台获取
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
-var client = alipay.New(appId, partnerId, "", privateKey, false)
+var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
 
 var p = AliPayTradeWapPay{}
 p.NotifyURL = "xxx"
