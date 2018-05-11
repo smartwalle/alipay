@@ -93,11 +93,15 @@ AliPay SDK for Golang
 
 本 SDK 中的签名方法默认为 **RSA2**，采用支付宝提供的 [RSA签名验签工具](https://docs.open.alipay.com/291/105971) 生成秘钥时，建议秘钥的格式采用 **PKCS1**，秘钥长度采用 **2048**。所以在支付宝管理后台请注意配置 **RSA2(SHA256)密钥**。
 
+生成秘钥对之后，将公钥提供给支付宝（通过支付宝后台上传）对我们请求的数据进行签名验证，我们的代码中将使用私钥对请求数据签名。
+
 请参考 [如何生成 RSA 密钥](https://docs.open.alipay.com/291/105971)。
 
 #### 创建 Wap 支付
 
 ``` Golang
+var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的公钥，通过支付宝管理后台获取
+var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client = alipay.New(appId, partnerId, "", privateKey, false)
 
 var p = AliPayTradeWapPay{}
@@ -107,8 +111,14 @@ p.OutTradeNo = "传递一个唯一单号"
 p.TotalAmount = "10.00"
 p.ProductCode = "商品编码"
 
-var url, _ = client.TradeWapPay(p)
-// 直接访问该 URL 就可以了
+var url, err = client.TradeWapPay(p)
+if err != nil {
+	fmt.Println(err)
+}
+
+var payURL = url.String()
+fmt.Println(payURL)
+// 这个 payURL 即是用于支付的 URL，可将输出的内容复制，到浏览器中访问该 URL 即可打开支付页面。
 ```
 
 #### 同步返回验签
@@ -142,20 +152,6 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 ```
 
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
-
-**需要特别注意，从支付宝后台获取到支付宝的公钥之后，需要将其转换成标准的公钥格式，如下所示：**
-
-```
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2MhEVUp+rRRyAD9HZfiS
-g8LLxRAX18XOMJE8/MNnlSSTWCCoHnM+FIU+AfB+8FE+gGIJYXJlpTIyWn4VUMte
-wh/4C8uwzBWod/3ilw9Uy7lFblXDBd8En8a59AxC6c9YL1nWD7/sh1szqej31VRI
-2OXQSYgvhWNGjzw2/KS1GdrWmdsVP2hOiKVy6TNtH7XnCSRfBBCQ+LgqO1tE0NHD
-DswRwBLAFmIlfZ//qZ+a8FvMc//sUm+CV78pQba4nnzsmh10fzVVFIWiKw3VDsxX
-PRrAtOJCwNsBwbvMuI/ictvxxjUl4nBZDw4lXt5eWWqBrnTSzogFNOk06aNmEBTU
-hwIDAQAB
------END PUBLIC KEY-----
-```
 
 #### 支持 RSA 签名及验证
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:

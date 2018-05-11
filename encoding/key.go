@@ -5,15 +5,15 @@ import (
 	"bytes"
 )
 
-func ParsePublicKey(raw string) (result string) {
+func ParsePublicKey(raw string) (result []byte) {
 	return parseKey(raw, "-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")
 }
 
-func ParsePrivateKey(raw string) (result string) {
+func ParsePrivateKey(raw string) (result []byte) {
 	return parseKey(raw, "-----BEGIN RSA PRIVATE KEY-----", "-----END RSA PRIVATE KEY-----")
 }
 
-func parseKey(raw, prefix, suffix string) (result string) {
+func parseKey(raw, prefix, suffix string) (result []byte) {
 	if strings.HasPrefix(raw, prefix) {
 		raw = strings.Replace(raw, prefix, "", 1)
 	}
@@ -45,5 +45,5 @@ func parseKey(raw, prefix, suffix string) (result string) {
 		buf.WriteString("\n")
 	}
 	buf.WriteString(suffix)
-	return buf.String()
+	return buf.Bytes()
 }
