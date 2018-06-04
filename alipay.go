@@ -124,7 +124,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return nil
 		}
 
-		if ok, err := verifyResponseData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
+		if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
 			return err
 		}
 	}
@@ -213,11 +213,8 @@ func VerifySign(data url.Values, key []byte) (ok bool, err error) {
 }
 
 func verifySign(data url.Values, key []byte) (ok bool, err error) {
-	sign, err := base64.StdEncoding.DecodeString(data.Get("sign"))
+	sign := data.Get("sign")
 	signType := data.Get("sign_type")
-	if err != nil {
-		return false, err
-	}
 
 	var keys = make([]string, 0, 0)
 	for key, value := range data {
@@ -240,18 +237,10 @@ func verifySign(data url.Values, key []byte) (ok bool, err error) {
 	}
 	var s = strings.Join(pList, "&")
 
-	if signType == K_SIGN_TYPE_RSA {
-		err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA1)
-	} else {
-		err = encoding.VerifyPKCS1v15([]byte(s), sign, key, crypto.SHA256)
-	}
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	return verifyData([]byte(s), signType, sign, key)
 }
 
-func verifyResponseData(data []byte, signType, sign string, key []byte) (ok bool, err error) {
+func verifyData(data []byte, signType, sign string, key []byte) (ok bool, err error) {
 	signBytes, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return false, err
