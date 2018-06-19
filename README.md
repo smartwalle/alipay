@@ -176,6 +176,34 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
 
+#### 关于合作者身份ID (partnerId)
+
+支付宝提供了验证通知有效性的方法，详细情况可以参考 [https://docs.open.alipay.com/58/103597/](https://docs.open.alipay.com/58/103597/)。
+
+本 SDK 中的验证示例如下：
+
+```Golang
+
+var client = alipay.New(appId, partnerId, aliPublickKey, privateKey, false)
+ 
+http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
+	var noti, _ = client.GetTradeNotification(req)
+	if noti != nil {
+		if ok := client.NotifyVerify(noti.NotifyId); ok {
+			fmt.Println("支付成功")
+		} else {
+			fmt.Println("不是支付宝发送的通知")
+		}
+	} else {
+		fmt.Println("支付失败")
+	}
+})
+```
+
+验证通知有效性的时候，需要提供合作者身份ID，如果不需要调用 NotifyVerify() 方法进行通知有效性的验证，那么就可以不用传递 partnerId 参数。
+
+如何查看合作者身份ID，请参考 [https://docs.open.alipay.com/58/103544/](https://docs.open.alipay.com/58/103544/) 
+
 #### 支持 RSA 签名及验证
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:
 
