@@ -3,7 +3,7 @@ package alipay
 import "encoding/json"
 
 ////////////////////////////////////////////////////////////////////////////////
-type tradePay struct {
+type TradePay struct {
 	NotifyURL string `json:"-"`
 	ReturnURL string `json:"-"`
 
@@ -35,7 +35,7 @@ type tradePay struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/270/alipay.trade.page.pay
 type AliPayTradePagePay struct {
-	tradePay
+	TradePay
 	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
 	GoodsDetail string `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
 	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
@@ -355,7 +355,7 @@ type RoyaltyParameter struct {
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.create/
 type AliPayTradeCreate struct {
-	tradePay
+	TradePay
 	AppAuthToken string `json:"-"` // 可选
 
 	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
@@ -440,7 +440,7 @@ type GoodsDetailItem struct {
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type AliPayTradePay struct {
-	tradePay
+	TradePay
 	AppAuthToken string `json:"-"` // 可选
 
 	Scene    string `json:"scene"`     // 必须 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code	bar_code,wave_code
@@ -511,7 +511,7 @@ func (this *AliPayTradePayResponse) IsSuccess() bool {
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 type AliPayTradeAppPay struct {
-	tradePay
+	TradePay
 	TimeExpire string `json:"time_expire,omitempty"` // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
 }
 
@@ -536,7 +536,7 @@ func (this AliPayTradeAppPay) ExtJSONParamValue() string {
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type AliPayTradePreCreate struct {
-	tradePay
+	TradePay
 	AppAuthToken       string             `json:"-"`                      // 可选
 	DiscountableAmount string             `json:"discountable_amount"`    // 可选 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】，【不可打折金额】则该值默认为【订单总金额】-【不可打折金额】
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"` // 可选 订单包含的商品列表信息.Json格式. 其它说明详见：“商品明细说明”
