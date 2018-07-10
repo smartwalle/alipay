@@ -61,15 +61,9 @@ func (this *AliPay) URLValues(param AliPayParam) (value url.Values, err error) {
 			p.Add(key, value)
 		}
 	}
-
 	var sign string
-	if this.SignType == K_SIGN_TYPE_RSA {
-		sign, err = signRSA(p, this.privateKey)
-	} else {
-		sign, err = signRSA2(p, this.privateKey)
-	}
+	sign, err = signRSAOrRSA2(p, this.privateKey, this.SignType)
 	p.Add("sign", sign)
-
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +158,13 @@ func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content s
 	return content, sign
 }
 
-func signRSA2(param url.Values, privateKey []byte) (s string, err error) {
+func signRSAOrRSA2(param url.Values, privateKey []byte, signType string) (s string, err error) {
+	var hash crypto.Hash
+	if signType == K_SIGN_TYPE_RSA {
+		hash = crypto.SHA1
+	} else {
+		hash = crypto.SHA256
+	}
 	if param == nil {
 		param = make(url.Values, 0)
 	}
@@ -178,29 +178,7 @@ func signRSA2(param url.Values, privateKey []byte) (s string, err error) {
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	sig, err := encoding.SignPKCS1v15([]byte(src), privateKey, crypto.SHA256)
-	if err != nil {
-		return "", err
-	}
-	s = base64.StdEncoding.EncodeToString(sig)
-	return s, nil
-}
-
-func signRSA(param url.Values, privateKey []byte) (s string, err error) {
-	if param == nil {
-		param = make(url.Values, 0)
-	}
-
-	var pList = make([]string, 0, 0)
-	for key := range param {
-		var value = strings.TrimSpace(param.Get(key))
-		if len(value) > 0 {
-			pList = append(pList, key+"="+value)
-		}
-	}
-	sort.Strings(pList)
-	var src = strings.Join(pList, "&")
-	sig, err := encoding.SignPKCS1v15([]byte(src), privateKey, crypto.SHA1)
+	sig, err := encoding.SignPKCS1v15([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
