@@ -14,6 +14,9 @@ func ParsePrivateKey(raw string) (result []byte) {
 }
 
 func parseKey(raw, prefix, suffix string) (result []byte) {
+	if raw == "" {
+		return nil
+	}
 	raw = strings.Replace(raw, prefix, "", 1)
 	raw = strings.Replace(raw, suffix, "", 1)
 	raw = strings.Replace(raw, " ", "", -1)
