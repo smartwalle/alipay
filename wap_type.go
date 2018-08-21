@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 )
 
+//////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
 type AliPayTradeWapPay struct {
 	TradePay

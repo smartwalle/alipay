@@ -108,7 +108,7 @@ func (this *AliPayFundTransOrderQueryResponse) IsSuccess() bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
-// AliPayFundAuthOrderAppFreeze 线上资金授权冻结接口请求参数
+// 线上资金授权冻结接口请求参数
 type AliPayFundAuthOrderAppFreeze struct {
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号 ,不能包含除中文、英文、数字以外的字符，创建后不能修改，需要保证在商户端不重复。
