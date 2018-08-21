@@ -13,3 +13,10 @@ func (this *AliPay) FundTransOrderQuery(param AliPayFundTransOrderQuery) (result
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
+
+// FundTransOrderQuery https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
+// 查询转账订单接口
+func(this *AliPay) FundAuthOrderAppFreeze(param AliPayFundAuthOrderAppFreeze) (results *AliPayFundAuthOrderAppFreezeResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
