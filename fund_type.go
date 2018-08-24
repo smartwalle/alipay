@@ -107,6 +107,58 @@ func (this *AliPayFundTransOrderQueryResponse) IsSuccess() bool {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
+// 资金授权发码接口
+type AliPayFundAuthOrderVoucherCreate struct {
+	AppAuthToken      string `json:"-"`                             // 可选
+	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号，创建后不能修改，需要保证在商户端不重复。
+	OutRequestNo      string `json:"out_request_no"`                // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，需要保证在商户端不重复。
+	ProductCode       string `json:"product_code,omitempty"`        // 必选, 销售产品码，后续新接入预授权当面付的业务，本字段取值固定为PRE_AUTH。
+	OrderTitle        string `json:"order_title"`                   // 必选, 业务订单的简单描述，如商品名称等 长度不超过100个字母或50个汉字
+	Amount            string `json:"amount"`                        // 必选, 需要冻结的金额，单位为：元（人民币），精确到小数点后两位 取值范围：[0.01,100000000.00]
+	PayeeUserId       string `json:"payee_user_id,omitempty"`       // 可选, 收款方的支付宝唯一用户号,以2088开头的16位纯数字组成，如果非空则会在支付时校验交易的的收款方与此是否一致，如果商户有勾选花呗渠道，收款方支付宝登录号(payee_logon_id)和用户号(payee_user_id)不能同时为空。
+	PayeeLogonId      string `json:"payee_logon_id,omitempty"`      // 可选, 收款方支付宝账号（Email或手机号），如果收款方支付宝登录号(payee_logon_id)和用户号(payee_user_id)同时传递，则以用户号(payee_user_id)为准，如果商户有勾选花呗渠道，收款方支付宝登录号(payee_logon_id)和用户号(payee_user_id)不能同时为空。
+	PayTimeout        string `json:"pay_timeout,omitempty"`         // 可选, 该笔订单允许的最晚付款时间，逾期将关闭该笔订单 取值范围：1m～15d。m-分钟，h-小时，d-天。 该参数数值不接受小数点， 如 1.5h，可转换为90m 如果为空，默认15m
+	ExtraParam        string `json:"extra_param,omitempty"`         // 可选, 业务扩展参数，用于商户的特定业务信息的传递，json格式。 1.授权业务对应的类目，key为category，value由支付宝分配，比如充电桩业务传 "CHARGE_PILE_CAR"； 2. 外部商户的门店编号，key为outStoreCode，可选； 3. 外部商户的门店简称，key为outStoreAlias，可选。
+	TransCurrency     string `json:"trans_currency,omitempty"`      // 可选, 标价币种, amount 对应的币种单位。支持澳元：AUD, 新西兰元：NZD, 台币：TWD, 美元：USD, 欧元：EUR, 英镑：GBP
+	SettleCurrency    string `json:"settle_currency,omitempty"`     // 可选, 商户指定的结算币种。支持澳元：AUD, 新西兰元：NZD, 台币：TWD, 美元：USD, 欧元：EUR, 英镑：GBP
+	EnablePayChannels string `json:"enable_pay_channels,omitempty"` // 可选, 商户可用该参数指定用户可使用的支付渠道，本期支持商户可支持三种支付渠道，余额宝（MONEY_FUND）、花呗（PCREDIT_PAY）以及芝麻信用（CREDITZHIMA）。商户可设置一种支付渠道，也可设置多种支付渠道。
+}
+
+func (this AliPayFundAuthOrderVoucherCreate) APIName() string {
+	return "alipay.fund.auth.order.voucher.create"
+}
+
+func (this AliPayFundAuthOrderVoucherCreate) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+func (this AliPayFundAuthOrderVoucherCreate) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayFundAuthOrderVoucherCreate) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayFundAuthOrderVoucherCreateResponse struct {
+	Body struct {
+		Code         string `json:"code"`
+		Msg          string `json:"msg"`
+		SubCode      string `json:"sub_code"`
+		SubMsg       string `json:"sub_msg"`
+		OutOrderNo   string `json:"out_order_no"`
+		OutRequestNo string `json:"out_request_no"`
+		CodeType     string `json:"code_type"`
+		CodeValue    string `json:"code_value"`
+		CodeURL      string `json:"code_url"`
+	} `json:"alipay_fund_auth_order_voucher_create_response"`
+	Sign string `json:"sign"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
 type AliPayFundAuthOrderAppFreeze struct {
