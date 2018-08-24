@@ -352,6 +352,17 @@ type RoyaltyParameter struct {
 	Desc             string  `json:"desc"`              // 可选 分账描述
 }
 
+type AliPayTradeOrderSettleResponse struct {
+	Body struct {
+		Code    string `json:"code"`
+		Msg     string `json:"msg"`
+		SubCode string `json:"sub_code"`
+		SubMsg  string `json:"sub_msg"`
+		TradeNo string `json:"trade_no"`
+	} `json:"alipay_trade_order_settle_response"`
+	Sign string `json:"sign"`
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.create/
 type AliPayTradeCreate struct {

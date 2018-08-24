@@ -34,7 +34,7 @@ func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery)
 }
 
 // TradeOrderSettle https://docs.open.alipay.com/api_1/alipay.trade.order.settle
-func (this *AliPay) TradeOrderSettle(param AliPayTradeOrderSettle) (results interface{}, err error) {
+func (this *AliPay) TradeOrderSettle(param AliPayTradeOrderSettle) (results *AliPayTradeOrderSettleResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
