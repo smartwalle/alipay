@@ -21,6 +21,13 @@ func (this *AliPay) FundAuthOrderVoucherCreate(param AliPayFundAuthOrderVoucherC
 	return results, err
 }
 
+// https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
+// 资金授权冻结接口
+func (this *AliPay) FundAuthOrderFreeze(param AliPayFundAuthOrderFreeze) (results AliPayFundAuthOrderFreezeResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
+
 // FundTransOrderQuery https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口
 func (this *AliPay) FundAuthOrderAppFreeze(param AliPayFundAuthOrderAppFreeze) (results string, err error) {
