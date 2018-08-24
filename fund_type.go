@@ -224,7 +224,7 @@ type AliPayFundAuthOrderUnfreeze struct {
 }
 
 func (this AliPayFundAuthOrderUnfreeze) APIName() string {
-	return "alipay.fund.auth.order.unfreeze("
+	return "alipay.fund.auth.order.unfreeze"
 }
 
 func (this AliPayFundAuthOrderUnfreeze) Params() map[string]string {
@@ -257,6 +257,51 @@ type AliPayFundAuthOrderUnfreezeResponse struct {
 		CreditAmount string `json:"credit_amount"`
 		FundAmount   string `json:"fund_amount"`
 	} `json:"alipay_fund_auth_order_unfreeze_response"`
+	Sign string `json:"sign"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
+// 资金授权撤销接口
+type AliPayFundAuthOperationCancel struct {
+	AppAuthToken string `json:"-"`                        // 可选
+	AuthNo       string `json:"auth_no,omitempty"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
+	OutOrderNo   string `json:"out_order_no,omitempty"`   // 特殊可选,  商户的授权资金订单号，与支付宝的授权资金订单号不能同时为空，二者都存在时，以支付宝的授权资金订单号为准，该参数与商户的授权资金操作流水号配对使用。
+	OperationId  string `json:"operation_id,omitempty"`   // 特殊可选, 支付宝的授权资金操作流水号，与商户的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与支付宝授权资金订单号配对使用。
+	OutRequestNo string `json:"out_request_no,omitempty"` // 特殊可选, 商户的授权资金操作流水号，与支付宝的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与商户的授权资金订单号配对使用。
+	Remark       string `json:"remark"`                   // 必选, 商户对本次撤销操作的附言描述，长度不超过100个字母或50个汉字
+}
+
+func (this AliPayFundAuthOperationCancel) APIName() string {
+	return "alipay.fund.auth.operation.cancel"
+}
+
+func (this AliPayFundAuthOperationCancel) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+func (this AliPayFundAuthOperationCancel) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayFundAuthOperationCancel) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayFundAuthOperationCancelResponse struct {
+	Body struct {
+		Code         string `json:"code"`
+		Msg          string `json:"msg"`
+		SubCode      string `json:"sub_code"`
+		SubMsg       string `json:"sub_msg"`
+		AuthNo       string `json:"auth_no"`
+		OutOrderNo   string `json:"out_order_no"`
+		OperationId  string `json:"operation_id"`
+		OutRequestNo string `json:"out_request_no"`
+		Action       string `json:"action"`
+	} `json:"alipay_fund_auth_operation_cancel_response"`
 	Sign string `json:"sign"`
 }
 
