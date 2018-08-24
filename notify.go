@@ -31,7 +31,7 @@ func (this *AliPay) NotifyVerify(notifyId string) bool {
 	param.Add("service", "notify_verify")
 	param.Add("partner", this.partnerId)
 	param.Add("notify_id", notifyId)
-	req, err := NewRequest("GET", this.apiDomain, param)
+	req, err := NewRequest("GET", this.notifyVerifyDomain, param)
 	if err != nil {
 		return false
 	}

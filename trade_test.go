@@ -43,27 +43,27 @@ import (
 //	fmt.Println(client.TradeAppPay(p))
 //}
 //
-func TestAliPay_TradePagePay(t *testing.T) {
-	fmt.Println("========== TradePagePay ==========")
-	var p = AliPayTradePagePay{}
-	p.NotifyURL = "http://220.112.233.229:3000/alipay"
-	p.ReturnURL = "http://220.112.233.229:3000"
-	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_20170623011112"
-	p.TotalAmount = "10.00"
-	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
-	fmt.Println(client.TradePagePay(p))
-}
-
-//func TestAliPay_TradePreCreate(t *testing.T) {
-//	fmt.Println("========== TradePreCreate ==========")
-//	var p = AliPayTradePreCreate{}
-//	p.OutTradeNo = "no_0001"
-//	p.Subject = "测试订单"
-//	p.TotalAmount = "10.10"
-//
-//	fmt.Println(client.TradePreCreate(p))
+//func TestAliPay_TradePagePay(t *testing.T) {
+//	fmt.Println("========== TradePagePay ==========")
+//	var p = AliPayTradePagePay{}
+//	p.NotifyURL = "http://220.112.233.229:3000/alipay"
+//	p.ReturnURL = "http://220.112.233.229:3000"
+//	p.Subject = "修正了中文的 Bug"
+//	p.OutTradeNo = "trade_no_20170623011112"
+//	p.TotalAmount = "10.00"
+//	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+//	fmt.Println(client.TradePagePay(p))
 //}
+
+func TestAliPay_TradePreCreate(t *testing.T) {
+	fmt.Println("========== TradePreCreate ==========")
+	var p = AliPayTradePreCreate{}
+	p.OutTradeNo = "no_0001"
+	p.Subject = "测试订单"
+	p.TotalAmount = "10.10"
+
+	fmt.Println(client.TradePreCreate(p))
+}
 
 //func TestAliPay_TradePay(t *testing.T) {
 //	fmt.Println("========== TradePay ==========")

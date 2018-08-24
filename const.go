@@ -8,8 +8,9 @@ const (
 	K_ALI_PAY_TRADE_STATUS_TRADE_SUCCESS  = "TRADE_SUCCESS"  // 交易支付成功
 	K_ALI_PAY_TRADE_STATUS_TRADE_FINISHED = "TRADE_FINISHED" // 交易结束，不可退款
 
-	K_ALI_PAY_SANDBOX_API_URL    = "https://openapi.alipaydev.com/gateway.do"
-	K_ALI_PAY_PRODUCTION_API_URL = "https://openapi.alipay.com/gateway.do"
+	K_ALI_PAY_SANDBOX_API_URL     = "https://openapi.alipaydev.com/gateway.do"
+	K_ALI_PAY_PRODUCTION_API_URL  = "https://openapi.alipay.com/gateway.do"
+	K_ALI_PAY_PRODUCTION_MAPI_URL = "https://mapi.alipay.com/gateway.do"
 
 	K_FORMAT  = "JSON"
 	K_CHARSET = "utf-8"

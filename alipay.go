@@ -16,13 +16,14 @@ import (
 )
 
 type AliPay struct {
-	appId           string
-	apiDomain       string
-	partnerId       string
-	privateKey      []byte
-	AliPayPublicKey []byte
-	Client          *http.Client
-	SignType        string
+	appId              string
+	apiDomain          string
+	notifyVerifyDomain string
+	partnerId          string
+	privateKey         []byte
+	AliPayPublicKey    []byte
+	Client             *http.Client
+	SignType           string
 }
 
 func New(appId, partnerId, aliPublicKey, privateKey string, isProduction bool) (client *AliPay) {
@@ -34,8 +35,10 @@ func New(appId, partnerId, aliPublicKey, privateKey string, isProduction bool) (
 	client.Client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
+		client.notifyVerifyDomain = K_ALI_PAY_PRODUCTION_MAPI_URL
 	} else {
 		client.apiDomain = K_ALI_PAY_SANDBOX_API_URL
+		client.notifyVerifyDomain = K_ALI_PAY_SANDBOX_API_URL
 	}
 	client.SignType = K_SIGN_TYPE_RSA2
 	return client
@@ -124,8 +127,10 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return nil
 		}
 
-		if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
-			return err
+		if sign != "" {
+			if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
+				return err
+			}
 		}
 	}
 
