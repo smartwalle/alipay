@@ -1,10 +1,5 @@
 package alipay
 
-import (
-	"fmt"
-	"testing"
-)
-
 //func TestAliPay_TradeQuery(t *testing.T) {
 //	fmt.Println("========== TradeQuery ==========")
 //	type arg struct {
@@ -55,15 +50,15 @@ import (
 //	fmt.Println(client.TradePagePay(p))
 //}
 
-func TestAliPay_TradePreCreate(t *testing.T) {
-	fmt.Println("========== TradePreCreate ==========")
-	var p = AliPayTradePreCreate{}
-	p.OutTradeNo = "no_0001"
-	p.Subject = "测试订单"
-	p.TotalAmount = "10.10"
-
-	fmt.Println(client.TradePreCreate(p))
-}
+//func TestAliPay_TradePreCreate(t *testing.T) {
+//	fmt.Println("========== TradePreCreate ==========")
+//	var p = AliPayTradePreCreate{}
+//	p.OutTradeNo = "no_0001"
+//	p.Subject = "测试订单"
+//	p.TotalAmount = "10.10"
+//
+//	fmt.Println(client.TradePreCreate(p))
+//}
 
 //func TestAliPay_TradePay(t *testing.T) {
 //	fmt.Println("========== TradePay ==========")

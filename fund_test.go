@@ -11,3 +11,13 @@ package alipay
 //
 //	fmt.Println(client.FundAuthOrderAppFreeze(p))
 //}
+
+//func TestAliPay_FundTransToAccountTransfer(t *testing.T) {
+//	fmt.Println("========== AliPayFundTransToAccountTransfer ==========")
+//	var p = AliPayFundTransToAccountTransfer{}
+//	p.OutBizNo = "xxxx"
+//	p.PayeeType = "ALIPAY_LOGONID"
+//	p.PayeeAccount = "xwmkjn7612@sandbox.com"
+//	p.Amount = "100"
+//	fmt.Println(client.FundTransToAccountTransfer(p))
+//}
