@@ -306,6 +306,68 @@ type AliPayFundAuthOperationCancelResponse struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
+// 资金授权操作查询接口
+type AliPayFundAuthOperationDetailQuery struct {
+	AppAuthToken string `json:"-"`              // 可选
+	AuthNo       string `json:"auth_no"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
+	OutOrderNo   string `json:"out_order_no"`   // 特殊可选, 商户的授权资金订单号，与支付宝的授权资金订单号不能同时为空，二者都存在时，以支付宝的授权资金订单号为准，该参数与商户的授权资金操作流水号配对使用。
+	OperationId  string `json:"operation_id"`   // 特殊可选, 支付宝的授权资金操作流水号，与商户的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与支付宝授权资金订单号配对使用。
+	OutRequestNo string `json:"out_request_no"` // 特殊可选, 商户的授权资金操作流水号，与支付宝的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与商户的授权资金订单号配对使用。
+}
+
+func (this AliPayFundAuthOperationDetailQuery) APIName() string {
+	return "alipay.fund.auth.operation.detail.query"
+}
+
+func (this AliPayFundAuthOperationDetailQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+func (this AliPayFundAuthOperationDetailQuery) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayFundAuthOperationDetailQuery) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayFundAuthOperationDetailQueryResponse struct {
+	Body struct {
+		AuthNo                  string `json:"auth_no"`
+		OutOrderNo              string `json:"out_order_no"`
+		TotalFreezeAmount       string `json:"total_freeze_amount"`
+		RestAmount              string `json:"rest_amount"`
+		TotalPayAmount          string `json:"total_pay_amount"`
+		OrderTitle              string `json:"order_title"`
+		PayerLogonId            string `json:"payer_logon_id"`
+		PayerUserId             string `json:"payer_user_id"`
+		ExtraParam              string `json:"extra_param"`
+		OperationId             string `json:"operation_id"`
+		OutRequestNo            string `json:"out_request_no"`
+		Amount                  string `json:"amount"`
+		OperationType           string `json:"operation_type"`
+		Status                  string `json:"status"`
+		Remark                  string `json:"remark"`
+		GMTCreate               string `json:"gmt_create"`
+		GMTTrans                string `json:"gmt_trans"`
+		PreAuthType             string `json:"pre_auth_type"`
+		TransCurrency           string `json:"trans_currency"`
+		TotalFreezeCreditAmount string `json:"total_freeze_credit_amount"`
+		TotalFreezeFundAmount   string `json:"total_freeze_fund_amount"`
+		TotalPayCreditAmount    string `json:"total_pay_credit_amount"`
+		TotalPayFundAmount      string `json:"total_pay_fund_amount"`
+		RestCreditAmount        string `json:"rest_credit_amount"`
+		RestFundAmount          string `json:"rest_fund_amount"`
+		CreditAmount            string `json:"credit_amount"`
+		FundAmount              string `json:"fund_amount"`
+	} `json:"alipay_fund_auth_operation_detail_query_response"`
+	Sign string `json:"sign"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
 type AliPayFundAuthOrderAppFreeze struct {

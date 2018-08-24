@@ -37,7 +37,14 @@ func (this *AliPay) FundAuthOrderUnfreeze(param AliPayFundAuthOrderUnfreeze) (re
 
 // FundAuthOperationCancel https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 // 资金授权撤销接口
-func (this *AliPay) FundAuthOperationCancel(param AliPayFundAuthOperationCancel) (results *AliPayFundAuthOperationCancel, err error) {
+func (this *AliPay) FundAuthOperationCancel(param AliPayFundAuthOperationCancel) (results *AliPayFundAuthOperationCancelResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
+
+// FundAuthOperationDetailQuery https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
+// 资金授权操作查询接口
+func (this *AliPay) FundAuthOperationDetailQuery(param AliPayFundAuthOperationDetailQuery) (results *AliPayFundAuthOperationDetailQueryResponse, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }

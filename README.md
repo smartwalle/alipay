@@ -71,6 +71,34 @@ AliPay SDK for Golang
 
 	alipay.fund.trans.order.query 
 	
+* **单笔转账到支付宝账户接口**
+	
+	alipay.fund.trans.toaccount.transfer
+	
+* **资金授权发码接口**
+
+	alipay.fund.auth.order.voucher.create
+
+* **资金授权操作查询接口**
+
+	alipay.fund.auth.operation.detail.query
+
+* **资金授权撤销接口**
+	
+	alipay.fund.auth.operation.cancel
+	
+* **资金授权解冻接口**
+
+	alipay.fund.auth.order.unfreeze
+
+* **资金授权冻结接口**
+
+	alipay.fund.auth.order.freeze
+	
+* **线上资金授权冻结接口**
+	
+	alipay.fund.auth.order.app.freeze
+	
 #### 通知
 	
 * **通知内容转换及签名验证**
