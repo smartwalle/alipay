@@ -213,6 +213,54 @@ type AliPayFundAuthOrderFreezeResponse struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
+// 资金授权解冻接口
+type AliPayFundAuthOrderUnfreeze struct {
+	AppAuthToken string `json:"-"`                     // 可选
+	OutRequestNo string `json:"out_request_no"`        // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，不能包含除中文、英文、数字以外的字符，需要保证在商户端不重复。
+	Amount       string `json:"amount"`                // 必选, 本次操作解冻的金额，单位为：元（人民币），精确到小数点后两位，取值范围：[0.01,100000000.00]
+	Remark       string `json:"remark"`                // 必选, 商户对本次解冻操作的附言描述，长度不超过100个字母或50个汉字
+	ExtraParam   string `json:"extra_param,omitempty"` // 可选, 解冻扩展信息，json格式；unfreezeBizInfo 目前为芝麻消费字段，支持Key值如下： "bizComplete":"true" -- 选填：标识本次解冻用户是否履约，如果true信用单会完结为COMPLETE
+}
+
+func (this AliPayFundAuthOrderUnfreeze) APIName() string {
+	return "alipay.fund.auth.order.unfreeze("
+}
+
+func (this AliPayFundAuthOrderUnfreeze) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+func (this AliPayFundAuthOrderUnfreeze) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this AliPayFundAuthOrderUnfreeze) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type AliPayFundAuthOrderUnfreezeResponse struct {
+	Body struct {
+		Code         string `json:"code"`
+		Msg          string `json:"msg"`
+		SubCode      string `json:"sub_code"`
+		SubMsg       string `json:"sub_msg"`
+		AuthNo       string `json:"auth_no"`
+		OutOrderNo   string `json:"out_order_no"`
+		OperationId  string `json:"operation_id"`
+		OutRequestNo string `json:"out_request_no"`
+		Amount       string `json:"amount"`
+		Status       string `json:"status"`
+		GMTTrans     string `json:"gmt_trans"`
+		CreditAmount string `json:"credit_amount"`
+		FundAmount   string `json:"fund_amount"`
+	} `json:"alipay_fund_auth_order_unfreeze_response"`
+	Sign string `json:"sign"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
 type AliPayFundAuthOrderAppFreeze struct {
