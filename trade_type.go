@@ -647,7 +647,7 @@ func (this *AliPayTradeCancelResponse) IsSuccess() bool {
 // https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
 type AliPayTradeOrderInfoSync struct {
 	AppAuthToken string `json:"-"`              // 可选
-	OutTradeNo   string `json:"out_trade_no"`   // 必选 标识一笔交易多次请求，同一笔交易多次信息同步时需要保证唯一
+	OutRequestNo string `json:"out_request_no"` // 必选 标识一笔交易多次请求，同一笔交易多次信息同步时需要保证唯一
 	BizType      string `json:"biz_type"`       // 必选 交易信息同步对应的业务类型，具体值与支付宝约定；信用授权场景下传CREDIT_AUTH
 	TradeNo      string `json:"trade_no"`       // 可选 支付宝交易号，和商户订单号不能同时为空
 	OrderBizInfo string `json:"order_biz_info"` // 可选 商户传入同步信息，具体值要和支付宝约定；用于芝麻信用租车、单次授权等信息同步场景，格式为json格式
