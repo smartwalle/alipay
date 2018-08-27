@@ -62,6 +62,10 @@ AliPay SDK for Golang
 * **统一收单交易退款查询**
 
 	alipay.trade.fastpay.refund.query
+	
+* **支付宝订单信息同步接口**
+	
+	alipay.trade.orderinfo.sync
 
 * **单笔转账到支付宝账户接口**
 

@@ -110,6 +110,7 @@ func (this *AliPayFundTransOrderQueryResponse) IsSuccess() bool {
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
 // 资金授权发码接口
 type AliPayFundAuthOrderVoucherCreate struct {
+	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号，创建后不能修改，需要保证在商户端不重复。
 	OutRequestNo      string `json:"out_request_no"`                // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，需要保证在商户端不重复。
@@ -132,6 +133,7 @@ func (this AliPayFundAuthOrderVoucherCreate) APIName() string {
 func (this AliPayFundAuthOrderVoucherCreate) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
 	return m
 }
 
@@ -162,6 +164,7 @@ type AliPayFundAuthOrderVoucherCreateResponse struct {
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
 // 资金授权冻结接口
 type AliPayFundAuthOrderFreeze struct {
+	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthCode     string `json:"auth_code"`                // 必选, 支付授权码，25~30开头的长度为16~24位的数字，实际字符串长度以开发者获取的付款码长度为准
 	AuthCodeType string `json:"auth_code_type"`           // 必选, 授权码类型 目前仅支持"bar_code"
@@ -183,6 +186,7 @@ func (this AliPayFundAuthOrderFreeze) APIName() string {
 func (this AliPayFundAuthOrderFreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
 	return m
 }
 
@@ -216,6 +220,7 @@ type AliPayFundAuthOrderFreezeResponse struct {
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
 // 资金授权解冻接口
 type AliPayFundAuthOrderUnfreeze struct {
+	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                     // 可选
 	OutRequestNo string `json:"out_request_no"`        // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，不能包含除中文、英文、数字以外的字符，需要保证在商户端不重复。
 	Amount       string `json:"amount"`                // 必选, 本次操作解冻的金额，单位为：元（人民币），精确到小数点后两位，取值范围：[0.01,100000000.00]
@@ -230,6 +235,7 @@ func (this AliPayFundAuthOrderUnfreeze) APIName() string {
 func (this AliPayFundAuthOrderUnfreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
 	return m
 }
 
@@ -264,6 +270,7 @@ type AliPayFundAuthOrderUnfreezeResponse struct {
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 // 资金授权撤销接口
 type AliPayFundAuthOperationCancel struct {
+	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthNo       string `json:"auth_no,omitempty"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
 	OutOrderNo   string `json:"out_order_no,omitempty"`   // 特殊可选,  商户的授权资金订单号，与支付宝的授权资金订单号不能同时为空，二者都存在时，以支付宝的授权资金订单号为准，该参数与商户的授权资金操作流水号配对使用。
@@ -279,6 +286,7 @@ func (this AliPayFundAuthOperationCancel) APIName() string {
 func (this AliPayFundAuthOperationCancel) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
 	return m
 }
 
@@ -371,6 +379,7 @@ type AliPayFundAuthOperationDetailQueryResponse struct {
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
 type AliPayFundAuthOrderAppFreeze struct {
+	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号 ,不能包含除中文、英文、数字以外的字符，创建后不能修改，需要保证在商户端不重复。
 	OutRequestNo      string `json:"out_request_no"`                // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，不能包含除中文、英文、数字以外的字符，需要保证在商户端不重复。
@@ -391,6 +400,7 @@ func (this AliPayFundAuthOrderAppFreeze) APIName() string {
 func (this AliPayFundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
 	return m
 }
 

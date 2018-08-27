@@ -80,3 +80,9 @@ func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayRespo
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
+
+// TradeOrderInfoSync https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
+func (this *AliPay) TradeOrderInfoSync(param AliPayTradeOrderInfoSync) (results *AliPayTradeOrderInfoSyncResponse, err error) {
+	err = this.doRequest("POST", param, &results)
+	return results, err
+}
