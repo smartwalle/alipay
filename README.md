@@ -97,12 +97,12 @@ AliPay SDK for Golang
 
 * **资金授权冻结接口**
 
-	alipay.fund.auth.order.freeze
-	
+	alipay.fund.auth.order.freeze
+		
 * **线上资金授权冻结接口**
 	
 	alipay.fund.auth.order.app.freeze
-	
+
 #### 通知
 	
 * **通知内容转换及签名验证**
