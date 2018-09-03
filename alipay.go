@@ -93,7 +93,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+	req.Header.Set("Content-Type", K_CONTENT_TYPE_FORM)
 
 	resp, err := this.Client.Do(req)
 	if resp != nil {

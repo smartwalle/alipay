@@ -18,7 +18,7 @@ func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (url *url.URL, err erro
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+	req.Header.Set("Content-Type", K_CONTENT_TYPE_FORM)
 
 	rep, err := this.Client.Do(req)
 	if err != nil {
