@@ -30,3 +30,7 @@ const (
 	K_SIGN_TYPE_RSA2 = "RSA2"
 	K_SIGN_TYPE_RSA  = "RSA"
 )
+
+const (
+	K_CONTENT_TYPE_FORM = "application/x-www-form-urlencoded;charset=utf-8"
+)
