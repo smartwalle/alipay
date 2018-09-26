@@ -1,8 +1,6 @@
 package alipay_test
 
 import (
-	"testing"
-
 	"github.com/smartwalle/alipay"
 )
 
@@ -20,21 +18,4 @@ var client *alipay.AliPay
 
 func init() {
 	client = alipay.New(appID, partnerID, aliPublicKey, privateKey, false)
-}
-
-func TestAliPay_TradeWapPay(t *testing.T) {
-	t.Log("========== TradeWapPay ==========")
-	var p = alipay.AliPayTradeWapPay{}
-	p.NotifyURL = "http://203.86.24.181:3000/alipay"
-	p.ReturnURL = "http://203.86.24.181:3000"
-	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_20170623021"
-	p.TotalAmount = "10.00"
-	p.ProductCode = "QUICK_WAP_WAY"
-
-	url, err := client.TradeWapPay(p)
-	t.Log(url)
-	if err != nil {
-		t.FailNow()
-	}
 }
