@@ -134,7 +134,7 @@ AliPay SDK for Golang
 ``` Golang
 var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的公钥，通过支付宝管理后台获取
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
-var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
+var client = alipay.New(appId, aliPublicKey, privateKey, false)
 
 var p = AliPayTradeWapPay{}
 p.NotifyURL = "http://xxx"
@@ -161,7 +161,7 @@ fmt.Println(payURL)
 如果需要开启自动验签，只需要在初始化 AliPay 对象的时候提供 **aliPublicKey** 参数，该参数的值为支付宝管理后台获取到的支付宝公钥，如下：
 
 ``` Golang
-var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
+var client = alipay.New(appId, aliPublicKey, privateKey, false)
 ```
 
 #### Return URL
@@ -177,7 +177,7 @@ p.ReturnURL = "http://xxx/return"
 
 
 ```Golang
-var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
+var client = alipay.New(appId, aliPublicKey, privateKey, false)
 
 http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
@@ -194,7 +194,7 @@ http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 
 ```Golang
 
-var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
+var client = alipay.New(appId, aliPublicKey, privateKey, false)
  
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
@@ -219,34 +219,6 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 #### 关于支付宝公钥 (aliPublicKey)
 
 支付宝公钥是从支付宝管理后台获取（不是我们通过工具生成的公钥），该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。
-
-#### 关于合作者身份ID (partnerId)
-
-支付宝提供了验证通知有效性的方法，详细情况可以参考 [https://docs.open.alipay.com/58/103597/](https://docs.open.alipay.com/58/103597/)。
-
-本 SDK 中的验证示例如下：
-
-```Golang
-
-var client = alipay.New(appId, partnerId, aliPublicKey, privateKey, false)
- 
-http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
-	var noti, _ = client.GetTradeNotification(req)
-	if noti != nil {
-		if ok := client.NotifyVerify(noti.NotifyId); ok {
-			fmt.Println("支付成功")
-		} else {
-			fmt.Println("不是支付宝发送的通知")
-		}
-	} else {
-		fmt.Println("支付失败")
-	}
-})
-```
-
-验证通知有效性的时候，需要提供合作者身份ID，如果不需要调用 NotifyVerify() 方法进行通知有效性的验证，那么就可以不用传递 partnerId 参数。
-
-如何查看合作者身份ID，请参考 [https://docs.open.alipay.com/58/103544/](https://docs.open.alipay.com/58/103544/) 
 
 #### 支持 RSA 签名及验证
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:

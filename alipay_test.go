@@ -5,8 +5,7 @@ import (
 )
 
 var (
-	appID     = "2016073100129537"
-	partnerID = "2088102169227503"
+	appID = "2016073100129537"
 
 	// RSA2(SHA256)
 	aliPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2MhEVUp+rRRyAD9HZfiSg8LLxRAX18XOMJE8/MNnlSSTWCCoHnM+FIU+AfB+8FE+gGIJYXJlpTIyWn4VUMtewh/4C8uwzBWod/3ilw9Uy7lFblXDBd8En8a59AxC6c9YL1nWD7/sh1szqej31VRI2OXQSYgvhWNGjzw2/KS1GdrWmdsVP2hOiKVy6TNtH7XnCSRfBBCQ+LgqO1tE0NHDDswRwBLAFmIlfZ//qZ+a8FvMc//sUm+CV78pQba4nnzsmh10fzVVFIWiKw3VDsxXPRrAtOJCwNsBwbvMuI/ictvxxjUl4nBZDw4lXt5eWWqBrnTSzogFNOk06aNmEBTUhwIDAQAB"
@@ -17,5 +16,5 @@ var (
 var client *alipay.AliPay
 
 func init() {
-	client = alipay.New(appID, partnerID, aliPublicKey, privateKey, false)
+	client = alipay.New(appID, aliPublicKey, privateKey, false)
 }

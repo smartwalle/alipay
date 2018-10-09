@@ -26,10 +26,10 @@ func NewRequest(method, url string, params url.Values) (*http.Request, error) {
 	return http.NewRequest(m, url, body)
 }
 
-func (this *AliPay) NotifyVerify(notifyId string) bool {
+func (this *AliPay) NotifyVerify(partnerId, notifyId string) bool {
 	var param = url.Values{}
 	param.Add("service", "notify_verify")
-	param.Add("partner", this.partnerId)
+	param.Add("partner", partnerId)
 	param.Add("notify_id", notifyId)
 	req, err := NewRequest("GET", this.notifyVerifyDomain, param)
 	if err != nil {
@@ -95,9 +95,9 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 	noti.PassbackParams = req.FormValue("passback_params")
 	noti.VoucherDetailList = req.FormValue("voucher_detail_list")
 
-	if len(noti.NotifyId) == 0 {
-		return nil, errors.New("不是有效的 Notify")
-	}
+	//if len(noti.NotifyId) == 0 {
+	//	return nil, errors.New("不是有效的 Notify")
+	//}
 
 	ok, err := verifySign(req.Form, aliPayPublicKey)
 	if ok == false {
