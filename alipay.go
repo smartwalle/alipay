@@ -201,7 +201,7 @@ func verifySign(data url.Values, key []byte) (ok bool, err error) {
 
 	var keys = make([]string, 0, 0)
 	for key, value := range data {
-		if key == "sign" || key == "sign_type" {
+		if key == "sign" {
 			continue
 		}
 		if len(value) > 0 {
