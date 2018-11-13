@@ -27,7 +27,7 @@ func TestAliPay_TradePagePay(t *testing.T) {
 	p.NotifyURL = "http://220.112.233.229:3000/alipay"
 	p.ReturnURL = "http://220.112.233.229:3000"
 	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_20170623011112"
+	p.OutTradeNo = "trade_no_20170623011121"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
 	url, err := client.TradePagePay(p)
@@ -71,4 +71,16 @@ func TestAliPay_TradePay(t *testing.T) {
 		t.Fatal(rsp.AliPayTradePay.Msg, rsp.AliPayTradePay.SubMsg)
 	}
 	t.Log(rsp.AliPayTradePay.Msg)
+}
+
+func TestAliPay_TradeRefund(t *testing.T) {
+	t.Log("========== TradeRefund ==========")
+	var p = alipay.AliPayTradeRefund{}
+	p.RefundAmount = "10"
+	p.OutTradeNo = "trade_no_20170623011121"
+	rsp, err := client.TradeRefund(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", rsp.AliPayTradeRefund)
 }
