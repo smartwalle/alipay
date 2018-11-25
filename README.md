@@ -142,7 +142,7 @@ p.ReturnURL = "http://xxx"
 p.Subject = "标题"
 p.OutTradeNo = "传递一个唯一单号"
 p.TotalAmount = "10.00"
-p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+p.ProductCode = "QUICK_WAP_WAY"
 
 var url, err = client.TradeWapPay(p)
 if err != nil {
