@@ -2,6 +2,7 @@ package alipay
 
 import (
 	"crypto"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -32,7 +33,11 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Ali
 	//client.partnerId = partnerId
 	client.privateKey = encoding.ParsePrivateKey(privateKey)
 	client.AliPayPublicKey = encoding.ParsePublicKey(aliPublicKey)
-	client.Client = http.DefaultClient
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client.Client= &http.Client{Transport: tr}
+	//client.Client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
 		client.notifyVerifyDomain = K_ALI_PAY_PRODUCTION_MAPI_URL
