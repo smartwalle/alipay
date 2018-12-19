@@ -33,9 +33,10 @@ type TradePay struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// https://docs.open.alipay.com/270/alipay.trade.page.pay
+// https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 type AliPayTradePagePay struct {
 	TradePay
+	TimeExpire  string `json:"time_expire,omitempty"`  // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
 	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
 	GoodsDetail string `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
 	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
