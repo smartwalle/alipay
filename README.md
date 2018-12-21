@@ -75,10 +75,6 @@ AliPay SDK for Golang
 
 	alipay.fund.trans.order.query 
 	
-* **单笔转账到支付宝账户接口**
-	
-	alipay.fund.trans.toaccount.transfer
-	
 * **资金授权发码接口**
 
 	alipay.fund.auth.order.voucher.create
