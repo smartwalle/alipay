@@ -221,6 +221,7 @@ type AliPayFundAuthOrderFreezeResponse struct {
 // 资金授权解冻接口
 type AliPayFundAuthOrderUnfreeze struct {
 	NotifyURL    string `json:"-"`
+	AuthNo       string `json:"auth_no"`               // 必选,支付宝资金授权订单号,支付宝冻结时返回的交易号，数字格式 2016101210002001810258115912
 	AppAuthToken string `json:"-"`                     // 可选
 	OutRequestNo string `json:"out_request_no"`        // 必选, 商户本次资金操作的请求流水号，用于标示请求流水的唯一性，不能包含除中文、英文、数字以外的字符，需要保证在商户端不重复。
 	Amount       string `json:"amount"`                // 必选, 本次操作解冻的金额，单位为：元（人民币），精确到小数点后两位，取值范围：[0.01,100000000.00]
