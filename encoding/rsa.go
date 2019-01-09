@@ -4,9 +4,6 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
-	"errors"
 )
 
 func packageData(originalData []byte, packageSize int) (r [][]byte) {
@@ -29,23 +26,14 @@ func packageData(originalData []byte, packageSize int) (r [][]byte) {
 	return r
 }
 
-func RSAEncrypt(plaintext, key []byte) ([]byte, error) {
-	var err error
-	var block *pem.Block
-	block, _ = pem.Decode(key)
-	if block == nil {
-		return nil, errors.New("public key error")
-	}
-
-	var pubInterface interface{}
-	pubInterface, err = x509.ParsePKIXPublicKey(block.Bytes)
+func RSAEncryptWithPKCS1(plaintext, key []byte) ([]byte, error) {
+	pub, err := ParsePKCS1PublicKey(key)
 	if err != nil {
 		return nil, err
 	}
-	var pub = pubInterface.(*rsa.PublicKey)
 
 	var data = packageData(plaintext, pub.N.BitLen()/8-11)
-	var cipherData []byte = make([]byte, 0, 0)
+	var cipherData = make([]byte, 0, 0)
 
 	for _, d := range data {
 		var c, e = rsa.EncryptPKCS1v15(rand.Reader, pub, d)
@@ -58,22 +46,29 @@ func RSAEncrypt(plaintext, key []byte) ([]byte, error) {
 	return cipherData, nil
 }
 
-func RSADecrypt(ciphertext, key []byte) ([]byte, error) {
-	var err error
-	var block *pem.Block
-	block, _ = pem.Decode(key)
-	if block == nil {
-		return nil, errors.New("private key error")
+func RSAEncryptWithPKCS1Key(plaintext []byte, key *rsa.PublicKey) ([]byte, error) {
+	var data = packageData(plaintext, key.N.BitLen()/8-11)
+	var cipherData = make([]byte, 0, 0)
+
+	for _, d := range data {
+		var c, e = rsa.EncryptPKCS1v15(rand.Reader, key, d)
+		if e != nil {
+			return nil, e
+		}
+		cipherData = append(cipherData, c...)
 	}
 
-	var pri *rsa.PrivateKey
-	pri, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	return cipherData, nil
+}
+
+func RSADecryptWithPKCS1(ciphertext, key []byte) ([]byte, error) {
+	pri, err := ParsePKCS1PrivateKey(key)
 	if err != nil {
 		return nil, err
 	}
 
 	var data = packageData(ciphertext, pri.PublicKey.N.BitLen()/8)
-	var plainData []byte = make([]byte, 0, 0)
+	var plainData = make([]byte, 0, 0)
 
 	for _, d := range data {
 		var p, e = rsa.DecryptPKCS1v15(rand.Reader, pri, d)
@@ -85,44 +80,46 @@ func RSADecrypt(ciphertext, key []byte) ([]byte, error) {
 	return plainData, nil
 }
 
-func SignPKCS1v15(src, key []byte, hash crypto.Hash) ([]byte, error) {
-	var h = hash.New()
-	h.Write(src)
-	var hashed = h.Sum(nil)
+func RSADecryptWithPKCS1Key(ciphertext []byte, key *rsa.PrivateKey) ([]byte, error) {
+	var data = packageData(ciphertext, key.PublicKey.N.BitLen()/8)
+	var plainData = make([]byte, 0, 0)
 
-	var err error
-	var block *pem.Block
-	block, _ = pem.Decode(key)
-	if block == nil {
-		return nil, errors.New("private key error")
+	for _, d := range data {
+		var p, e = rsa.DecryptPKCS1v15(rand.Reader, key, d)
+		if e != nil {
+			return nil, e
+		}
+		plainData = append(plainData, p...)
 	}
+	return plainData, nil
+}
 
-	var pri *rsa.PrivateKey
-	pri, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+func SignPKCS1v15(src, key []byte, hash crypto.Hash) ([]byte, error) {
+	pri, err := ParsePKCS1PrivateKey(key)
 	if err != nil {
 		return nil, err
 	}
-	return rsa.SignPKCS1v15(rand.Reader, pri, hash, hashed)
+	return SignPKCS1v15WithKey(src, pri, hash)
 }
 
-func VerifyPKCS1v15(src, sig, key []byte, hash crypto.Hash) error {
+func SignPKCS1v15WithKey(src []byte, key *rsa.PrivateKey, hash crypto.Hash) ([]byte, error) {
 	var h = hash.New()
 	h.Write(src)
 	var hashed = h.Sum(nil)
+	return rsa.SignPKCS1v15(rand.Reader, key, hash, hashed)
+}
 
-	var err error
-	var block *pem.Block
-	block, _ = pem.Decode(key)
-	if block == nil {
-		return errors.New("public key error")
-	}
-
-	var pubInterface interface{}
-	pubInterface, err = x509.ParsePKIXPublicKey(block.Bytes)
+func VerifyPKCS1v15(src, sig, key []byte, hash crypto.Hash) error {
+	pub, err := ParsePKCS1PublicKey(key)
 	if err != nil {
 		return err
 	}
-	var pub = pubInterface.(*rsa.PublicKey)
+	return VerifyPKCS1v15WithKey(src, sig, pub, hash)
+}
 
-	return rsa.VerifyPKCS1v15(pub, hash, hashed, sig)
+func VerifyPKCS1v15WithKey(src, sig []byte, key *rsa.PublicKey, hash crypto.Hash) error {
+	var h = hash.New()
+	h.Write(src)
+	var hashed = h.Sum(nil)
+	return rsa.VerifyPKCS1v15(key, hash, hashed, sig)
 }
