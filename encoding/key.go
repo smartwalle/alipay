@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-func ParsePublicKey(raw string) (result []byte) {
-	return parseKey(raw, "-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")
+func FormatPublicKey(raw string) (result []byte) {
+	return formatKey(raw, "-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")
 }
 
-func ParsePrivateKey(raw string) (result []byte) {
-	return parseKey(raw, "-----BEGIN RSA PRIVATE KEY-----", "-----END RSA PRIVATE KEY-----")
+func FormatPrivateKey(raw string) (result []byte) {
+	return formatKey(raw, "-----BEGIN RSA PRIVATE KEY-----", "-----END RSA PRIVATE KEY-----")
 }
 
-func parseKey(raw, prefix, suffix string) (result []byte) {
+func formatKey(raw, prefix, suffix string) (result []byte) {
 	if raw == "" {
 		return nil
 	}

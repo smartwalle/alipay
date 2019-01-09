@@ -30,8 +30,8 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Ali
 	client = &AliPay{}
 	client.appId = appId
 	//client.partnerId = partnerId
-	client.privateKey = encoding.ParsePrivateKey(privateKey)
-	client.AliPayPublicKey = encoding.ParsePublicKey(aliPublicKey)
+	client.privateKey = encoding.FormatPrivateKey(privateKey)
+	client.AliPayPublicKey = encoding.FormatPublicKey(aliPublicKey)
 	client.Client = http.DefaultClient
 	if isProduction {
 		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL

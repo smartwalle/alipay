@@ -79,10 +79,10 @@ var k5 = `
 	`
 
 func TestParsePublicKey(t *testing.T) {
-	fmt.Println(ParsePublicKey(string(k1)))
-	fmt.Println(ParsePublicKey(k2))
+	fmt.Println(FormatPublicKey(string(k1)))
+	fmt.Println(FormatPublicKey(k2))
 
-	fmt.Println(ParsePrivateKey(string(k3)))
-	fmt.Println(ParsePrivateKey(k4))
-	fmt.Println(ParsePrivateKey(k5))
+	fmt.Println(FormatPrivateKey(string(k3)))
+	fmt.Println(FormatPrivateKey(k4))
+	fmt.Println(FormatPrivateKey(k5))
 }
