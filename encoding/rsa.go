@@ -26,7 +26,7 @@ func packageData(originalData []byte, packageSize int) (r [][]byte) {
 	return r
 }
 
-func RSAEncryptWithPKCS1(plaintext, key []byte) ([]byte, error) {
+func RSAEncryptPKCS1(plaintext, key []byte) ([]byte, error) {
 	pub, err := ParsePKCS1PublicKey(key)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func RSAEncryptWithPKCS1(plaintext, key []byte) ([]byte, error) {
 	return cipherData, nil
 }
 
-func RSAEncryptWithPKCS1Key(plaintext []byte, key *rsa.PublicKey) ([]byte, error) {
+func RSAEncryptPKCS1WithKey(plaintext []byte, key *rsa.PublicKey) ([]byte, error) {
 	var data = packageData(plaintext, key.N.BitLen()/8-11)
 	var cipherData = make([]byte, 0, 0)
 
@@ -61,7 +61,7 @@ func RSAEncryptWithPKCS1Key(plaintext []byte, key *rsa.PublicKey) ([]byte, error
 	return cipherData, nil
 }
 
-func RSADecryptWithPKCS1(ciphertext, key []byte) ([]byte, error) {
+func RSADecryptPKCS1(ciphertext, key []byte) ([]byte, error) {
 	pri, err := ParsePKCS1PrivateKey(key)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func RSADecryptWithPKCS1(ciphertext, key []byte) ([]byte, error) {
 	return plainData, nil
 }
 
-func RSADecryptWithPKCS1Key(ciphertext []byte, key *rsa.PrivateKey) ([]byte, error) {
+func RSADecryptPKCS1WithKey(ciphertext []byte, key *rsa.PrivateKey) ([]byte, error) {
 	var data = packageData(ciphertext, key.PublicKey.N.BitLen()/8)
 	var plainData = make([]byte, 0, 0)
 
