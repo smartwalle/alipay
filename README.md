@@ -19,85 +19,93 @@ AliPay SDK for Golang
 
 #### 手机网站支付API
 
+```
+中线(-)后面的名称是该接口在 AliPay 结构体中对应的方法名。
+```
+
 * **手机网站支付接口**
 	
-	alipay.trade.wap.pay
+	alipay.trade.wap.pay - **TradeWapPay()**
 	
 * **电脑网站支付**
 
-	alipay.trade.page.pay
+	alipay.trade.page.pay - **TradePagePay()**
 
 * **统一收单线下交易查询**
 	
-	alipay.trade.query
+	alipay.trade.query - **TradeQuery()**
 	
 * **统一收单交易支付接口**
 	
-	alipay.trade.pay
+	alipay.trade.pay - **TradePay()**
 	
 * **统一收单交易创建接口**
 
-	alipay.trade.create
+	alipay.trade.create - **TradeCreate()**
 	
 * **统一收单线下交易预创建**
 
-	alipay.trade.precreate
+	alipay.trade.precreate - **TradePreCreate()**
 	
 * **统一收单交易撤销接口**
 
-	alipay.trade.cancel
+	alipay.trade.cancel - **TradeCancel()**
 	
 * **统一收单交易关闭接口**
 
-	alipay.trade.close
+	alipay.trade.close - **TradeClose()**
 
 * **统一收单交易退款接口**
 
-	alipay.trade.refund
+	alipay.trade.refund - **TradeRefund()**
 	
 * **App支付接口**
 
-	alipay.trade.app.pay
+	alipay.trade.app.pay - **TradeAppPay()**
 
 * **统一收单交易退款查询**
 
-	alipay.trade.fastpay.refund.query
+	alipay.trade.fastpay.refund.query - **TradeFastpayRefundQuery()**
 	
 * **支付宝订单信息同步接口**
 	
-	alipay.trade.orderinfo.sync
+	alipay.trade.orderinfo.sync - **TradeOrderInfoSync()**
 
 * **单笔转账到支付宝账户接口**
 
-	alipay.fund.trans.toaccount.transfer
+	alipay.fund.trans.toaccount.transfer - **FundTransToAccountTransfer()**
 	
 * **查询转账订单接口**
 
-	alipay.fund.trans.order.query 
+	alipay.fund.trans.order.query - **FundTransOrderQuery()**
 	
 * **资金授权发码接口**
 
-	alipay.fund.auth.order.voucher.create
+	alipay.fund.auth.order.voucher.create - **FundAuthOrderVoucherCreate()**
 
 * **资金授权操作查询接口**
 
-	alipay.fund.auth.operation.detail.query
+	alipay.fund.auth.operation.detail.query - **FundAuthOperationDetailQuery()**
 
 * **资金授权撤销接口**
 	
-	alipay.fund.auth.operation.cancel
+	alipay.fund.auth.operation.cancel - **FundAuthOperationCancel()**
 	
 * **资金授权解冻接口**
 
-	alipay.fund.auth.order.unfreeze
+	alipay.fund.auth.order.unfreeze - **FundAuthOrderUnfreeze()**
 
 * **资金授权冻结接口**
 
-	alipay.fund.auth.order.freeze
+	alipay.fund.auth.order.freeze - **FundAuthOrderFreeze()**
 		
 * **线上资金授权冻结接口**
 	
-	alipay.fund.auth.order.app.freeze
+	alipay.fund.auth.order.app.freeze - **FundAuthOrderAppFreeze()**
+	
+* **查询对账单下载地址**
+	
+	alipay.data.dataservice.bill.downloadurl.query - **BillDownloadURLQuery()**
 
 #### 通知
 	
@@ -214,7 +222,11 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 #### 关于支付宝公钥 (aliPublicKey)
 
-支付宝公钥是从支付宝管理后台获取（不是我们通过工具生成的公钥），该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。
+支付宝公钥是从支付宝管理后台获取 **(不是我们通过工具生成的公钥)**，该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。
+
+#### 关于 alipay.New() 函数中的最后一个参数 isProduction
+
+支付宝提供了用于开发时测试的 sandbox 环境，对接的时候需要注意相关的 app id 和密钥是 sandbox 环境还是 production 环境的。如果是 sandbox 环境，本参数应该传 false，否则为 true。
 
 #### 支持 RSA 签名及验证
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:

@@ -49,7 +49,7 @@ func (this *AliPay) FundAuthOperationDetailQuery(param AliPayFundAuthOperationDe
 	return results, err
 }
 
-// FundTransOrderQuery https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
+// FundAuthOrderAppFreeze https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口
 func (this *AliPay) FundAuthOrderAppFreeze(param AliPayFundAuthOrderAppFreeze) (results string, err error) {
 	p, err := this.URLValues(param)
