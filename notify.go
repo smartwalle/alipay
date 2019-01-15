@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+var (
+	kSuccess = []byte("success")
+)
+
 func NewRequest(method, url string, params url.Values) (*http.Request, error) {
 	var m = strings.ToUpper(method)
 	var body io.Reader
@@ -104,4 +108,13 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 		return nil, err
 	}
 	return noti, err
+}
+
+func (this *AliPay) AckNotification(w http.ResponseWriter) {
+	AckNotification(w)
+}
+
+func AckNotification(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	w.Write(kSuccess)
 }

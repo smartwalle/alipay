@@ -207,6 +207,7 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	} else {
 		fmt.Println("支付失败")
 	}
+	alipay.AckNotification(rep) // 确认收到通知消息
 })
 ```
 
