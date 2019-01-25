@@ -34,11 +34,11 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Ali
 	client.AliPayPublicKey = encoding.FormatPublicKey(aliPublicKey)
 	client.Client = http.DefaultClient
 	if isProduction {
-		client.apiDomain = K_ALI_PAY_PRODUCTION_API_URL
-		client.notifyVerifyDomain = K_ALI_PAY_PRODUCTION_MAPI_URL
+		client.apiDomain = kProductionURL
+		client.notifyVerifyDomain = kProductionMAPIURL
 	} else {
-		client.apiDomain = K_ALI_PAY_SANDBOX_API_URL
-		client.notifyVerifyDomain = K_ALI_PAY_SANDBOX_API_URL
+		client.apiDomain = kSandboxURL
+		client.notifyVerifyDomain = kSandboxURL
 	}
 	client.SignType = K_SIGN_TYPE_RSA2
 	return client
@@ -48,11 +48,11 @@ func (this *AliPay) URLValues(param AliPayParam) (value url.Values, err error) {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
-	p.Add("format", K_FORMAT)
-	p.Add("charset", K_CHARSET)
+	p.Add("format", kFormat)
+	p.Add("charset", kCharset)
 	p.Add("sign_type", this.SignType)
-	p.Add("timestamp", time.Now().Format(K_TIME_FORMAT))
-	p.Add("version", K_VERSION)
+	p.Add("timestamp", time.Now().Format(kTimeFormat))
+	p.Add("version", kVersion)
 
 	if len(param.ExtJSONParamName()) > 0 {
 		p.Add(param.ExtJSONParamName(), param.ExtJSONParamValue())
@@ -93,7 +93,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", K_CONTENT_TYPE_FORM)
+	req.Header.Set("Content-Type", kContentType)
 
 	resp, err := this.Client.Do(req)
 	if resp != nil {
@@ -111,10 +111,10 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	if len(this.AliPayPublicKey) > 0 {
 		var dataStr = string(data)
 
-		var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + k_RESPONSE_SUFFIX
+		var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 
 		var rootIndex = strings.LastIndex(dataStr, rootNodeName)
-		var errorIndex = strings.LastIndex(dataStr, k_ERROR_RESPONSE)
+		var errorIndex = strings.LastIndex(dataStr, kErrorResponse)
 
 		var content string
 		var sign string
@@ -122,7 +122,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 		if rootIndex > 0 {
 			content, sign = parserJSONSource(dataStr, rootNodeName, rootIndex)
 		} else if errorIndex > 0 {
-			content, sign = parserJSONSource(dataStr, k_ERROR_RESPONSE, errorIndex)
+			content, sign = parserJSONSource(dataStr, kErrorResponse, errorIndex)
 		} else {
 			return nil
 		}
@@ -152,7 +152,7 @@ func (this *AliPay) VerifySign(data url.Values) (ok bool, err error) {
 
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
-	var signIndex = strings.LastIndex(rawData, "\""+k_SIGN_NODE_NAME+"\"")
+	var signIndex = strings.LastIndex(rawData, "\""+kSignNodeName+"\"")
 	var dataEndIndex = signIndex - 1
 
 	var indexLen = dataEndIndex - dataStartIndex
@@ -161,7 +161,7 @@ func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content s
 	}
 	content = rawData[dataStartIndex:dataEndIndex]
 
-	var signStartIndex = signIndex + len(k_SIGN_NODE_NAME) + 4
+	var signStartIndex = signIndex + len(kSignNodeName) + 4
 	sign = rawData[signStartIndex:]
 	var signEndIndex = strings.LastIndex(sign, "\"}")
 	sign = sign[:signEndIndex]
