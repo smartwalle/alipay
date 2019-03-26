@@ -400,7 +400,9 @@ func (this AliPayFundAuthOrderAppFreeze) APIName() string {
 
 func (this AliPayFundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	if this.AppAuthToken != "" {
+		m["app_auth_token"] = this.AppAuthToken
+	}
 	m["notify_url"] = this.NotifyURL
 	return m
 }
