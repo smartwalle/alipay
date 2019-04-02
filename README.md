@@ -15,7 +15,7 @@ AliPay SDK for Golang
 
 在集成的过程中有遇到问题，欢迎加 QQ 群 564704807 讨论。
 
-## 微信支付
+## 其它支付
 
 微信支付 [https://github.com/smartwalle/wxpay](https://github.com/smartwalle/wxpay)
 
