@@ -15,7 +15,7 @@ import (
 	"github.com/smartwalle/alipay/encoding"
 )
 
-type AliPay struct {
+type Client struct {
 	appId              string
 	apiDomain          string
 	notifyVerifyDomain string
@@ -26,8 +26,8 @@ type AliPay struct {
 	SignType        string
 }
 
-func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *AliPay) {
-	client = &AliPay{}
+func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Client) {
+	client = &Client{}
 	client.appId = appId
 	//client.partnerId = partnerId
 	client.privateKey = encoding.FormatPrivateKey(privateKey)
@@ -44,7 +44,7 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Ali
 	return client
 }
 
-func (this *AliPay) URLValues(param AliPayParam) (value url.Values, err error) {
+func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
 	p.Add("method", param.APIName())
@@ -79,7 +79,7 @@ func (this *AliPay) URLValues(param AliPayParam) (value url.Values, err error) {
 	return p, nil
 }
 
-func (this *AliPay) doRequest(method string, param AliPayParam, results interface{}) (err error) {
+func (this *Client) doRequest(method string, param Param, results interface{}) (err error) {
 	var buf io.Reader
 	if param != nil {
 		p, err := this.URLValues(param)
@@ -142,11 +142,11 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 	return err
 }
 
-func (this *AliPay) DoRequest(method string, param AliPayParam, results interface{}) (err error) {
+func (this *Client) DoRequest(method string, param Param, results interface{}) (err error) {
 	return this.doRequest(method, param, results)
 }
 
-func (this *AliPay) VerifySign(data url.Values) (ok bool, err error) {
+func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
 	return verifySign(data, this.AliPayPublicKey)
 }
 

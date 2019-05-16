@@ -32,7 +32,7 @@ const (
 	K_SUCCESS_CODE = "10000"
 )
 
-type AliPayParam interface {
+type Param interface {
 	// 用于提供访问的 method
 	APIName() string
 

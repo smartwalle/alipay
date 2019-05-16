@@ -6,8 +6,8 @@ import (
 )
 
 func TestAliPay_FundTransToAccountTransfer(t *testing.T) {
-	t.Log("========== AliPayFundTransToAccountTransfer ==========")
-	var p = alipay.AliPayFundTransToAccountTransfer{}
+	t.Log("========== FundTransToAccountTransfer ==========")
+	var p = alipay.FundTransToAccountTransfer{}
 	p.OutBizNo = "xxxx"
 	p.PayeeType = "ALIPAY_LOGONID"
 	p.PayeeAccount = "xwmkjn7612@sandbox.com"
@@ -16,15 +16,15 @@ func TestAliPay_FundTransToAccountTransfer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Body.Code != alipay.K_SUCCESS_CODE {
-		t.Fatal(rsp.Body.Msg, rsp.Body.SubMsg)
+	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
-	t.Log(rsp.Body.Msg)
+	t.Log(rsp.Content.Msg)
 }
 
 func TestAliPay_FundAuthOrderVoucherCreate(t *testing.T) {
-	t.Log("========== AliPayFundAuthOrderVoucherCreate ==========")
-	var p = alipay.AliPayFundAuthOrderVoucherCreate{}
+	t.Log("========== FundAuthOrderVoucherCreate ==========")
+	var p = alipay.FundAuthOrderVoucherCreate{}
 	p.OutOrderNo = "1111"
 	p.OutRequestNo = "222"
 	p.OrderTitle = "eee"
@@ -33,15 +33,15 @@ func TestAliPay_FundAuthOrderVoucherCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Body.Code != alipay.K_SUCCESS_CODE {
-		t.Fatal(rsp.Body.Msg, rsp.Body.SubMsg)
+	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
-	t.Log(rsp.Body.Msg)
+	t.Log(rsp.Content.Msg)
 }
 
 func TestAliPay_FundAuthOrderAppFreeze(t *testing.T) {
-	t.Log("========== AliPayFundAuthOrderAppFreeze ==========")
-	var p = alipay.AliPayFundAuthOrderAppFreeze{}
+	t.Log("========== FundAuthOrderAppFreeze ==========")
+	var p = alipay.FundAuthOrderAppFreeze{}
 	p.OutOrderNo = "111"
 	p.OutRequestNo = "xxxxx"
 	p.OrderTitle = "test"

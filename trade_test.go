@@ -7,7 +7,7 @@ import (
 
 func TestAliPay_TradeAppPay(t *testing.T) {
 	t.Log("========== TradeAppPay ==========")
-	var p = alipay.AliPayTradeAppPay{}
+	var p = alipay.TradeAppPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.Body = "body"
 	p.Subject = "商品标题"
@@ -23,11 +23,11 @@ func TestAliPay_TradeAppPay(t *testing.T) {
 
 func TestAliPay_TradePagePay(t *testing.T) {
 	t.Log("========== TradePagePay ==========")
-	var p = alipay.AliPayTradePagePay{}
+	var p = alipay.TradePagePay{}
 	p.NotifyURL = "http://220.112.233.229:3000/alipay"
 	p.ReturnURL = "http://220.112.233.229:3000"
 	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_20170623011121"
+	p.OutTradeNo = "trade_no_20170623011121d"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
 	url, err := client.TradePagePay(p)
@@ -39,7 +39,7 @@ func TestAliPay_TradePagePay(t *testing.T) {
 
 func TestAliPay_TradePreCreate(t *testing.T) {
 	t.Log("========== TradePreCreate ==========")
-	var p = alipay.AliPayTradePreCreate{}
+	var p = alipay.TradePreCreate{}
 	p.OutTradeNo = "no_0001"
 	p.Subject = "测试订单"
 	p.TotalAmount = "10.10"
@@ -48,15 +48,15 @@ func TestAliPay_TradePreCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.AliPayPreCreateResponse.Code != alipay.K_SUCCESS_CODE {
-		t.Fatal(rsp.AliPayPreCreateResponse.Msg, rsp.AliPayPreCreateResponse.SubMsg)
+	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
-	t.Log(rsp.AliPayPreCreateResponse.QRCode)
+	t.Log(rsp.Content.QRCode)
 }
 
 func TestAliPay_TradePay(t *testing.T) {
-	t.Log("========== TradePay ==========")
-	var p = alipay.AliPayTradePay{}
+	t.Log("========== Trade ==========")
+	var p = alipay.TradePay{}
 	p.OutTradeNo = "no_000111"
 	p.Subject = "测试订单"
 	p.TotalAmount = "10.10"
@@ -75,7 +75,7 @@ func TestAliPay_TradePay(t *testing.T) {
 
 func TestAliPay_TradeRefund(t *testing.T) {
 	t.Log("========== TradeRefund ==========")
-	var p = alipay.AliPayTradeRefund{}
+	var p = alipay.TradeRefund{}
 	p.RefundAmount = "10"
 	p.OutTradeNo = "trade_no_20170623011121"
 	rsp, err := client.TradeRefund(p)

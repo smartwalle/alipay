@@ -5,7 +5,7 @@ import (
 )
 
 // TradePagePay https://docs.open.alipay.com/270/alipay.trade.page.pay
-func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, err error) {
+func (this *Client) TradePagePay(param TradePagePay) (results *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func (this *AliPay) TradePagePay(param AliPayTradePagePay) (results *url.URL, er
 }
 
 // TradeAppPay https://docs.open.alipay.com/api_1/alipay.trade.app.pay
-func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err error) {
+func (this *Client) TradeAppPay(param TradeAppPay) (results string, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
 		return "", err
@@ -27,62 +27,62 @@ func (this *AliPay) TradeAppPay(param AliPayTradeAppPay) (results string, err er
 	return p.Encode(), err
 }
 
-// TradeFastpayRefundQuery https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
-func (this *AliPay) TradeFastpayRefundQuery(param AliPayFastpayTradeRefundQuery) (results *AliPayFastpayTradeRefundQueryResponse, err error) {
+// TradeFastPayRefundQuery https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
+func (this *Client) TradeFastPayRefundQuery(param TradeFastPayRefundQuery) (results *TradeFastPayRefundQueryRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeOrderSettle https://docs.open.alipay.com/api_1/alipay.trade.order.settle
-func (this *AliPay) TradeOrderSettle(param AliPayTradeOrderSettle) (results *AliPayTradeOrderSettleResponse, err error) {
+func (this *Client) TradeOrderSettle(param TradeOrderSettle) (results *TradeOrderSettleRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeClose https://docs.open.alipay.com/api_1/alipay.trade.close/
-func (this *AliPay) TradeClose(param AliPayTradeClose) (results *AliPayTradeCloseResponse, err error) {
+func (this *Client) TradeClose(param TradeClose) (results *TradeCloseRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeCancel https://docs.open.alipay.com/api_1/alipay.trade.cancel/
-func (this *AliPay) TradeCancel(param AliPayTradeCancel) (results *AliPayTradeCancelResponse, err error) {
+func (this *Client) TradeCancel(param TradeCancel) (results *TradeCancelRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeRefund https://docs.open.alipay.com/api_1/alipay.trade.refund/
-func (this *AliPay) TradeRefund(param AliPayTradeRefund) (results *AliPayTradeRefundResponse, err error) {
+func (this *Client) TradeRefund(param TradeRefund) (results *TradeRefundRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradePreCreate https://docs.open.alipay.com/api_1/alipay.trade.precreate/
-func (this *AliPay) TradePreCreate(param AliPayTradePreCreate) (results *AliPayTradePreCreateResponse, err error) {
+func (this *Client) TradePreCreate(param TradePreCreate) (results *TradePreCreateRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeQuery https://docs.open.alipay.com/api_1/alipay.trade.query/
-func (this *AliPay) TradeQuery(param AliPayTradeQuery) (results *AliPayTradeQueryResponse, err error) {
+func (this *Client) TradeQuery(param TradeQuery) (results *TradeQueryRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeCreate https://docs.open.alipay.com/api_1/alipay.trade.create/
-func (this *AliPay) TradeCreate(param AliPayTradeCreate) (results *AliPayTradeCreateResponse, err error) {
+func (this *Client) TradeCreate(param TradeCreate) (results *TradeCreateRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
-// TradePay https://docs.open.alipay.com/api_1/alipay.trade.pay/
-func (this *AliPay) TradePay(param AliPayTradePay) (results *AliPayTradePayResponse, err error) {
+// Trade https://docs.open.alipay.com/api_1/alipay.trade.pay/
+func (this *Client) TradePay(param TradePay) (results *TradePayRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }
 
 // TradeOrderInfoSync https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
-func (this *AliPay) TradeOrderInfoSync(param AliPayTradeOrderInfoSync) (results *AliPayTradeOrderInfoSyncResponse, err error) {
+func (this *Client) TradeOrderInfoSync(param TradeOrderInfoSync) (results *TradeOrderInfoSyncRsp, err error) {
 	err = this.doRequest("POST", param, &results)
 	return results, err
 }

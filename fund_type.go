@@ -3,7 +3,7 @@ package alipay
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
 // 单笔转账到支付宝账户接口请求结构
-type AliPayFundTransToAccountTransfer struct {
+type FundTransToAccountTransfer struct {
 	AppAuthToken  string `json:"-"`               // 可选
 	OutBizNo      string `json:"out_biz_no"`      // 必选 商户转账唯一订单号
 	PayeeType     string `json:"payee_type"`      // 必选 收款方账户类型,"ALIPAY_LOGONID":支付宝帐号
@@ -14,27 +14,27 @@ type AliPayFundTransToAccountTransfer struct {
 	Remark        string `json:"remark"`          // 可选 转账备注,金额大于50000时必填
 }
 
-func (this AliPayFundTransToAccountTransfer) APIName() string {
+func (this FundTransToAccountTransfer) APIName() string {
 	return "alipay.fund.trans.toaccount.transfer"
 }
 
-func (this AliPayFundTransToAccountTransfer) Params() map[string]string {
+func (this FundTransToAccountTransfer) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayFundTransToAccountTransfer) ExtJSONParamName() string {
+func (this FundTransToAccountTransfer) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundTransToAccountTransfer) ExtJSONParamValue() string {
+func (this FundTransToAccountTransfer) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
 // 单笔转账到支付宝账户接口响应参数
-type AliPayFundTransToAccountTransferResponse struct {
-	Body struct {
+type FundTransToAccountTransferRsp struct {
+	Content struct {
 		Code     string `json:"code"`
 		Msg      string `json:"msg"`
 		SubCode  string `json:"sub_code"`
@@ -46,8 +46,8 @@ type AliPayFundTransToAccountTransferResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayFundTransToAccountTransferResponse) IsSuccess() bool {
-	if this.Body.Code == K_SUCCESS_CODE {
+func (this *FundTransToAccountTransferRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -56,33 +56,33 @@ func (this *AliPayFundTransToAccountTransferResponse) IsSuccess() bool {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
 // 查询转账订单接口请求参数
-type AliPayFundTransOrderQuery struct {
+type FundTransOrderQuery struct {
 	AppAuthToken string `json:"-"`                    // 可选
 	OutBizNo     string `json:"out_biz_no,omitempty"` // 与 OrderId 二选一
 	OrderId      string `json:"order_id,omitempty"`   // 与 OutBizNo 二选一
 }
 
-func (this AliPayFundTransOrderQuery) APIName() string {
+func (this FundTransOrderQuery) APIName() string {
 	return "alipay.fund.trans.order.query"
 }
 
-func (this AliPayFundTransOrderQuery) Params() map[string]string {
+func (this FundTransOrderQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayFundTransOrderQuery) ExtJSONParamName() string {
+func (this FundTransOrderQuery) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundTransOrderQuery) ExtJSONParamValue() string {
+func (this FundTransOrderQuery) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
 // 查询转账订单接口响应参数
-type AliPayFundTransOrderQueryResponse struct {
-	Body struct {
+type FundTransOrderQueryRsp struct {
+	Content struct {
 		Code           string `json:"code"`
 		Msg            string `json:"msg"`
 		SubCode        string `json:"sub_code"`
@@ -99,8 +99,8 @@ type AliPayFundTransOrderQueryResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayFundTransOrderQueryResponse) IsSuccess() bool {
-	if this.Body.Code == K_SUCCESS_CODE {
+func (this *FundTransOrderQueryRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -109,7 +109,7 @@ func (this *AliPayFundTransOrderQueryResponse) IsSuccess() bool {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
 // 资金授权发码接口
-type AliPayFundAuthOrderVoucherCreate struct {
+type FundAuthOrderVoucherCreate struct {
 	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号，创建后不能修改，需要保证在商户端不重复。
@@ -126,27 +126,27 @@ type AliPayFundAuthOrderVoucherCreate struct {
 	EnablePayChannels string `json:"enable_pay_channels,omitempty"` // 可选, 商户可用该参数指定用户可使用的支付渠道，本期支持商户可支持三种支付渠道，余额宝（MONEY_FUND）、花呗（PCREDIT_PAY）以及芝麻信用（CREDITZHIMA）。商户可设置一种支付渠道，也可设置多种支付渠道。
 }
 
-func (this AliPayFundAuthOrderVoucherCreate) APIName() string {
+func (this FundAuthOrderVoucherCreate) APIName() string {
 	return "alipay.fund.auth.order.voucher.create"
 }
 
-func (this AliPayFundAuthOrderVoucherCreate) Params() map[string]string {
+func (this FundAuthOrderVoucherCreate) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayFundAuthOrderVoucherCreate) ExtJSONParamName() string {
+func (this FundAuthOrderVoucherCreate) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOrderVoucherCreate) ExtJSONParamValue() string {
+func (this FundAuthOrderVoucherCreate) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOrderVoucherCreateResponse struct {
-	Body struct {
+type FundAuthOrderVoucherCreateRsp struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
@@ -163,7 +163,7 @@ type AliPayFundAuthOrderVoucherCreateResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
 // 资金授权冻结接口
-type AliPayFundAuthOrderFreeze struct {
+type FundAuthOrderFreeze struct {
 	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthCode     string `json:"auth_code"`                // 必选, 支付授权码，25~30开头的长度为16~24位的数字，实际字符串长度以开发者获取的付款码长度为准
@@ -179,27 +179,27 @@ type AliPayFundAuthOrderFreeze struct {
 	ProductCode  string `json:"product_code,omitempty"`   // 可选, 销售产品码，后续新接入预授权当面付的业务，本字段取值固定为PRE_AUTH。
 }
 
-func (this AliPayFundAuthOrderFreeze) APIName() string {
+func (this FundAuthOrderFreeze) APIName() string {
 	return "alipay.fund.auth.order.voucher.create"
 }
 
-func (this AliPayFundAuthOrderFreeze) Params() map[string]string {
+func (this FundAuthOrderFreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayFundAuthOrderFreeze) ExtJSONParamName() string {
+func (this FundAuthOrderFreeze) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOrderFreeze) ExtJSONParamValue() string {
+func (this FundAuthOrderFreeze) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOrderFreezeResponse struct {
-	Body struct {
+type FundAuthOrderFreezeRsp struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
@@ -219,7 +219,7 @@ type AliPayFundAuthOrderFreezeResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
 // 资金授权解冻接口
-type AliPayFundAuthOrderUnfreeze struct {
+type FundAuthOrderUnfreeze struct {
 	NotifyURL    string `json:"-"`
 	AuthNo       string `json:"auth_no"`               // 必选,支付宝资金授权订单号,支付宝冻结时返回的交易号，数字格式 2016101210002001810258115912
 	AppAuthToken string `json:"-"`                     // 可选
@@ -229,27 +229,27 @@ type AliPayFundAuthOrderUnfreeze struct {
 	ExtraParam   string `json:"extra_param,omitempty"` // 可选, 解冻扩展信息，json格式；unfreezeBizInfo 目前为芝麻消费字段，支持Key值如下： "bizComplete":"true" -- 选填：标识本次解冻用户是否履约，如果true信用单会完结为COMPLETE
 }
 
-func (this AliPayFundAuthOrderUnfreeze) APIName() string {
+func (this FundAuthOrderUnfreeze) APIName() string {
 	return "alipay.fund.auth.order.unfreeze"
 }
 
-func (this AliPayFundAuthOrderUnfreeze) Params() map[string]string {
+func (this FundAuthOrderUnfreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayFundAuthOrderUnfreeze) ExtJSONParamName() string {
+func (this FundAuthOrderUnfreeze) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOrderUnfreeze) ExtJSONParamValue() string {
+func (this FundAuthOrderUnfreeze) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOrderUnfreezeResponse struct {
-	Body struct {
+type FundAuthOrderUnfreezeRsp struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
@@ -270,7 +270,7 @@ type AliPayFundAuthOrderUnfreezeResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 // 资金授权撤销接口
-type AliPayFundAuthOperationCancel struct {
+type FundAuthOperationCancel struct {
 	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthNo       string `json:"auth_no,omitempty"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
@@ -280,27 +280,27 @@ type AliPayFundAuthOperationCancel struct {
 	Remark       string `json:"remark"`                   // 必选, 商户对本次撤销操作的附言描述，长度不超过100个字母或50个汉字
 }
 
-func (this AliPayFundAuthOperationCancel) APIName() string {
+func (this FundAuthOperationCancel) APIName() string {
 	return "alipay.fund.auth.operation.cancel"
 }
 
-func (this AliPayFundAuthOperationCancel) Params() map[string]string {
+func (this FundAuthOperationCancel) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayFundAuthOperationCancel) ExtJSONParamName() string {
+func (this FundAuthOperationCancel) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOperationCancel) ExtJSONParamValue() string {
+func (this FundAuthOperationCancel) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOperationCancelResponse struct {
-	Body struct {
+type FundAuthOperationCancelRsp struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
@@ -317,7 +317,7 @@ type AliPayFundAuthOperationCancelResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
 // 资金授权操作查询接口
-type AliPayFundAuthOperationDetailQuery struct {
+type FundAuthOperationDetailQuery struct {
 	AppAuthToken string `json:"-"`              // 可选
 	AuthNo       string `json:"auth_no"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
 	OutOrderNo   string `json:"out_order_no"`   // 特殊可选, 商户的授权资金订单号，与支付宝的授权资金订单号不能同时为空，二者都存在时，以支付宝的授权资金订单号为准，该参数与商户的授权资金操作流水号配对使用。
@@ -325,26 +325,26 @@ type AliPayFundAuthOperationDetailQuery struct {
 	OutRequestNo string `json:"out_request_no"` // 特殊可选, 商户的授权资金操作流水号，与支付宝的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与商户的授权资金订单号配对使用。
 }
 
-func (this AliPayFundAuthOperationDetailQuery) APIName() string {
+func (this FundAuthOperationDetailQuery) APIName() string {
 	return "alipay.fund.auth.operation.detail.query"
 }
 
-func (this AliPayFundAuthOperationDetailQuery) Params() map[string]string {
+func (this FundAuthOperationDetailQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayFundAuthOperationDetailQuery) ExtJSONParamName() string {
+func (this FundAuthOperationDetailQuery) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOperationDetailQuery) ExtJSONParamValue() string {
+func (this FundAuthOperationDetailQuery) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOperationDetailQueryResponse struct {
-	Body struct {
+type FundAuthOperationDetailQueryRsp struct {
+	Content struct {
 		AuthNo                  string `json:"auth_no"`
 		OutOrderNo              string `json:"out_order_no"`
 		TotalFreezeAmount       string `json:"total_freeze_amount"`
@@ -379,7 +379,7 @@ type AliPayFundAuthOperationDetailQueryResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
-type AliPayFundAuthOrderAppFreeze struct {
+type FundAuthOrderAppFreeze struct {
 	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号 ,不能包含除中文、英文、数字以外的字符，创建后不能修改，需要保证在商户端不重复。
@@ -394,11 +394,11 @@ type AliPayFundAuthOrderAppFreeze struct {
 	EnablePayChannels string `json:"enable_pay_channels,omitempty"` // 商户可用该参数指定用户可使用的支付渠道，本期支持商户可支持三种支付渠道，余额宝（MONEY_FUND）、花呗（PCREDIT_PAY）以及芝麻信用（CREDITZHIMA）。商户可设置一种支付渠道，也可设置多种支付渠道。
 }
 
-func (this AliPayFundAuthOrderAppFreeze) APIName() string {
+func (this FundAuthOrderAppFreeze) APIName() string {
 	return "alipay.fund.auth.order.app.freeze"
 }
 
-func (this AliPayFundAuthOrderAppFreeze) Params() map[string]string {
+func (this FundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
 	if this.AppAuthToken != "" {
 		m["app_auth_token"] = this.AppAuthToken
@@ -407,15 +407,15 @@ func (this AliPayFundAuthOrderAppFreeze) Params() map[string]string {
 	return m
 }
 
-func (this AliPayFundAuthOrderAppFreeze) ExtJSONParamName() string {
+func (this FundAuthOrderAppFreeze) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFundAuthOrderAppFreeze) ExtJSONParamValue() string {
+func (this FundAuthOrderAppFreeze) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFundAuthOrderAppFreezeResponse struct {
+type FundAuthOrderAppFreezeRsp struct {
 	Body struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`

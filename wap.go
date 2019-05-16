@@ -7,7 +7,7 @@ import (
 )
 
 // TradeWapPay https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
-func (this *AliPay) TradeWapPay(param AliPayTradeWapPay) (url *url.URL, err error) {
+func (this *Client) TradeWapPay(param TradeWapPay) (url *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
 		return nil, err

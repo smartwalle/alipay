@@ -30,7 +30,7 @@ func NewRequest(method, url string, params url.Values) (*http.Request, error) {
 	return http.NewRequest(m, url, body)
 }
 
-func (this *AliPay) NotifyVerify(partnerId, notifyId string) bool {
+func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	var param = url.Values{}
 	param.Add("service", "notify_verify")
 	param.Add("partner", partnerId)
@@ -56,7 +56,7 @@ func (this *AliPay) NotifyVerify(partnerId, notifyId string) bool {
 	return false
 }
 
-func (this *AliPay) GetTradeNotification(req *http.Request) (*TradeNotification, error) {
+func (this *Client) GetTradeNotification(req *http.Request) (*TradeNotification, error) {
 	return GetTradeNotification(req, this.AliPayPublicKey)
 }
 
@@ -110,7 +110,7 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 	return noti, err
 }
 
-func (this *AliPay) AckNotification(w http.ResponseWriter) {
+func (this *Client) AckNotification(w http.ResponseWriter) {
 	AckNotification(w)
 }
 

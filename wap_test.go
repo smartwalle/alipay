@@ -7,7 +7,7 @@ import (
 
 func TestAliPay_TradeWapPay(t *testing.T) {
 	t.Log("========== TradeWapPay ==========")
-	var p = alipay.AliPayTradeWapPay{}
+	var p = alipay.TradeWapPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
 	p.ReturnURL = "http://203.86.24.181:3000"
 	p.Subject = "修正了中文的 Bug"

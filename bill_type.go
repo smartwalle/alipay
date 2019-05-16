@@ -25,8 +25,8 @@ func (this BillDownloadURLQuery) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type BillDownloadURLQueryResponse struct {
-	AliPayDataServiceBillDownloadURLQueryResponse struct {
+type BillDownloadURLQueryRsp struct {
+	Content struct {
 		Code            string `json:"code"`
 		Msg             string `json:"msg"`
 		SubCode         string `json:"sub_code"`

@@ -3,7 +3,7 @@ package alipay
 import "encoding/json"
 
 ////////////////////////////////////////////////////////////////////////////////
-type TradePay struct {
+type Trade struct {
 	NotifyURL string `json:"-"`
 	ReturnURL string `json:"-"`
 
@@ -34,30 +34,30 @@ type TradePay struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay
-type AliPayTradePagePay struct {
-	TradePay
+type TradePagePay struct {
+	Trade
 	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
 	GoodsDetail string `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
 	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
 	QRCodeWidth string `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
 }
 
-func (this AliPayTradePagePay) APIName() string {
+func (this TradePagePay) APIName() string {
 	return "alipay.trade.page.pay"
 }
 
-func (this AliPayTradePagePay) Params() map[string]string {
+func (this TradePagePay) Params() map[string]string {
 	var m = make(map[string]string)
 	m["notify_url"] = this.NotifyURL
 	m["return_url"] = this.ReturnURL
 	return m
 }
 
-func (this AliPayTradePagePay) ExtJSONParamName() string {
+func (this TradePagePay) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradePagePay) ExtJSONParamValue() string {
+func (this TradePagePay) ExtJSONParamValue() string {
 	var bytes, err = json.Marshal(this)
 	if err != nil {
 		return ""
@@ -74,32 +74,32 @@ const (
 )
 
 // https://docs.open.alipay.com/api_1/alipay.trade.query/
-type AliPayTradeQuery struct {
+type TradeQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 订单支付时传入的商户订单号, 与 TradeNo 二选一
 	TradeNo      string `json:"trade_no,omitempty"`     // 支付宝交易号
 }
 
-func (this AliPayTradeQuery) APIName() string {
+func (this TradeQuery) APIName() string {
 	return "alipay.trade.query"
 }
 
-func (this AliPayTradeQuery) Params() map[string]string {
+func (this TradeQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayTradeQuery) ExtJSONParamName() string {
+func (this TradeQuery) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeQuery) ExtJSONParamValue() string {
+func (this TradeQuery) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeQueryResponse struct {
-	AliPayTradeQuery struct {
+type TradeQueryRsp struct {
+	Content struct {
 		Code             string `json:"code"`
 		Msg              string `json:"msg"`
 		SubCode          string `json:"sub_code"`
@@ -154,8 +154,8 @@ type VoucherDetail struct {
 	Memo               string `json:"memo"`                // 优惠券备注信息
 }
 
-func (this *AliPayTradeQueryResponse) IsSuccess() bool {
-	if this.AliPayTradeQuery.Code == K_SUCCESS_CODE {
+func (this *TradeQueryRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -163,7 +163,7 @@ func (this *AliPayTradeQueryResponse) IsSuccess() bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.close/
-type AliPayTradeClose struct {
+type TradeClose struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	NotifyURL    string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -171,26 +171,26 @@ type AliPayTradeClose struct {
 	OperatorId   string `json:"operator_id,omitempty"`  // 可选
 }
 
-func (this AliPayTradeClose) APIName() string {
+func (this TradeClose) APIName() string {
 	return "alipay.trade.close"
 }
 
-func (this AliPayTradeClose) Params() map[string]string {
+func (this TradeClose) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradeClose) ExtJSONParamName() string {
+func (this TradeClose) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeClose) ExtJSONParamValue() string {
+func (this TradeClose) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeCloseResponse struct {
+type TradeCloseRsp struct {
 	AliPayTradeClose struct {
 		Code       string `json:"code"`
 		Msg        string `json:"msg"`
@@ -204,7 +204,7 @@ type AliPayTradeCloseResponse struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.refund/
-type AliPayTradeRefund struct {
+type TradeRefund struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
 	TradeNo      string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
@@ -216,25 +216,25 @@ type AliPayTradeRefund struct {
 	TerminalId   string `json:"terminal_id"`            // 可选 商户的终端编号
 }
 
-func (this AliPayTradeRefund) APIName() string {
+func (this TradeRefund) APIName() string {
 	return "alipay.trade.refund"
 }
 
-func (this AliPayTradeRefund) Params() map[string]string {
+func (this TradeRefund) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayTradeRefund) ExtJSONParamName() string {
+func (this TradeRefund) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeRefund) ExtJSONParamValue() string {
+func (this TradeRefund) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeRefundResponse struct {
+type TradeRefundRsp struct {
 	AliPayTradeRefund struct {
 		Code                 string              `json:"code"`
 		Msg                  string              `json:"msg"`
@@ -253,7 +253,7 @@ type AliPayTradeRefundResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayTradeRefundResponse) IsSuccess() bool {
+func (this *TradeRefundRsp) IsSuccess() bool {
 	if this.AliPayTradeRefund.Code == K_SUCCESS_CODE {
 		return true
 	}
@@ -268,33 +268,33 @@ type RefundDetailItem struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
-type AliPayFastpayTradeRefundQuery struct {
+type TradeFastPayRefundQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
 	TradeNo      string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
 	OutRequestNo string `json:"out_request_no"`         // 必须 请求退款接口时，传入的退款请求号，如果在退款请求时未传入，则该值为创建交易时的外部交易号
 }
 
-func (this AliPayFastpayTradeRefundQuery) APIName() string {
+func (this TradeFastPayRefundQuery) APIName() string {
 	return "alipay.trade.fastpay.refund.query"
 }
 
-func (this AliPayFastpayTradeRefundQuery) Params() map[string]string {
+func (this TradeFastPayRefundQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayFastpayTradeRefundQuery) ExtJSONParamName() string {
+func (this TradeFastPayRefundQuery) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayFastpayTradeRefundQuery) ExtJSONParamValue() string {
+func (this TradeFastPayRefundQuery) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayFastpayTradeRefundQueryResponse struct {
-	AliPayTradeFastpayRefundQueryResponse struct {
+type TradeFastPayRefundQueryRsp struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
@@ -309,8 +309,8 @@ type AliPayFastpayTradeRefundQueryResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayFastpayTradeRefundQueryResponse) IsSuccess() bool {
-	if this.AliPayTradeFastpayRefundQueryResponse.Code == K_SUCCESS_CODE {
+func (this *TradeFastPayRefundQueryRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -318,7 +318,7 @@ func (this *AliPayFastpayTradeRefundQueryResponse) IsSuccess() bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.order.settle
-type AliPayTradeOrderSettle struct {
+type TradeOrderSettle struct {
 	AppAuthToken      string              `json:"-"`                  // 可选
 	OutRequestNo      string              `json:"out_request_no"`     // 必须 结算请求流水号 开发者自行生成并保证唯一性
 	TradeNo           string              `json:"trade_no"`           // 必须 支付宝订单号
@@ -326,21 +326,21 @@ type AliPayTradeOrderSettle struct {
 	OperatorId        string              `json:"operator_id"`        //可选 操作员id
 }
 
-func (this AliPayTradeOrderSettle) APIName() string {
+func (this TradeOrderSettle) APIName() string {
 	return "alipay.trade.order.settle"
 }
 
-func (this AliPayTradeOrderSettle) Params() map[string]string {
+func (this TradeOrderSettle) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayTradeOrderSettle) ExtJSONParamName() string {
+func (this TradeOrderSettle) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeOrderSettle) ExtJSONParamValue() string {
+func (this TradeOrderSettle) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
@@ -352,7 +352,7 @@ type RoyaltyParameter struct {
 	Desc             string  `json:"desc"`                        // 可选 分账描述
 }
 
-type AliPayTradeOrderSettleResponse struct {
+type TradeOrderSettleRsp struct {
 	Body struct {
 		Code    string `json:"code"`
 		Msg     string `json:"msg"`
@@ -365,8 +365,8 @@ type AliPayTradeOrderSettleResponse struct {
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.create/
-type AliPayTradeCreate struct {
-	TradePay
+type TradeCreate struct {
+	Trade
 	AppAuthToken string `json:"-"` // 可选
 
 	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
@@ -376,27 +376,27 @@ type AliPayTradeCreate struct {
 	TerminalId         string             `json:"terminal_id"`
 }
 
-func (this AliPayTradeCreate) APIName() string {
+func (this TradeCreate) APIName() string {
 	return "alipay.trade.create"
 }
 
-func (this AliPayTradeCreate) Params() map[string]string {
+func (this TradeCreate) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradeCreate) ExtJSONParamName() string {
+func (this TradeCreate) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeCreate) ExtJSONParamValue() string {
+func (this TradeCreate) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeCreateResponse struct {
-	AliPayTradeCreateResponse struct {
+type TradeCreateRsp struct {
+	Content struct {
 		Code       string `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
@@ -450,8 +450,8 @@ type GoodsDetailItem struct {
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.pay/
-type AliPayTradePay struct {
-	TradePay
+type TradePay struct {
+	Trade
 	AppAuthToken string `json:"-"` // 可选
 
 	Scene    string `json:"scene"`               // 必须 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code, bar_code, wave_code
@@ -469,26 +469,26 @@ type AliPayTradePay struct {
 	TerminalParams     string             `json:"terminal_params,omitempty"`
 }
 
-func (this AliPayTradePay) APIName() string {
+func (this TradePay) APIName() string {
 	return "alipay.trade.pay"
 }
 
-func (this AliPayTradePay) Params() map[string]string {
+func (this TradePay) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradePay) ExtJSONParamName() string {
+func (this TradePay) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradePay) ExtJSONParamValue() string {
+func (this TradePay) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradePayResponse struct {
+type TradePayRsp struct {
 	AliPayTradePay struct {
 		Code                string           `json:"code"`
 		Msg                 string           `json:"msg"`
@@ -513,7 +513,7 @@ type AliPayTradePayResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayTradePayResponse) IsSuccess() bool {
+func (this *TradePayRsp) IsSuccess() bool {
 	if this.AliPayTradePay.Code == K_SUCCESS_CODE {
 		return true
 	}
@@ -522,33 +522,33 @@ func (this *AliPayTradePayResponse) IsSuccess() bool {
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
-type AliPayTradeAppPay struct {
-	TradePay
+type TradeAppPay struct {
+	Trade
 	TimeExpire string `json:"time_expire,omitempty"` // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
 }
 
-func (this AliPayTradeAppPay) APIName() string {
+func (this TradeAppPay) APIName() string {
 	return "alipay.trade.app.pay"
 }
 
-func (this AliPayTradeAppPay) Params() map[string]string {
+func (this TradeAppPay) Params() map[string]string {
 	var m = make(map[string]string)
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradeAppPay) ExtJSONParamName() string {
+func (this TradeAppPay) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeAppPay) ExtJSONParamValue() string {
+func (this TradeAppPay) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.precreate/
-type AliPayTradePreCreate struct {
-	TradePay
+type TradePreCreate struct {
+	Trade
 	AppAuthToken       string             `json:"-"`                      // 可选
 	DiscountableAmount string             `json:"discountable_amount"`    // 可选 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】，【不可打折金额】则该值默认为【订单总金额】-【不可打折金额】
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"` // 可选 订单包含的商品列表信息.Json格式. 其它说明详见：“商品明细说明”
@@ -556,27 +556,27 @@ type AliPayTradePreCreate struct {
 	TerminalId         string             `json:"terminal_id"`            // 可选 商户机具终端编号
 }
 
-func (this AliPayTradePreCreate) APIName() string {
+func (this TradePreCreate) APIName() string {
 	return "alipay.trade.precreate"
 }
 
-func (this AliPayTradePreCreate) Params() map[string]string {
+func (this TradePreCreate) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradePreCreate) ExtJSONParamName() string {
+func (this TradePreCreate) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradePreCreate) ExtJSONParamValue() string {
+func (this TradePreCreate) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradePreCreateResponse struct {
-	AliPayPreCreateResponse struct {
+type TradePreCreateRsp struct {
+	Content struct {
 		Code       string `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
@@ -587,8 +587,8 @@ type AliPayTradePreCreateResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayTradePreCreateResponse) IsSuccess() bool {
-	if this.AliPayPreCreateResponse.Code == K_SUCCESS_CODE {
+func (this *TradePreCreateRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -596,7 +596,7 @@ func (this *AliPayTradePreCreateResponse) IsSuccess() bool {
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.cancel/
-type AliPayTradeCancel struct {
+type TradeCancel struct {
 	AppAuthToken string `json:"-"` // 可选
 	NotifyURL    string `json:"-"` // 可选
 
@@ -604,27 +604,27 @@ type AliPayTradeCancel struct {
 	TradeNo    string `json:"trade_no"`     // 支付宝交易号，和商户订单号不能同时为空
 }
 
-func (this AliPayTradeCancel) APIName() string {
+func (this TradeCancel) APIName() string {
 	return "alipay.trade.cancel"
 }
 
-func (this AliPayTradeCancel) Params() map[string]string {
+func (this TradeCancel) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-func (this AliPayTradeCancel) ExtJSONParamName() string {
+func (this TradeCancel) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeCancel) ExtJSONParamValue() string {
+func (this TradeCancel) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeCancelResponse struct {
-	AliPayTradeCancelResponse struct {
+type TradeCancelRsp struct {
+	Content struct {
 		Code       string `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
@@ -637,8 +637,8 @@ type AliPayTradeCancelResponse struct {
 	Sign string `json:"sign"`
 }
 
-func (this *AliPayTradeCancelResponse) IsSuccess() bool {
-	if this.AliPayTradeCancelResponse.Code == K_SUCCESS_CODE {
+func (this *TradeCancelRsp) IsSuccess() bool {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -646,7 +646,7 @@ func (this *AliPayTradeCancelResponse) IsSuccess() bool {
 
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
-type AliPayTradeOrderInfoSync struct {
+type TradeOrderInfoSync struct {
 	AppAuthToken string `json:"-"`              // 可选
 	OutRequestNo string `json:"out_request_no"` // 必选 标识一笔交易多次请求，同一笔交易多次信息同步时需要保证唯一
 	BizType      string `json:"biz_type"`       // 必选 交易信息同步对应的业务类型，具体值与支付宝约定；信用授权场景下传CREDIT_AUTH
@@ -654,26 +654,26 @@ type AliPayTradeOrderInfoSync struct {
 	OrderBizInfo string `json:"order_biz_info"` // 可选 商户传入同步信息，具体值要和支付宝约定；用于芝麻信用租车、单次授权等信息同步场景，格式为json格式
 }
 
-func (this AliPayTradeOrderInfoSync) APIName() string {
+func (this TradeOrderInfoSync) APIName() string {
 	return "alipay.trade.orderinfo.sync"
 }
 
-func (this AliPayTradeOrderInfoSync) Params() map[string]string {
+func (this TradeOrderInfoSync) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
 }
 
-func (this AliPayTradeOrderInfoSync) ExtJSONParamName() string {
+func (this TradeOrderInfoSync) ExtJSONParamName() string {
 	return "biz_content"
 }
 
-func (this AliPayTradeOrderInfoSync) ExtJSONParamValue() string {
+func (this TradeOrderInfoSync) ExtJSONParamValue() string {
 	return marshal(this)
 }
 
-type AliPayTradeOrderInfoSyncResponse struct {
-	Body struct {
+type TradeOrderInfoSyncRsp struct {
+	Content struct {
 		Code        string `json:"code"`
 		Msg         string `json:"msg"`
 		SubCode     string `json:"sub_code"`
