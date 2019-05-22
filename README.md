@@ -146,7 +146,7 @@ var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的�
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client = alipay.New(appId, aliPublicKey, privateKey, false)
 
-var p = TradeWapPay{}
+var p = alipay.TradeWapPay{}
 p.NotifyURL = "http://xxx"
 p.ReturnURL = "http://xxx"
 p.Subject = "标题"
@@ -179,7 +179,7 @@ var client = alipay.New(appId, aliPublicKey, privateKey, false)
 发起支付的时候，当我们有提供 Return URL 参数，那么支付成功之后，支付宝将会重定向到该 URL，并附带上相关的参数。
 
 ```Golang
-var p = TradeWapPay{}
+var p = alipay.TradeWapPay{}
 p.ReturnURL = "http://xxx/return"
 ```
 
