@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -124,13 +125,15 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 		} else if errorIndex > 0 {
 			content, sign = parserJSONSource(dataStr, k_ERROR_RESPONSE, errorIndex)
 		} else {
-			return nil
+			return errors.New("no sign content found")
 		}
 
 		if sign != "" {
 			if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
 				return err
 			}
+		} else {
+			return errors.New("no sign content found")
 		}
 	}
 
@@ -139,7 +142,11 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 		return err
 	}
 
-	return err
+	if results == nil {
+		return errors.New("results is nil")
+	}
+
+	return nil
 }
 
 func (this *AliPay) DoRequest(method string, param AliPayParam, results interface{}) (err error) {
