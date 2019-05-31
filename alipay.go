@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +14,10 @@ import (
 	"time"
 
 	"github.com/smartwalle/alipay/encoding"
+)
+
+var (
+	kSignNotFound = errors.New("alipay: sign content not found")
 )
 
 type AliPay struct {
@@ -124,13 +129,15 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 		} else if errorIndex > 0 {
 			content, sign = parserJSONSource(dataStr, kErrorResponse, errorIndex)
 		} else {
-			return nil
+			return kSignNotFound
 		}
 
 		if sign != "" {
-			if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
-				return err
-			}
+			return kSignNotFound
+		}
+
+		if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
+			return err
 		}
 	}
 
