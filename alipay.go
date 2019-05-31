@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +14,10 @@ import (
 	"time"
 
 	"github.com/smartwalle/alipay/encoding"
+)
+
+var (
+	kSignNotFound = errors.New("alipay: sign content not found")
 )
 
 type Client struct {
@@ -79,7 +84,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	return p, nil
 }
 
-func (this *Client) doRequest(method string, param Param, results interface{}) (err error) {
+func (this *Client) doRequest(method string, param Param, result interface{}) (err error) {
 	var buf io.Reader
 	if param != nil {
 		p, err := this.URLValues(param)
@@ -124,17 +129,19 @@ func (this *Client) doRequest(method string, param Param, results interface{}) (
 		} else if errorIndex > 0 {
 			content, sign = parserJSONSource(dataStr, kErrorResponse, errorIndex)
 		} else {
-			return nil
+			return kSignNotFound
 		}
 
-		if sign != "" {
-			if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
-				return err
-			}
+		if sign == "" {
+			return kSignNotFound
+		}
+
+		if ok, err := verifyData([]byte(content), this.SignType, sign, this.AliPayPublicKey); ok == false {
+			return err
 		}
 	}
 
-	err = json.Unmarshal(data, results)
+	err = json.Unmarshal(data, result)
 	if err != nil {
 		return err
 	}
@@ -142,8 +149,8 @@ func (this *Client) doRequest(method string, param Param, results interface{}) (
 	return err
 }
 
-func (this *Client) DoRequest(method string, param Param, results interface{}) (err error) {
-	return this.doRequest(method, param, results)
+func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
+	return this.doRequest(method, param, result)
 }
 
 func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
