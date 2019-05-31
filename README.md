@@ -133,7 +133,7 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 
 参考[官网文档](https://docs.open.alipay.com/200/105894) 进行应用的配置。
 
-本 SDK 中的签名方法默认为 **RSA2**，采用支付宝提供的 [RSA签名&验签工具](https://docs.open.alipay.com/291/105971) 生成秘钥时，建议秘钥的格式采用 **PKCS1**，秘钥长度采用 **2048**。所以在支付宝管理后台请注意配置 **RSA2(SHA256)密钥**。
+本 SDK 中的签名方法默认为 **RSA2**，采用支付宝提供的 [RSA签名&验签工具](https://docs.open.alipay.com/291/105971) 生成秘钥时，秘钥的格式必须为 **PKCS1**，秘钥长度推荐 **2048**。所以在支付宝管理后台请注意配置 **RSA2(SHA256)密钥**。
 
 生成秘钥对之后，将公钥提供给支付宝（通过支付宝后台上传）对我们请求的数据进行签名验证，我们的代码中将使用私钥对请求数据签名。
 
@@ -144,7 +144,13 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 ``` Golang
 var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的公钥，通过支付宝管理后台获取
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
-var client = alipay.New(appId, aliPublicKey, privateKey, false)
+var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
+
+// 将 key 的验证调整到初始化阶段
+if err != nil {
+	fmt.Println(err)
+	return
+}
 
 var p = alipay.TradeWapPay{}
 p.NotifyURL = "http://xxx"
@@ -171,7 +177,7 @@ fmt.Println(payURL)
 如果需要开启自动验签，只需要在初始化 AliPay 对象的时候提供 **aliPublicKey** 参数，该参数的值为支付宝管理后台获取到的支付宝公钥，如下：
 
 ``` Golang
-var client = alipay.New(appId, aliPublicKey, privateKey, false)
+var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
 ```
 
 #### Return URL
@@ -187,7 +193,7 @@ p.ReturnURL = "http://xxx/return"
 
 
 ```Golang
-var client = alipay.New(appId, aliPublicKey, privateKey, false)
+var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
 
 http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
@@ -196,7 +202,7 @@ http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 }
 ```
 
-#### 验证支付结果
+#### 异步验证支付结果
 
 有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递会相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
 
@@ -204,7 +210,7 @@ http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 
 ```Golang
 
-var client = alipay.New(appId, aliPublicKey, privateKey, false)
+var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
  
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
@@ -239,7 +245,7 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:
 
 ```Golang
-var client = alipay.New(...)
+var client, err = alipay.New(...)
 client.SignType = alipay.K_SIGN_TYPE_RSA
 ```
 

@@ -56,11 +56,7 @@ func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	return false
 }
 
-func (this *Client) GetTradeNotification(req *http.Request) (*TradeNotification, error) {
-	return GetTradeNotification(req, this.AliPayPublicKey)
-}
-
-func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *TradeNotification, err error) {
+func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
@@ -103,7 +99,7 @@ func GetTradeNotification(req *http.Request, aliPayPublicKey []byte) (noti *Trad
 	//	return nil, errors.New("不是有效的 Notify")
 	//}
 
-	ok, err := verifySign(req.Form, aliPayPublicKey)
+	ok, err := this.VerifySign(req.Form)
 	if ok == false {
 		return nil, err
 	}

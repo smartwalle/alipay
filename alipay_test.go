@@ -1,7 +1,9 @@
 package alipay_test
 
 import (
+	"fmt"
 	"github.com/smartwalle/alipay"
+	"os"
 )
 
 var (
@@ -16,5 +18,11 @@ var (
 var client *alipay.Client
 
 func init() {
-	client = alipay.New(appID, aliPublicKey, privateKey, false)
+	var err error
+	client, err = alipay.New(appID, aliPublicKey, privateKey, false)
+
+	if err != nil {
+		fmt.Println("初始化支付宝失败, 错误信息为", err)
+		os.Exit(-1)
+	}
 }
