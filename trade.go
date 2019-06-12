@@ -4,7 +4,7 @@ import (
 	"net/url"
 )
 
-// TradePagePay https://docs.open.alipay.com/270/alipay.trade.page.pay
+// TradePagePay https://docs.open.alipay.com/api_1/alipay.trade.page.pay
 func (this *Client) TradePagePay(param TradePagePay) (results *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {

@@ -27,9 +27,17 @@ func TestAliPay_TradePagePay(t *testing.T) {
 	p.NotifyURL = "http://220.112.233.229:3000/alipay"
 	p.ReturnURL = "http://220.112.233.229:3000"
 	p.Subject = "修正了中文的 Bug"
-	p.OutTradeNo = "trade_no_20170623011121d"
+	p.OutTradeNo = "trade_no_20170623011121d1"
 	p.TotalAmount = "10.00"
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+
+	p.GoodsDetail = []*alipay.GoodsDetail{&alipay.GoodsDetail{
+		GoodsId:   "123",
+		GoodsName: "xxx",
+		Quantity:  1,
+		Price:     13,
+	}}
+
 	url, err := client.TradePagePay(p)
 	if err != nil {
 		t.Fatal(err)

@@ -36,10 +36,22 @@ type Trade struct {
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 type TradePagePay struct {
 	Trade
-	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
-	GoodsDetail string `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
-	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
-	QRCodeWidth string `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
+	AuthToken   string         `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
+	GoodsDetail []*GoodsDetail `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
+	QRPayMode   string         `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
+	QRCodeWidth string         `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
+}
+
+type GoodsDetail struct {
+	GoodsId        string  `json:"goods_id"`
+	AliPayGoodsId  string  `json:"alipay_goods_id,omitempty"`
+	GoodsName      string  `json:"goods_name"`
+	Quantity       int     `json:"quantity"`
+	Price          float64 `json:"price"`
+	GoodsCategory  string  `json:"goods_category,omitempty"`
+	CategoriesTree string  `json:"categories_tree,omitempty"`
+	Body           string  `json:"body,omitempty"`
+	ShowURL        string  `json:"show_url,omitempty"`
 }
 
 func (this TradePagePay) APIName() string {
