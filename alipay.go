@@ -132,7 +132,7 @@ func (this *AliPay) doRequest(method string, param AliPayParam, results interfac
 			return kSignNotFound
 		}
 
-		if sign != "" {
+		if sign == "" {
 			return kSignNotFound
 		}
 
