@@ -172,7 +172,7 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 }
 
 func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
-	return verifySign(data, this.aliPublicKey)
+	return VerifySignRSA(data, this.aliPublicKey)
 }
 
 func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
@@ -221,10 +221,10 @@ func VerifySign(data url.Values, key []byte) (ok bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	return verifySign(data, pub)
+	return VerifySignRSA(data, pub)
 }
 
-func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
+func VerifySignRSA(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	sign := data.Get("sign")
 	signType := data.Get("sign_type")
 
