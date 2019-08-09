@@ -22,6 +22,7 @@ var (
 )
 
 type Client struct {
+	isProduction       bool
 	appId              string
 	apiDomain          string
 	notifyVerifyDomain string
@@ -51,12 +52,13 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 	}
 
 	client = &Client{}
+	client.isProduction = isProduction
 	client.appId = appId
 	client.appPrivateKey = pri
 	client.aliPublicKey = pub
 
 	client.Client = http.DefaultClient
-	if isProduction {
+	if client.isProduction {
 		client.apiDomain = kProductionURL
 		client.notifyVerifyDomain = kProductionMAPIURL
 	} else {
