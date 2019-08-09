@@ -33,10 +33,7 @@ func TestClient_UserCertifyOpenCertify(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
-	}
-	t.Log(rsp.Content.Msg)
+	t.Log(rsp)
 }
 
 func TestClient_UserCertifyOpenQuery(t *testing.T) {
