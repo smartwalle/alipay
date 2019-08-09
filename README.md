@@ -112,6 +112,19 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 * **查询对账单下载地址**
 	
 	alipay.data.dataservice.bill.downloadurl.query - **BillDownloadURLQuery()**
+	
+* **身份认证初始化服务**
+
+    alipay.user.certify.open.initialize - **UserCertifyOpenInitialize()**
+    
+* **身份认证开始认证**
+
+    alipay.user.certify.open.certify - **UserCertifyOpenCertify()**
+    
+* **身份认证记录查询**
+
+    alipay.user.certify.open.query - **UserCertifyOpenQuery()**
+
 
 #### 通知
 	
