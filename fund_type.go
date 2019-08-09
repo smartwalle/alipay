@@ -416,7 +416,7 @@ func (this FundAuthOrderAppFreeze) ExtJSONParamValue() string {
 }
 
 type FundAuthOrderAppFreezeRsp struct {
-	Body struct {
+	Content struct {
 		Code         string `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`

@@ -203,7 +203,7 @@ func (this TradeClose) ExtJSONParamValue() string {
 }
 
 type TradeCloseRsp struct {
-	AliPayTradeClose struct {
+	Content struct {
 		Code       string `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
@@ -247,7 +247,7 @@ func (this TradeRefund) ExtJSONParamValue() string {
 }
 
 type TradeRefundRsp struct {
-	AliPayTradeRefund struct {
+	Content struct {
 		Code                 string              `json:"code"`
 		Msg                  string              `json:"msg"`
 		SubCode              string              `json:"sub_code"`
@@ -266,7 +266,7 @@ type TradeRefundRsp struct {
 }
 
 func (this *TradeRefundRsp) IsSuccess() bool {
-	if this.AliPayTradeRefund.Code == K_SUCCESS_CODE {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false
@@ -365,7 +365,7 @@ type RoyaltyParameter struct {
 }
 
 type TradeOrderSettleRsp struct {
-	Body struct {
+	Content struct {
 		Code    string `json:"code"`
 		Msg     string `json:"msg"`
 		SubCode string `json:"sub_code"`
@@ -501,7 +501,7 @@ func (this TradePay) ExtJSONParamValue() string {
 }
 
 type TradePayRsp struct {
-	AliPayTradePay struct {
+	Content struct {
 		Code                string           `json:"code"`
 		Msg                 string           `json:"msg"`
 		SubCode             string           `json:"sub_code"`
@@ -526,7 +526,7 @@ type TradePayRsp struct {
 }
 
 func (this *TradePayRsp) IsSuccess() bool {
-	if this.AliPayTradePay.Code == K_SUCCESS_CODE {
+	if this.Content.Code == K_SUCCESS_CODE {
 		return true
 	}
 	return false

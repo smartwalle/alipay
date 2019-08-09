@@ -75,10 +75,10 @@ func TestAliPay_TradePay(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.AliPayTradePay.Code != alipay.K_SUCCESS_CODE {
-		t.Fatal(rsp.AliPayTradePay.Msg, rsp.AliPayTradePay.SubMsg)
+	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
-	t.Log(rsp.AliPayTradePay.Msg)
+	t.Log(rsp.Content.Msg)
 }
 
 func TestAliPay_TradeRefund(t *testing.T) {
@@ -90,5 +90,5 @@ func TestAliPay_TradeRefund(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%v", rsp.AliPayTradeRefund)
+	t.Logf("%v", rsp.Content)
 }
