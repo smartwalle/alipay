@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAliPay_TradeAppPay(t *testing.T) {
+func TestClient_TradeAppPay(t *testing.T) {
 	t.Log("========== TradeAppPay ==========")
 	var p = alipay.TradeAppPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
@@ -21,7 +21,7 @@ func TestAliPay_TradeAppPay(t *testing.T) {
 	t.Log(param)
 }
 
-func TestAliPay_TradePagePay(t *testing.T) {
+func TestClient_TradePagePay(t *testing.T) {
 	t.Log("========== TradePagePay ==========")
 	var p = alipay.TradePagePay{}
 	p.NotifyURL = "http://220.112.233.229:3000/alipay"
@@ -45,7 +45,7 @@ func TestAliPay_TradePagePay(t *testing.T) {
 	t.Log(url)
 }
 
-func TestAliPay_TradePreCreate(t *testing.T) {
+func TestClient_TradePreCreate(t *testing.T) {
 	t.Log("========== TradePreCreate ==========")
 	var p = alipay.TradePreCreate{}
 	p.OutTradeNo = "no_0001"
@@ -62,7 +62,7 @@ func TestAliPay_TradePreCreate(t *testing.T) {
 	t.Log(rsp.Content.QRCode)
 }
 
-func TestAliPay_TradePay(t *testing.T) {
+func TestClient_TradePay(t *testing.T) {
 	t.Log("========== Trade ==========")
 	var p = alipay.TradePay{}
 	p.OutTradeNo = "no_000111"
@@ -81,7 +81,7 @@ func TestAliPay_TradePay(t *testing.T) {
 	t.Log(rsp.Content.Msg)
 }
 
-func TestAliPay_TradeRefund(t *testing.T) {
+func TestClient_TradeRefund(t *testing.T) {
 	t.Log("========== TradeRefund ==========")
 	var p = alipay.TradeRefund{}
 	p.RefundAmount = "10"

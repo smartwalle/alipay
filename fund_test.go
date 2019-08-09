@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAliPay_FundTransToAccountTransfer(t *testing.T) {
+func TestClient_FundTransToAccountTransfer(t *testing.T) {
 	t.Log("========== FundTransToAccountTransfer ==========")
 	var p = alipay.FundTransToAccountTransfer{}
 	p.OutBizNo = "xxxx"
@@ -22,7 +22,7 @@ func TestAliPay_FundTransToAccountTransfer(t *testing.T) {
 	t.Log(rsp.Content.Msg)
 }
 
-func TestAliPay_FundAuthOrderVoucherCreate(t *testing.T) {
+func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
 	t.Log("========== FundAuthOrderVoucherCreate ==========")
 	var p = alipay.FundAuthOrderVoucherCreate{}
 	p.OutOrderNo = "1111"
@@ -39,7 +39,7 @@ func TestAliPay_FundAuthOrderVoucherCreate(t *testing.T) {
 	t.Log(rsp.Content.Msg)
 }
 
-func TestAliPay_FundAuthOrderAppFreeze(t *testing.T) {
+func TestClient_FundAuthOrderAppFreeze(t *testing.T) {
 	t.Log("========== FundAuthOrderAppFreeze ==========")
 	var p = alipay.FundAuthOrderAppFreeze{}
 	p.OutOrderNo = "111"

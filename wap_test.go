@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAliPay_TradeWapPay(t *testing.T) {
+func TestClient_TradeWapPay(t *testing.T) {
 	t.Log("========== TradeWapPay ==========")
 	var p = alipay.TradeWapPay{}
 	p.NotifyURL = "http://203.86.24.181:3000/alipay"
