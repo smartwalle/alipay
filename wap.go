@@ -1,10 +1,18 @@
 package alipay
 
+import "net/url"
+
 // TradeWapPay https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
-func (this *Client) TradeWapPay(param TradeWapPay) (url string, err error) {
+func (this *Client) TradeWapPay(param TradeWapPay) (result *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return this.apiDomain + "?" + p.Encode(), nil
+
+	result, err = url.Parse(this.apiDomain + "?" + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
 }
