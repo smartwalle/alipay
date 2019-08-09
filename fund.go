@@ -21,36 +21,31 @@ func (this *Client) FundAuthOrderVoucherCreate(param FundAuthOrderVoucherCreate)
 	return result, err
 }
 
-// FundAuthOrderFreeze https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
-// 资金授权冻结接口
+// FundAuthOrderFreeze 资金授权冻结接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
 func (this *Client) FundAuthOrderFreeze(param FundAuthOrderFreeze) (result *FundAuthOrderFreezeRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundAuthOrderUnfreeze https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
-// 资金授权解冻接口
+// FundAuthOrderUnfreeze 资金授权解冻接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
 func (this *Client) FundAuthOrderUnfreeze(param FundAuthOrderUnfreeze) (result *FundAuthOrderUnfreezeRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundAuthOperationCancel https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
-// 资金授权撤销接口
+// FundAuthOperationCancel 资金授权撤销接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 func (this *Client) FundAuthOperationCancel(param FundAuthOperationCancel) (result *FundAuthOperationCancelRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundAuthOperationDetailQuery https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
-// 资金授权操作查询接口
+// FundAuthOperationDetailQuery 资金授权操作查询接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
 func (this *Client) FundAuthOperationDetailQuery(param FundAuthOperationDetailQuery) (result *FundAuthOperationDetailQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundAuthOrderAppFreeze https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
-// 线上资金授权冻结接口
+// FundAuthOrderAppFreeze 线上资金授权冻结接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 func (this *Client) FundAuthOrderAppFreeze(param FundAuthOrderAppFreeze) (result string, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {

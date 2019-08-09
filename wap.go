@@ -2,7 +2,7 @@ package alipay
 
 import "net/url"
 
-// TradeWapPay https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
+// TradeWapPay 手机网站支付接口 https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
 func (this *Client) TradeWapPay(param TradeWapPay) (result *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {

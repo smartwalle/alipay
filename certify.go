@@ -2,13 +2,13 @@ package alipay
 
 import "net/url"
 
-// UserCertifyOpenInitialize https://docs.open.alipay.com/api_2/alipay.user.certify.open.initialize
+// UserCertifyOpenInitialize 身份认证初始化服务 https://docs.open.alipay.com/api_2/alipay.user.certify.open.initialize
 func (this *Client) UserCertifyOpenInitialize(param UserCertifyOpenInitialize) (result *UserCertifyOpenInitializeRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// UserCertifyOpenCertify https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
+// UserCertifyOpenCertify 身份认证开始认证 https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
 func (this *Client) UserCertifyOpenCertify(param UserCertifyOpenCertify) (result *url.URL, err error) {
 	p, err := this.URLValues(param)
 	if err != nil {
@@ -23,7 +23,7 @@ func (this *Client) UserCertifyOpenCertify(param UserCertifyOpenCertify) (result
 	return result, err
 }
 
-// UserCertifyOpenQuery https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
+// UserCertifyOpenQuery 身份认证记录查询 https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
 func (this *Client) UserCertifyOpenQuery(param UserCertifyOpenQuery) (result *UserCertifyOpenQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
