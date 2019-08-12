@@ -15,7 +15,7 @@ func TestClient_SystemOauthToken(t *testing.T) {
 	t.Log("========== SystemOauthToken ==========")
 	var p = alipay.SystemOauthToken{}
 	p.GrantType = "authorization_code"
-	p.Code = "b0a51da9949144f290cdd5ed3bfaRX31"
+	p.Code = "aac6328ccb5048f5b5896ca5b659OX31"
 	rsp, err := client.SystemOauthToken(p)
 	if err != nil {
 		t.Fatal(err)
