@@ -24,10 +24,10 @@ func (this *Client) PublicAppAuthorize(scopes []string, redirectURI, state strin
 	if err != nil {
 		return nil, err
 	}
-	return result, err
+	return result, nil
 }
 
-// https://docs.open.alipay.com/api_9/alipay.system.oauth.token
+// SystemOauthToken 换取授权访问令牌 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 func (this *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	if result != nil {
@@ -43,8 +43,32 @@ func (this *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOaut
 	return result, err
 }
 
-// https://docs.open.alipay.com/api_2/alipay.user.info.share
+// UserInfoShare 支付宝会员授权信息查询接口 https://docs.open.alipay.com/api_2/alipay.user.info.share
 func (this *Client) UserInfoShare(param UserInfoShare) (result *UserInfoShareRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}
+
+// AppToAppAuth 第三方应用授权 https://docs.open.alipay.com/20160728150111277227/intro
+func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error) {
+	var domain = kSandboxAppToAppAuth
+	if this.isProduction {
+		domain = kProductionAppToAppAuth
+	}
+
+	var p = url.Values{}
+	p.Set("app_id", this.appId)
+	p.Set("redirect_uri", redirectURI)
+
+	result, err = url.Parse(domain + "?" + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// 换取应用授权令牌 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
+func (this *Client) OpenAuthTokenApp(param OpenAuthTokenApp) (result *OpenAuthTokenAppRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
