@@ -17,14 +17,6 @@ func (this BillDownloadURLQuery) Params() map[string]string {
 	return m
 }
 
-func (this BillDownloadURLQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this BillDownloadURLQuery) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type BillDownloadURLQueryRsp struct {
 	Content struct {
 		Code            string `json:"code"`

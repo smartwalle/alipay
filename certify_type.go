@@ -55,14 +55,6 @@ func (this UserCertifyOpenInitialize) Params() map[string]string {
 	return m
 }
 
-func (this UserCertifyOpenInitialize) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this UserCertifyOpenInitialize) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type UserCertifyOpenInitializeRsp struct {
 	Content struct {
 		Code      string `json:"code"`
@@ -91,14 +83,6 @@ func (this UserCertifyOpenCertify) Params() map[string]string {
 	return m
 }
 
-func (this UserCertifyOpenCertify) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this UserCertifyOpenCertify) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type UserCertifyOpenCertifyRsp struct {
 	Content struct {
 		Code    string `json:"code"`
@@ -124,14 +108,6 @@ func (this UserCertifyOpenQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this UserCertifyOpenQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this UserCertifyOpenQuery) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type UserCertifyOpenQueryRsp struct {

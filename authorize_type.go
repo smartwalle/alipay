@@ -31,14 +31,6 @@ func (this SystemOauthToken) Params() map[string]string {
 	return m
 }
 
-func (this SystemOauthToken) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this SystemOauthToken) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type SystemOauthTokenRsp struct {
 	Content struct {
 		Code         string `json:"code"`
@@ -76,14 +68,6 @@ func (this UserInfoShare) Params() map[string]string {
 	m["app_auth_token"] = this.AppAuthToken
 	m["auth_token"] = this.AuthToken
 	return m
-}
-
-func (this UserInfoShare) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this UserInfoShare) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type UserInfoShareRsp struct {

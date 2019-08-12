@@ -24,14 +24,6 @@ func (this FundTransToAccountTransfer) Params() map[string]string {
 	return m
 }
 
-func (this FundTransToAccountTransfer) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundTransToAccountTransfer) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 // 单笔转账到支付宝账户接口响应参数
 type FundTransToAccountTransferRsp struct {
 	Content struct {
@@ -70,14 +62,6 @@ func (this FundTransOrderQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this FundTransOrderQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundTransOrderQuery) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 // 查询转账订单接口响应参数
@@ -137,14 +121,6 @@ func (this FundAuthOrderVoucherCreate) Params() map[string]string {
 	return m
 }
 
-func (this FundAuthOrderVoucherCreate) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOrderVoucherCreate) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type FundAuthOrderVoucherCreateRsp struct {
 	Content struct {
 		Code         string `json:"code"`
@@ -190,14 +166,6 @@ func (this FundAuthOrderFreeze) Params() map[string]string {
 	return m
 }
 
-func (this FundAuthOrderFreeze) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOrderFreeze) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type FundAuthOrderFreezeRsp struct {
 	Content struct {
 		Code         string `json:"code"`
@@ -238,14 +206,6 @@ func (this FundAuthOrderUnfreeze) Params() map[string]string {
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
-}
-
-func (this FundAuthOrderUnfreeze) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOrderUnfreeze) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type FundAuthOrderUnfreezeRsp struct {
@@ -291,14 +251,6 @@ func (this FundAuthOperationCancel) Params() map[string]string {
 	return m
 }
 
-func (this FundAuthOperationCancel) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOperationCancel) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type FundAuthOperationCancelRsp struct {
 	Content struct {
 		Code         string `json:"code"`
@@ -333,14 +285,6 @@ func (this FundAuthOperationDetailQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this FundAuthOperationDetailQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOperationDetailQuery) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type FundAuthOperationDetailQueryRsp struct {
@@ -405,14 +349,6 @@ func (this FundAuthOrderAppFreeze) Params() map[string]string {
 	}
 	m["notify_url"] = this.NotifyURL
 	return m
-}
-
-func (this FundAuthOrderAppFreeze) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this FundAuthOrderAppFreeze) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type FundAuthOrderAppFreezeRsp struct {

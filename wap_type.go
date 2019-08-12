@@ -1,9 +1,5 @@
 package alipay
 
-import (
-	"encoding/json"
-)
-
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
 type TradeWapPay struct {
@@ -22,16 +18,4 @@ func (this TradeWapPay) Params() map[string]string {
 	m["notify_url"] = this.NotifyURL
 	m["return_url"] = this.ReturnURL
 	return m
-}
-
-func (this TradeWapPay) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeWapPay) ExtJSONParamValue() string {
-	var bytes, err = json.Marshal(this)
-	if err != nil {
-		return ""
-	}
-	return string(bytes)
 }

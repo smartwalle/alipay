@@ -1,7 +1,5 @@
 package alipay
 
-import "encoding/json"
-
 ////////////////////////////////////////////////////////////////////////////////
 type Trade struct {
 	NotifyURL string `json:"-"`
@@ -65,18 +63,6 @@ func (this TradePagePay) Params() map[string]string {
 	return m
 }
 
-func (this TradePagePay) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradePagePay) ExtJSONParamValue() string {
-	var bytes, err = json.Marshal(this)
-	if err != nil {
-		return ""
-	}
-	return string(bytes)
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 const (
 	K_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" //（交易创建，等待买家付款）
@@ -100,14 +86,6 @@ func (this TradeQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this TradeQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeQuery) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type TradeQueryRsp struct {
@@ -194,14 +172,6 @@ func (this TradeClose) Params() map[string]string {
 	return m
 }
 
-func (this TradeClose) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeClose) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type TradeCloseRsp struct {
 	Content struct {
 		Code       string `json:"code"`
@@ -236,14 +206,6 @@ func (this TradeRefund) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this TradeRefund) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeRefund) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type TradeRefundRsp struct {
@@ -297,14 +259,6 @@ func (this TradeFastPayRefundQuery) Params() map[string]string {
 	return m
 }
 
-func (this TradeFastPayRefundQuery) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeFastPayRefundQuery) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type TradeFastPayRefundQueryRsp struct {
 	Content struct {
 		Code         string `json:"code"`
@@ -348,14 +302,6 @@ func (this TradeOrderSettle) Params() map[string]string {
 	return m
 }
 
-func (this TradeOrderSettle) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeOrderSettle) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type RoyaltyParameter struct {
 	TransOut         string  `json:"trans_out"`                   // 可选 分账支出方账户，类型为userId，本参数为要分账的支付宝账号对应的支付宝唯一用户号。以2088开头的纯16位数字。
 	TransIn          string  `json:"trans_in"`                    // 可选 分账收入方账户，类型为userId，本参数为要分账的支付宝账号对应的支付宝唯一用户号。以2088开头的纯16位数字。
@@ -397,14 +343,6 @@ func (this TradeCreate) Params() map[string]string {
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
-}
-
-func (this TradeCreate) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeCreate) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type TradeCreateRsp struct {
@@ -492,14 +430,6 @@ func (this TradePay) Params() map[string]string {
 	return m
 }
 
-func (this TradePay) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradePay) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type TradePayRsp struct {
 	Content struct {
 		Code                string           `json:"code"`
@@ -549,14 +479,6 @@ func (this TradeAppPay) Params() map[string]string {
 	return m
 }
 
-func (this TradeAppPay) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeAppPay) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 //////////////////////////////////////////////////////////////////////////////////
 // https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type TradePreCreate struct {
@@ -577,14 +499,6 @@ func (this TradePreCreate) Params() map[string]string {
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
-}
-
-func (this TradePreCreate) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradePreCreate) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type TradePreCreateRsp struct {
@@ -627,14 +541,6 @@ func (this TradeCancel) Params() map[string]string {
 	return m
 }
 
-func (this TradeCancel) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeCancel) ExtJSONParamValue() string {
-	return marshal(this)
-}
-
 type TradeCancelRsp struct {
 	Content struct {
 		Code       string `json:"code"`
@@ -674,14 +580,6 @@ func (this TradeOrderInfoSync) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
-}
-
-func (this TradeOrderInfoSync) ExtJSONParamName() string {
-	return "biz_content"
-}
-
-func (this TradeOrderInfoSync) ExtJSONParamValue() string {
-	return marshal(this)
 }
 
 type TradeOrderInfoSyncRsp struct {

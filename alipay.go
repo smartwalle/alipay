@@ -79,9 +79,11 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	p.Add("timestamp", time.Now().Format(kTimeFormat))
 	p.Add("version", kVersion)
 
-	if len(param.ExtJSONParamName()) > 0 {
-		p.Add(param.ExtJSONParamName(), param.ExtJSONParamValue())
+	bytes, err := json.Marshal(param)
+	if err != nil {
+		return nil, err
 	}
+	p.Add("biz_content", string(bytes))
 
 	var ps = param.Params()
 	if ps != nil {
