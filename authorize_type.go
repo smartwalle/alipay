@@ -5,6 +5,8 @@ const (
 	kSandboxPublicAppAuthorize    = "https://openauth.alipaydev.com/oauth2/publicAppAuthorize.htm"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 type SystemOauthToken struct {
 	AppAuthToken string `json:"-"`          // 可选
 	GrantType    string `json:"grant_type"` // 值为 authorization_code 时，代表用code换取；值为refresh_token时，代表用refresh_token换取
@@ -55,5 +57,52 @@ type SystemOauthTokenRsp struct {
 		SubCode string `json:"sub_code"`
 		SubMsg  string `json:"sub_msg"`
 	} `json:"error_response"` // 不要访问此结构体
+	Sign string `json:"sign"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// https://docs.open.alipay.com/api_2/alipay.user.info.share
+type UserInfoShare struct {
+	AppAuthToken string `json:"-"` // 可选
+	AuthToken    string `json:"-"` // 是
+}
+
+func (this UserInfoShare) APIName() string {
+	return "alipay.user.info.share"
+}
+
+func (this UserInfoShare) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["auth_token"] = this.AuthToken
+	return m
+}
+
+func (this UserInfoShare) ExtJSONParamName() string {
+	return "biz_content"
+}
+
+func (this UserInfoShare) ExtJSONParamValue() string {
+	return marshal(this)
+}
+
+type UserInfoShareRsp struct {
+	Content struct {
+		Code               string `json:"code"`
+		Msg                string `json:"msg"`
+		SubCode            string `json:"sub_code"`
+		SubMsg             string `json:"sub_msg"`
+		AuthNo             string `json:"auth_no"`
+		UserId             string `json:"user_id"`
+		Avatar             string `json:"avatar"`
+		Province           string `json:"province"`
+		City               string `json:"city"`
+		NickName           string `json:"nick_name"`
+		IsStudentCertified string `json:"is_student_certified"`
+		UserType           string `json:"user_type"`
+		UserStatus         string `json:"user_status"`
+		IsCertified        string `json:"is_certified"`
+		Gender             string `json:"gender"`
+	} `json:"alipay_user_info_share_response"`
 	Sign string `json:"sign"`
 }

@@ -124,6 +124,18 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 * **身份认证记录查询**
 
     alipay.user.certify.open.query - **UserCertifyOpenQuery()**
+    
+* **用户信息授权(网站支付宝登录快速接入)**
+    
+    生成授权链接 - **PublicAppAuthorize()**
+    
+* **换取授权访问令牌**
+
+    alipay.system.oauth.token - **SystemOauthToken()**
+    
+* **支付宝会员授权信息查询接口**
+    
+    alipay.user.info.share - **UserInfoShare()** 
 
 
 #### 通知

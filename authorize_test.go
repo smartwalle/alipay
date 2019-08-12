@@ -1,7 +1,6 @@
 package alipay_test
 
 import (
-	"fmt"
 	"github.com/smartwalle/alipay"
 	"testing"
 )
@@ -16,9 +15,8 @@ func TestClient_SystemOauthToken(t *testing.T) {
 	t.Log("========== SystemOauthToken ==========")
 	var p = alipay.SystemOauthToken{}
 	p.GrantType = "authorization_code"
-	p.Code = "0a59d92a24564661afd00221b0dbOC31"
+	p.Code = "0bb679f49d444197bdb1e7e08cafWX31"
 	rsp, err := client.SystemOauthToken(p)
-	fmt.Println(rsp, err)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,4 +24,18 @@ func TestClient_SystemOauthToken(t *testing.T) {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.UserId, rsp.Content.AccessToken)
+}
+
+func TestClient_UserInfoShare(t *testing.T) {
+	t.Log("========== UserInfoShare ==========")
+	var p = alipay.UserInfoShare{}
+	p.AuthToken = "authusrB82e8d260db754bbf8e02ed7beb195E31"
+	rsp, err := client.UserInfoShare(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+	}
+	t.Log(rsp.Content.UserId, rsp.Content.Avatar)
 }

@@ -28,15 +28,23 @@ func (this *Client) PublicAppAuthorize(scopes []string, redirectURI, state strin
 }
 
 // https://docs.open.alipay.com/api_9/alipay.system.oauth.token
-func (this *Client) SystemOauthToken(param SystemOauthToken) (result SystemOauthTokenRsp, err error) {
+func (this *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
 	err = this.doRequest("POST", param, &result)
-	if result.Error != nil {
-		result.Content.Code = result.Error.Code
-		result.Content.Msg = result.Error.Msg
-		result.Content.SubCode = result.Error.SubCode
-		result.Content.SubMsg = result.Error.SubMsg
-	} else {
-		result.Content.Code = K_SUCCESS_CODE
+	if result != nil {
+		if result.Error != nil {
+			result.Content.Code = result.Error.Code
+			result.Content.Msg = result.Error.Msg
+			result.Content.SubCode = result.Error.SubCode
+			result.Content.SubMsg = result.Error.SubMsg
+		} else {
+			result.Content.Code = K_SUCCESS_CODE
+		}
 	}
+	return result, err
+}
+
+// https://docs.open.alipay.com/api_2/alipay.user.info.share
+func (this *Client) UserInfoShare(param UserInfoShare) (result *UserInfoShareRsp, err error) {
+	err = this.doRequest("POST", param, &result)
 	return result, err
 }
