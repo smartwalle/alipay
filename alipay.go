@@ -233,23 +233,20 @@ func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	signType := data.Get("sign_type")
 
 	var keys = make([]string, 0, 0)
-	for key, value := range data {
+	for key := range data {
 		if key == "sign" || key == "sign_type" {
 			continue
 		}
-		if len(value) > 0 {
-			keys = append(keys, key)
-		}
+		keys = append(keys, key)
 	}
 
 	sort.Strings(keys)
 
 	var pList = make([]string, 0, 0)
 	for _, key := range keys {
-		var value = strings.TrimSpace(data.Get(key))
-		if len(value) > 0 {
-			pList = append(pList, key+"="+value)
-		}
+		// 此处忠实于支付宝返回参数，文档中并未提及value两边去除空格，以及空value的处理
+		// 实际遇到的问题是 标题后带空格被trim后验签错误
+		pList = append(pList, key+"="+data.Get(key))
 	}
 	var s = strings.Join(pList, "&")
 
