@@ -259,6 +259,13 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	if rootIndex > 0 {
 		content, certSN, sign = parseJSONSource(dataStr, rootNodeName, rootIndex)
 		if sign == "" {
+			var errRsp *ErrorRsp
+			if err = json.Unmarshal([]byte(content), &errRsp); err != nil {
+				return err
+			}
+			if errRsp != nil {
+				return errRsp
+			}
 			return kSignNotFound
 		}
 	} else if errorIndex > 0 {
