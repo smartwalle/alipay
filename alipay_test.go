@@ -25,4 +25,11 @@ func init() {
 		fmt.Println("初始化支付宝失败, 错误信息为", err)
 		os.Exit(-1)
 	}
+
+	if client.IsProduction() {
+		// https://docs.open.alipay.com/291/105971#Krqvg
+		fmt.Println("加载证书", client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt"))
+		fmt.Println("加载证书", client.LoadAliPayRootCertFromFile("alipayRootCert.crt"))
+		fmt.Println("加载证书", client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt"))
+	}
 }

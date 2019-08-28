@@ -2,14 +2,19 @@ package alipay
 
 import (
 	"crypto"
+	"crypto/md5"
 	"crypto/rsa"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -18,7 +23,8 @@ import (
 )
 
 var (
-	kSignNotFound = errors.New("alipay: sign content not found")
+	kSignNotFound         = errors.New("alipay: sign content not found")
+	kAliPublicKeyNotFound = errors.New("alipay: alipay public key not found")
 )
 
 type Client struct {
@@ -29,7 +35,10 @@ type Client struct {
 	appPrivateKey      *rsa.PrivateKey // 应用私钥
 	aliPublicKey       *rsa.PublicKey  // 支付宝公钥
 	Client             *http.Client
-	SignType           string
+
+	appCertSN        string
+	rootCertSN       string
+	aliPublicKeyList map[string]*rsa.PublicKey
 }
 
 // New 初始化支付宝客户端
@@ -44,7 +53,7 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 	}
 
 	var pub *rsa.PublicKey
-	if len(aliPublicKey) > 0 {
+	if len(aliPublicKey) > 0 && isProduction == false {
 		pub, err = encoding.ParsePKCS1PublicKey(encoding.FormatPublicKey(aliPublicKey))
 		if err != nil {
 			return nil, err
@@ -65,8 +74,109 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 		client.apiDomain = kSandboxURL
 		client.notifyVerifyDomain = kSandboxURL
 	}
-	client.SignType = K_SIGN_TYPE_RSA2
+	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
 	return client, nil
+}
+
+func (this *Client) IsProduction() bool {
+	return this.isProduction
+}
+
+func getCertSN(cert *x509.Certificate) string {
+	var value = md5.Sum([]byte(cert.Issuer.String() + cert.SerialNumber.String()))
+	return hex.EncodeToString(value[:])
+}
+
+func (this *Client) LoadAppPublicCert(s string) error {
+	cert, err := encoding.LoadCertificate([]byte(s))
+	if err != nil {
+		return err
+	}
+	this.appCertSN = getCertSN(cert)
+	return nil
+}
+
+func (this *Client) LoadAppPublicCertFromFile(p string) error {
+	file, err := os.Open(p)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	return this.LoadAppPublicCert(string(b))
+}
+
+func (this *Client) LoadAliPayPublicCert(s string) error {
+	cert, err := encoding.LoadCertificate([]byte(s))
+	if err != nil {
+		return err
+	}
+
+	key, ok := cert.PublicKey.(*rsa.PublicKey)
+	if ok == false {
+		return nil
+	}
+
+	this.aliPublicKeyList[getCertSN(cert)] = key
+
+	if this.aliPublicKey == nil {
+		this.aliPublicKey = key
+	}
+	return nil
+}
+
+func (this *Client) LoadAliPayPublicCertFromFile(p string) error {
+	file, err := os.Open(p)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	return this.LoadAliPayPublicCert(string(b))
+}
+
+func (this *Client) LoadAliPayRootCert(s string) error {
+	var certStrList = strings.Split(s, kCertificateEnd)
+
+	var certSNList = make([]string, 0, len(certStrList))
+
+	for _, certStr := range certStrList {
+		certStr = certStr + kCertificateEnd
+
+		var cert, _ = encoding.LoadCertificate([]byte(certStr))
+		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
+			certSNList = append(certSNList, getCertSN(cert))
+		}
+	}
+
+	this.rootCertSN = strings.Join(certSNList, "_")
+	return nil
+}
+
+func (this *Client) LoadAliPayRootCertFromFile(p string) error {
+	file, err := os.Open(p)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+
+	if err != nil {
+		return err
+	}
+
+	return this.LoadAliPayRootCert(string(b))
 }
 
 func (this *Client) URLValues(param Param) (value url.Values, err error) {
@@ -75,9 +185,15 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	p.Add("method", param.APIName())
 	p.Add("format", kFormat)
 	p.Add("charset", kCharset)
-	p.Add("sign_type", this.SignType)
+	p.Add("sign_type", kSignTypeRSA2)
 	p.Add("timestamp", time.Now().Format(kTimeFormat))
 	p.Add("version", kVersion)
+	if this.appCertSN != "" {
+		p.Add("app_cert_sn", this.appCertSN)
+	}
+	if this.rootCertSN != "" {
+		p.Add("alipay_root_cert_sn", this.rootCertSN)
+	}
 
 	bytes, err := json.Marshal(param)
 	if err != nil {
@@ -92,13 +208,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 		}
 	}
 
-	var hash crypto.Hash
-	if this.SignType == K_SIGN_TYPE_RSA {
-		hash = crypto.SHA1
-	} else {
-		hash = crypto.SHA256
-	}
-	sign, err := signWithPKCS1v15(p, this.appPrivateKey, hash)
+	sign, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
 	if err != nil {
 		return nil, err
 	}
@@ -135,32 +245,46 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return err
 	}
 
-	if this.aliPublicKey != nil {
-		var dataStr = string(data)
+	var dataStr = string(data)
 
-		var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
+	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 
-		var rootIndex = strings.LastIndex(dataStr, rootNodeName)
-		var errorIndex = strings.LastIndex(dataStr, kErrorResponse)
+	var rootIndex = strings.LastIndex(dataStr, rootNodeName)
+	var errorIndex = strings.LastIndex(dataStr, kErrorResponse)
 
-		var content string
-		var sign string
+	var content string
+	var certSN string
+	var sign string
 
-		if rootIndex > 0 {
-			content, sign = parserJSONSource(dataStr, rootNodeName, rootIndex)
-		} else if errorIndex > 0 {
-			content, sign = parserJSONSource(dataStr, kErrorResponse, errorIndex)
-		} else {
-			return kSignNotFound
+	if rootIndex > 0 {
+		content, certSN, sign = parseJSONSource(dataStr, rootNodeName, rootIndex)
+	} else if errorIndex > 0 {
+		content, certSN, sign = parseJSONSource(dataStr, kErrorResponse, errorIndex)
+	} else {
+		return kSignNotFound
+	}
+
+	if sign == "" {
+		return kSignNotFound
+	}
+
+	var publicKey *rsa.PublicKey
+
+	if this.isProduction {
+		publicKey = this.aliPublicKeyList[certSN]
+	} else {
+		publicKey = this.aliPublicKey
+	}
+
+	if publicKey == nil {
+		if this.isProduction {
+			// TODO https://docs.open.alipay.com/api_9/alipay.open.app.alipaycert.download 下载新的证书
 		}
+		return kAliPublicKeyNotFound
+	}
 
-		if sign == "" {
-			return kSignNotFound
-		}
-
-		if ok, err := verifyData([]byte(content), this.SignType, sign, this.aliPublicKey); ok == false {
-			return err
-		}
+	if ok, err := verifyData([]byte(content), sign, publicKey); ok == false {
+		return err
 	}
 
 	err = json.Unmarshal(data, result)
@@ -179,23 +303,38 @@ func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
 	return verifySign(data, this.aliPublicKey)
 }
 
-func parserJSONSource(rawData string, nodeName string, nodeIndex int) (content string, sign string) {
+func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, certSN, sign string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
 	var signIndex = strings.LastIndex(rawData, "\""+kSignNodeName+"\"")
-	var dataEndIndex = signIndex - 1
+	var certIndex = strings.LastIndex(rawData, "\""+kCertSNNodeName+"\"")
+	var dataEndIndex int
+
+	if signIndex > 0 && certIndex > 0 {
+		dataEndIndex = int(math.Min(float64(signIndex), float64(certIndex))) - 1
+	} else if certIndex > 0 {
+		dataEndIndex = certIndex - 1
+	} else {
+		dataEndIndex = signIndex - 1
+	}
 
 	var indexLen = dataEndIndex - dataStartIndex
 	if indexLen < 0 {
-		return "", ""
+		return "", "", ""
 	}
 	content = rawData[dataStartIndex:dataEndIndex]
 
+	if certIndex > 0 {
+		var certStartIndex = certIndex + len(kCertSNNodeName) + 4
+		certSN = rawData[certStartIndex:]
+		var certEndIndex = strings.Index(certSN, "\"")
+		certSN = certSN[:certEndIndex]
+	}
+
 	var signStartIndex = signIndex + len(kSignNodeName) + 4
 	sign = rawData[signStartIndex:]
-	var signEndIndex = strings.LastIndex(sign, "\"}")
+	var signEndIndex = strings.LastIndex(sign, "\"")
 	sign = sign[:signEndIndex]
-
-	return content, sign
+	return content, certSN, sign
 }
 
 func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (s string, err error) {
@@ -220,17 +359,8 @@ func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.
 	return s, nil
 }
 
-func VerifySign(data url.Values, key []byte) (ok bool, err error) {
-	pub, err := encoding.ParsePKCS1PublicKey(encoding.FormatPublicKey(string(key)))
-	if err != nil {
-		return false, err
-	}
-	return verifySign(data, pub)
-}
-
 func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	sign := data.Get("sign")
-	signType := data.Get("sign_type")
 
 	var keys = make([]string, 0, 0)
 	for key := range data {
@@ -248,21 +378,16 @@ func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	}
 	var s = strings.Join(pList, "&")
 
-	return verifyData([]byte(s), signType, sign, key)
+	return verifyData([]byte(s), sign, key)
 }
 
-func verifyData(data []byte, signType, sign string, key *rsa.PublicKey) (ok bool, err error) {
+func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err error) {
 	signBytes, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return false, err
 	}
 
-	if signType == K_SIGN_TYPE_RSA {
-		err = encoding.VerifyPKCS1v15WithKey(data, signBytes, key, crypto.SHA1)
-	} else {
-		err = encoding.VerifyPKCS1v15WithKey(data, signBytes, key, crypto.SHA256)
-	}
-	if err != nil {
+	if err = encoding.VerifyPKCS1v15WithKey(data, signBytes, key, crypto.SHA256); err != nil {
 		return false, err
 	}
 	return true, nil

@@ -5,22 +5,20 @@ const (
 	kProductionURL     = "https://openapi.alipay.com/gateway.do"
 	kProductionMAPIURL = "https://mapi.alipay.com/gateway.do"
 
-	kFormat      = "JSON"
-	kCharset     = "utf-8"
-	kVersion     = "1.0"
-	kContentType = "application/x-www-form-urlencoded;charset=utf-8"
-	kTimeFormat  = "2006-01-02 15:04:05"
+	kFormat       = "JSON"
+	kCharset      = "utf-8"
+	kVersion      = "1.0"
+	kSignTypeRSA2 = "RSA2"
+	kContentType  = "application/x-www-form-urlencoded;charset=utf-8"
+	kTimeFormat   = "2006-01-02 15:04:05"
 )
 
 const (
 	kResponseSuffix = "_response"
 	kErrorResponse  = "error_response"
 	kSignNodeName   = "sign"
-)
-
-const (
-	K_SIGN_TYPE_RSA2 = "RSA2"
-	K_SIGN_TYPE_RSA  = "RSA"
+	kCertSNNodeName = "alipay_cert_sn"
+	kCertificateEnd = "-----END CERTIFICATE-----"
 )
 
 const (

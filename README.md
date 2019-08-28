@@ -1,25 +1,55 @@
 AliPay SDK for Golang
 
 
-## 鸣谢
-
-感谢下列人员对本项目的支持：
-
-[@wusphinx](https://github.com/wusphinx)
-
-[@clearluo](https://github.com/clearluo)
-
-[@zwh8800](https://github.com/zwh8800) 
-
 ## 帮助
 
 在集成的过程中有遇到问题，欢迎加 QQ 群 564704807 讨论。
+
 
 ## 其它支付
 
 微信支付 [https://github.com/smartwalle/wxpay](https://github.com/smartwalle/wxpay)
 
 PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/paypal)
+
+
+## 关于各分支（版本)
+
+* v1 - 最老的版本，实现了完整的支付功能，目前已停止更新维护；
+* v2 - 在 v1 的基础上进行了一些优化和规范调整，目前已停止更新维护；
+* v3 - 支持公钥证书签名和验签，详情可以参考 [https://docs.open.alipay.com/291/105974/](https://docs.open.alipay.com/291/105974/) 和 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/)，为目前主要维护分支；
+* master - 和主要维护分支同步；
+
+## v3 版本如何初始化
+
+截止本次更新(2019-08-28)，支付宝的沙箱环境并未支持公钥证书，考虑到大家开发测试方便，所以本分支保留了沙箱环境下对普通公钥的支持，如果是生产环境则只支持公钥证书，不支持普通公钥。
+
+**需要特别注意以下内容**
+
+#### 沙箱环境
+
+初始化函数传递的参数信息和老版本一样 
+
+```
+var client, err = alipay.New(appID, aliPublicKey, privateKey, false)
+```
+
+
+#### 生产环境
+
+初始化函数传递的参数信息不再需要 aliPublicKey, 传了也无所谓，会自动过滤掉
+
+```
+var client, err = alipay.New(appID, "", privateKey, true)
+```
+
+另外，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
+
+```
+client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt")
+client.LoadAliPayRootCertFromFile("alipayRootCert.crt")
+client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt")
+```
 
 ## 已实现接口
 
@@ -267,14 +297,7 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 支付宝提供了用于开发时测试的 sandbox 环境，对接的时候需要注意相关的 app id 和密钥是 sandbox 环境还是 production 环境的。如果是 sandbox 环境，本参数应该传 false，否则为 true。
 
 #### 支持 RSA 签名及验证
-默认采用的是 RSA2 签名，如果需要使用 RSA 签名，只需要在初始化 AliPay 的时候，将其 SignType 设置为 alipay.K\_SIGN\_TYPE\_RSA 即可:
-
-```Golang
-var client, err = alipay.New(...)
-client.SignType = alipay.K_SIGN_TYPE_RSA
-```
-
-当然，相关的 Key 也要注意替换。
+默认采用的是 RSA2 签名，不再提供 RSA 的支持
 
 ## License
 This project is licensed under the MIT License.
