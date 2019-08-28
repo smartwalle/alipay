@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"math"
@@ -247,6 +248,8 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 
 	var dataStr = string(data)
 
+	fmt.Println(dataStr)
+
 	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 
 	var rootIndex = strings.LastIndex(dataStr, rootNodeName)
@@ -258,13 +261,19 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 
 	if rootIndex > 0 {
 		content, certSN, sign = parseJSONSource(dataStr, rootNodeName, rootIndex)
+		if sign == "" {
+			return kSignNotFound
+		}
 	} else if errorIndex > 0 {
 		content, certSN, sign = parseJSONSource(dataStr, kErrorResponse, errorIndex)
+		if sign == "" {
+			var errRsp *ErrorRsp
+			if err = json.Unmarshal([]byte(content), &errRsp); err != nil {
+				return err
+			}
+			return errRsp
+		}
 	} else {
-		return kSignNotFound
-	}
-
-	if sign == "" {
 		return kSignNotFound
 	}
 
@@ -313,8 +322,10 @@ func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, c
 		dataEndIndex = int(math.Min(float64(signIndex), float64(certIndex))) - 1
 	} else if certIndex > 0 {
 		dataEndIndex = certIndex - 1
-	} else {
+	} else if signIndex > 0 {
 		dataEndIndex = signIndex - 1
+	} else {
+		dataEndIndex = len(rawData) - 1
 	}
 
 	var indexLen = dataEndIndex - dataStartIndex
@@ -330,10 +341,13 @@ func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, c
 		certSN = certSN[:certEndIndex]
 	}
 
-	var signStartIndex = signIndex + len(kSignNodeName) + 4
-	sign = rawData[signStartIndex:]
-	var signEndIndex = strings.LastIndex(sign, "\"")
-	sign = sign[:signEndIndex]
+	if signIndex > 0 {
+		var signStartIndex = signIndex + len(kSignNodeName) + 4
+		sign = rawData[signStartIndex:]
+		var signEndIndex = strings.LastIndex(sign, "\"")
+		sign = sign[:signEndIndex]
+	}
+
 	return content, certSN, sign
 }
 

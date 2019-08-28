@@ -1,5 +1,7 @@
 package alipay
 
+import "fmt"
+
 const (
 	kSandboxURL        = "https://openapi.alipaydev.com/gateway.do"
 	kProductionURL     = "https://openapi.alipay.com/gateway.do"
@@ -32,4 +34,15 @@ type Param interface {
 
 	// 返回参数列表
 	Params() map[string]string
+}
+
+type ErrorRsp struct {
+	Code    string `json:"code"`
+	Msg     string `json:"msg"`
+	SubCode string `json:"sub_code"`
+	SubMsg  string `json:"sub_msg"`
+}
+
+func (this *ErrorRsp) Error() string {
+	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
