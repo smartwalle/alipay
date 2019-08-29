@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"github.com/smartwalle/crypto4go"
 	"io"
@@ -86,7 +85,7 @@ func (this *Client) IsProduction() bool {
 }
 
 func (this *Client) LoadAppPublicCert(s string) error {
-	cert, err := loadCertificate([]byte(s))
+	cert, err := crypto4go.ParseCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -110,7 +109,7 @@ func (this *Client) LoadAppPublicCertFromFile(p string) error {
 }
 
 func (this *Client) LoadAliPayPublicCert(s string) error {
-	cert, err := loadCertificate([]byte(s))
+	cert, err := crypto4go.ParseCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -151,7 +150,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	for _, certStr := range certStrList {
 		certStr = certStr + kCertificateEnd
 
-		var cert, _ = loadCertificate([]byte(certStr))
+		var cert, _ = crypto4go.ParseCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
 		}
@@ -407,18 +406,6 @@ func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err erro
 		return false, err
 	}
 	return true, nil
-}
-
-func loadCertificate(b []byte) (*x509.Certificate, error) {
-	block, _ := pem.Decode(b)
-	if block == nil {
-		return nil, nil
-	}
-	csr, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	return csr, nil
 }
 
 func getCertSN(cert *x509.Certificate) string {
