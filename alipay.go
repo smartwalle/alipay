@@ -37,6 +37,7 @@ type Client struct {
 
 	appCertSN        string
 	rootCertSN       string
+	aliPublicCertSN  string
 	aliPublicKeyList map[string]*rsa.PublicKey
 }
 
@@ -119,7 +120,8 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 		return nil
 	}
 
-	this.aliPublicKeyList[getCertSN(cert)] = key
+	this.aliPublicCertSN = getCertSN(cert)
+	this.aliPublicKeyList[this.aliPublicCertSN] = key
 
 	if this.aliPublicKey == nil {
 		this.aliPublicKey = key
@@ -310,7 +312,22 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 }
 
 func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
-	return verifySign(data, this.aliPublicKey)
+	var publicKey *rsa.PublicKey
+
+	if this.isProduction {
+		publicKey = this.aliPublicKeyList[this.aliPublicCertSN]
+	} else {
+		publicKey = this.aliPublicKey
+	}
+
+	//if publicKey == nil {
+	//	if this.isProduction {
+	//		// TODO https://docs.open.alipay.com/api_9/alipay.open.app.alipaycert.download 下载新的证书
+	//	}
+	//	return kAliPublicKeyNotFound
+	//}
+
+	return verifySign(data, publicKey)
 }
 
 func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, certSN, sign string) {
