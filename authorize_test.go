@@ -15,7 +15,7 @@ func TestClient_SystemOauthToken(t *testing.T) {
 	t.Log("========== SystemOauthToken ==========")
 	var p = alipay.SystemOauthToken{}
 	p.GrantType = "authorization_code"
-	p.Code = "aac6328ccb5048f5b5896ca5b659OX31"
+	p.Code = "647f16afe0b44c49a8eb1cb3c02aXX31"
 	rsp, err := client.SystemOauthToken(p)
 	if err != nil {
 		t.Fatal(err)
@@ -29,7 +29,7 @@ func TestClient_SystemOauthToken(t *testing.T) {
 func TestClient_UserInfoShare(t *testing.T) {
 	t.Log("========== UserInfoShare ==========")
 	var p = alipay.UserInfoShare{}
-	p.AuthToken = "authusrB235b1ccbd56346d39c24a3280b2acX31"
+	p.AuthToken = "authusrB133e40c363934488a9c3e25e17fd9X31"
 	rsp, err := client.UserInfoShare(p)
 	if err != nil {
 		t.Fatal(err)

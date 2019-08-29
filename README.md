@@ -39,7 +39,7 @@ var client, err = alipay.New(appID, aliPublicKey, privateKey, false)
 
 初始化函数传递的参数信息不再需要 aliPublicKey, 传了也无所谓，会自动过滤掉。
 
-**下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名，需要注意该私钥是 pkcs8 格式，可以使用“支付宝开发平台开发助手”将其转换为 pkcs1 格式。**
+**下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名。**
 
 ```
 var client, err = alipay.New(appID, "", privateKey, true)

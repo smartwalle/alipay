@@ -8,7 +8,9 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
+	"github.com/smartwalle/crypto4go"
 	"io"
 	"io/ioutil"
 	"math"
@@ -18,8 +20,6 @@ import (
 	"sort"
 	"strings"
 	"time"
-
-	"github.com/smartwalle/alipay/encoding"
 )
 
 var (
@@ -47,14 +47,17 @@ type Client struct {
 // privateKey - 应用私钥，开发者自己生成
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
 func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Client, err error) {
-	pri, err := encoding.ParsePKCS1PrivateKey(encoding.FormatPrivateKey(privateKey))
+	pri, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
-		return nil, err
+		pri, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var pub *rsa.PublicKey
 	if len(aliPublicKey) > 0 && isProduction == false {
-		pub, err = encoding.ParsePKCS1PublicKey(encoding.FormatPublicKey(aliPublicKey))
+		pub, err = crypto4go.ParsePublicKey(crypto4go.FormatPublicKey(aliPublicKey))
 		if err != nil {
 			return nil, err
 		}
@@ -82,13 +85,8 @@ func (this *Client) IsProduction() bool {
 	return this.isProduction
 }
 
-func getCertSN(cert *x509.Certificate) string {
-	var value = md5.Sum([]byte(cert.Issuer.String() + cert.SerialNumber.String()))
-	return hex.EncodeToString(value[:])
-}
-
 func (this *Client) LoadAppPublicCert(s string) error {
-	cert, err := encoding.LoadCertificate([]byte(s))
+	cert, err := loadCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -112,7 +110,7 @@ func (this *Client) LoadAppPublicCertFromFile(p string) error {
 }
 
 func (this *Client) LoadAliPayPublicCert(s string) error {
-	cert, err := encoding.LoadCertificate([]byte(s))
+	cert, err := loadCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -153,7 +151,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	for _, certStr := range certStrList {
 		certStr = certStr + kCertificateEnd
 
-		var cert, _ = encoding.LoadCertificate([]byte(certStr))
+		var cert, _ = loadCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
 		}
@@ -369,7 +367,7 @@ func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	sig, err := encoding.SignPKCS1v15WithKey([]byte(src), privateKey, hash)
+	sig, err := crypto4go.RSASignWithKey([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
@@ -405,8 +403,25 @@ func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err erro
 		return false, err
 	}
 
-	if err = encoding.VerifyPKCS1v15WithKey(data, signBytes, key, crypto.SHA256); err != nil {
+	if err = crypto4go.RSAVerifyWithKey(data, signBytes, key, crypto.SHA256); err != nil {
 		return false, err
 	}
 	return true, nil
+}
+
+func loadCertificate(b []byte) (*x509.Certificate, error) {
+	block, _ := pem.Decode(b)
+	if block == nil {
+		return nil, nil
+	}
+	csr, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return csr, nil
+}
+
+func getCertSN(cert *x509.Certificate) string {
+	var value = md5.Sum([]byte(cert.Issuer.String() + cert.SerialNumber.String()))
+	return hex.EncodeToString(value[:])
 }
