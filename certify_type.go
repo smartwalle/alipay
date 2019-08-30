@@ -31,18 +31,8 @@ type IdentityParam struct {
 	CertNo       string `json:"cert_no"`       // 证件号码，必填，填写需要验证的证件号码
 }
 
-func (this IdentityParam) MarshalJSON() ([]byte, error) {
-	var s = fmt.Sprintf(`"{\"identity_type\":\"%s\",\"cert_type\":\"%s\",\"cert_name\":\"%s\",\"cert_no\":\"%s\"}"`, this.IdentityType, this.CertType, this.CertName, this.CertNo)
-	return []byte(s), nil
-}
-
 type MerchantConfig struct {
-	ReturnURL string
-}
-
-func (this MerchantConfig) MarshalJSON() ([]byte, error) {
-	var s = fmt.Sprintf(`"{\"return_url\":\"%s\"}"`, this.ReturnURL)
-	return []byte(s), nil
+	ReturnURL string `json:"return_url"`
 }
 
 func (this UserCertifyOpenInitialize) APIName() string {
