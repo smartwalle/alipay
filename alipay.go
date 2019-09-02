@@ -95,13 +95,7 @@ func (this *Client) LoadAppPublicCert(s string) error {
 }
 
 func (this *Client) LoadAppPublicCertFromFile(p string) error {
-	file, err := os.Open(p)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	b, err := ioutil.ReadAll(file)
+	b, err := readFile(p)
 	if err != nil {
 		return err
 	}
@@ -130,13 +124,7 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 }
 
 func (this *Client) LoadAliPayPublicCertFromFile(p string) error {
-	file, err := os.Open(p)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	b, err := ioutil.ReadAll(file)
+	b, err := readFile(p)
 	if err != nil {
 		return err
 	}
@@ -163,13 +151,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 }
 
 func (this *Client) LoadAliPayRootCertFromFile(p string) error {
-	file, err := os.Open(p)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	b, err := ioutil.ReadAll(file)
+	b, err := readFile(p)
 
 	if err != nil {
 		return err
@@ -428,4 +410,18 @@ func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err erro
 func getCertSN(cert *x509.Certificate) string {
 	var value = md5.Sum([]byte(cert.Issuer.String() + cert.SerialNumber.String()))
 	return hex.EncodeToString(value[:])
+}
+
+func readFile(p string) ([]byte, error) {
+	file, err := os.Open(p)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
