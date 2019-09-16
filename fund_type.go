@@ -1,6 +1,6 @@
 package alipay
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
 // 单笔转账到支付宝账户接口请求结构
 type FundTransToAccountTransfer struct {
@@ -45,7 +45,7 @@ func (this *FundTransToAccountTransferRsp) IsSuccess() bool {
 	return false
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
 // 查询转账订单接口请求参数
 type FundTransOrderQuery struct {
@@ -90,7 +90,7 @@ func (this *FundTransOrderQueryRsp) IsSuccess() bool {
 	return false
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
 // 资金授权发码接口
 type FundAuthOrderVoucherCreate struct {
@@ -136,7 +136,7 @@ type FundAuthOrderVoucherCreateRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
 // 资金授权冻结接口
 type FundAuthOrderFreeze struct {
@@ -184,7 +184,7 @@ type FundAuthOrderFreezeRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
 // 资金授权解冻接口
 type FundAuthOrderUnfreeze struct {
@@ -227,7 +227,7 @@ type FundAuthOrderUnfreezeRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 // 资金授权撤销接口
 type FundAuthOperationCancel struct {
@@ -266,7 +266,7 @@ type FundAuthOperationCancelRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
 // 资金授权操作查询接口
 type FundAuthOperationDetailQuery struct {
@@ -320,7 +320,7 @@ type FundAuthOperationDetailQueryRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 // 线上资金授权冻结接口请求参数
 type FundAuthOrderAppFreeze struct {

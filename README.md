@@ -30,7 +30,7 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 
 #### 沙箱环境
 
-初始化函数传递的参数信息和老版本一样 
+初始化函数传递的参数信息和老版本一样，aliPublicKey 是从支付宝管理后台-沙箱应用处获取的支付宝公钥。
 
 ```
 var client, err = alipay.New(appID, aliPublicKey, privateKey, false)
@@ -50,9 +50,9 @@ var client, err = alipay.New(appID, "", privateKey, true)
 另外，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
 ```
-client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt")
-client.LoadAliPayRootCertFromFile("alipayRootCert.crt")
-client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt")
+client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
+client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
+client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
 ## 已实现接口
@@ -288,13 +288,9 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 应用私钥是我们通过工具生成的私钥，调用支付宝接口的时候，我们需要使用该私钥对参数进行签名。
 
-#### 关于应用公钥 (publicKey)
-
-应用公钥是我们通过工具生成的公钥，需要通过支付宝后台上传该公钥，支付宝收到我们请求的时候，会使用该公钥对参数进行签名验证，以确保数据的有效性。
-
 #### 关于支付宝公钥 (aliPublicKey)
 
-支付宝公钥是从支付宝管理后台获取 **(不是我们通过工具生成的公钥)**，该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。
+支付宝公钥是从支付宝管理后台获取 **(不是我们通过工具生成的公钥)**，该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。现已被**支付宝公钥证书**取代。
 
 #### 关于 alipay.New() 函数中的最后一个参数 isProduction
 

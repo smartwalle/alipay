@@ -10,7 +10,7 @@ const (
 	kSandboxAppToAppAuth    = "https://openauth.alipaydev.com/oauth2/appToAppAuth.htm"
 )
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 type SystemOauthToken struct {
 	AppAuthToken string `json:"-"` // 可选
@@ -57,7 +57,7 @@ type SystemOauthTokenRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_2/alipay.user.info.share
 type UserInfoShare struct {
 	AppAuthToken string `json:"-"` // 可选
@@ -96,7 +96,7 @@ type UserInfoShareRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
 type OpenAuthTokenApp struct {
 	GrantType    string `json:"grant_type"` // 值为 authorization_code 时，代表用code换取；值为refresh_token时，代表用refresh_token换取

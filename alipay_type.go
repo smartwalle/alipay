@@ -16,11 +16,12 @@ const (
 )
 
 const (
-	kResponseSuffix = "_response"
-	kErrorResponse  = "error_response"
-	kSignNodeName   = "sign"
-	kCertSNNodeName = "alipay_cert_sn"
-	kCertificateEnd = "-----END CERTIFICATE-----"
+	kResponseSuffix   = "_response"
+	kErrorResponse    = "error_response"
+	kSignNodeName     = "sign"
+	kSignTypeNodeName = "sign_type"
+	kCertSNNodeName   = "alipay_cert_sn"
+	kCertificateEnd   = "-----END CERTIFICATE-----"
 )
 
 const (
@@ -45,4 +46,31 @@ type ErrorRsp struct {
 
 func (this *ErrorRsp) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
+}
+
+// --------------------------------------------------------------------------------
+type CertDownload struct {
+	AppAuthToken string `json:"-"`              // 可选
+	AliPayCertSN string `json:"alipay_cert_sn"` // 支付宝公钥证书序列号
+}
+
+func (this CertDownload) APIName() string {
+	return "alipay.open.app.alipaycert.download"
+}
+
+func (this CertDownload) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+type CertDownloadRsp struct {
+	Content struct {
+		Code              string `json:"code"`
+		Msg               string `json:"msg"`
+		SubCode           string `json:"sub_code"`
+		SubMsg            string `json:"sub_msg"`
+		AliPayCertContent string `json:"alipay_cert_content"`
+	} `json:"alipay_open_app_alipaycert_download_response"`
+	Sign string `json:"sign"`
 }

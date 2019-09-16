@@ -1,6 +1,6 @@
 package alipay
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 type CertifyBizCode string
 
 const (
@@ -52,7 +52,7 @@ type UserCertifyOpenInitializeRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
 type UserCertifyOpenCertify struct {
 	AppAuthToken string `json:"-"`          // 可选
@@ -79,7 +79,7 @@ type UserCertifyOpenCertifyRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
 type UserCertifyOpenQuery struct {
 	AppAuthToken string `json:"-"`          // 可选

@@ -1,6 +1,6 @@
 package alipay
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 type Trade struct {
 	NotifyURL string `json:"-"`
 	ReturnURL string `json:"-"`
@@ -30,7 +30,7 @@ type Trade struct {
 	TimeoutExpress   string `json:"timeout_express,omitempty"`   // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 type TradePagePay struct {
 	Trade
@@ -63,7 +63,7 @@ func (this TradePagePay) Params() map[string]string {
 	return m
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 const (
 	K_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" //（交易创建，等待买家付款）
 	K_TRADE_STATUS_TRADE_CLOSED   = "TRADE_CLOSED"   //（未付款交易超时关闭，或支付完成后全额退款）
@@ -159,7 +159,7 @@ func (this *TradeQueryRsp) IsSuccess() bool {
 	return false
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.close/
 type TradeClose struct {
 	AppAuthToken string `json:"-"`                      // 可选
@@ -192,7 +192,7 @@ type TradeCloseRsp struct {
 	Sign string `json:"sign"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type TradeRefund struct {
 	AppAuthToken string `json:"-"`                      // 可选
@@ -248,7 +248,7 @@ type RefundDetailItem struct {
 	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 type TradeFastPayRefundQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
@@ -290,7 +290,7 @@ func (this *TradeFastPayRefundQueryRsp) IsSuccess() bool {
 	return false
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 type TradeOrderSettle struct {
 	AppAuthToken      string              `json:"-"`                  // 可选
@@ -329,7 +329,7 @@ type TradeOrderSettleRsp struct {
 	Sign string `json:"sign"`
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.create/
 type TradeCreate struct {
 	Trade
@@ -406,7 +406,7 @@ type GoodsDetailItem struct {
 	ShowUrl       string `json:"show_url"`
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type TradePay struct {
 	Trade
@@ -470,7 +470,7 @@ func (this *TradePayRsp) IsSuccess() bool {
 	return false
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 type TradeAppPay struct {
 	Trade
@@ -487,7 +487,7 @@ func (this TradeAppPay) Params() map[string]string {
 	return m
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type TradePreCreate struct {
 	Trade
@@ -528,7 +528,7 @@ func (this *TradePreCreateRsp) IsSuccess() bool {
 	return false
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.cancel/
 type TradeCancel struct {
 	AppAuthToken string `json:"-"` // 可选
@@ -570,7 +570,7 @@ func (this *TradeCancelRsp) IsSuccess() bool {
 	return false
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
 type TradeOrderInfoSync struct {
 	AppAuthToken string `json:"-"`              // 可选

@@ -17,6 +17,7 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -38,6 +39,8 @@ type Client struct {
 	rootCertSN       string
 	aliPublicCertSN  string
 	aliPublicKeyList map[string]*rsa.PublicKey
+
+	mu *sync.Mutex
 }
 
 // New 初始化支付宝客户端
@@ -67,6 +70,7 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 	client.appId = appId
 	client.appPrivateKey = pri
 	client.aliPublicKey = pub
+	client.mu = &sync.Mutex{}
 
 	client.Client = http.DefaultClient
 	if client.isProduction {
@@ -84,6 +88,7 @@ func (this *Client) IsProduction() bool {
 	return this.isProduction
 }
 
+// LoadAppPublicCert 加载应用公钥证书
 func (this *Client) LoadAppPublicCert(s string) error {
 	cert, err := crypto4go.ParseCertificate([]byte(s))
 	if err != nil {
@@ -93,6 +98,7 @@ func (this *Client) LoadAppPublicCert(s string) error {
 	return nil
 }
 
+// LoadAppPublicCertFromFile 加载应用公钥证书
 func (this *Client) LoadAppPublicCertFromFile(filename string) error {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -102,6 +108,7 @@ func (this *Client) LoadAppPublicCertFromFile(filename string) error {
 	return this.LoadAppPublicCert(string(b))
 }
 
+// LoadAliPayPublicCert 加载支付宝公钥证书
 func (this *Client) LoadAliPayPublicCert(s string) error {
 	cert, err := crypto4go.ParseCertificate([]byte(s))
 	if err != nil {
@@ -113,8 +120,10 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 		return nil
 	}
 
+	this.mu.Lock()
 	this.aliPublicCertSN = getCertSN(cert)
 	this.aliPublicKeyList[this.aliPublicCertSN] = key
+	this.mu.Unlock()
 
 	if this.aliPublicKey == nil {
 		this.aliPublicKey = key
@@ -122,6 +131,7 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 	return nil
 }
 
+// LoadAliPayPublicCertFromFile 加载支付宝公钥证书
 func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -131,6 +141,7 @@ func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
 	return this.LoadAliPayPublicCert(string(b))
 }
 
+// LoadAliPayRootCert 加载支付宝根证书
 func (this *Client) LoadAliPayRootCert(s string) error {
 	var certStrList = strings.Split(s, kCertificateEnd)
 
@@ -149,6 +160,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	return nil
 }
 
+// LoadAliPayRootCertFromFile 加载支付宝根证书
 func (this *Client) LoadAliPayRootCertFromFile(filename string) error {
 	b, err := ioutil.ReadFile(filename)
 
@@ -243,10 +255,14 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 			if err = json.Unmarshal([]byte(content), &errRsp); err != nil {
 				return err
 			}
-			if errRsp != nil {
-				return errRsp
+
+			// alipay.open.app.alipaycert.download(应用支付宝公钥证书下载) 没有返回 sign 字段，所以再判断一次 code
+			if errRsp.Code != K_SUCCESS_CODE {
+				if errRsp != nil {
+					return errRsp
+				}
+				return kSignNotFound
 			}
-			return kSignNotFound
 		}
 	} else if errorIndex > 0 {
 		content, certSN, sign = parseJSONSource(dataStr, kErrorResponse, errorIndex)
@@ -261,23 +277,15 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return kSignNotFound
 	}
 
-	var publicKey *rsa.PublicKey
-
-	if this.isProduction {
-		publicKey = this.aliPublicKeyList[certSN]
-	} else {
-		publicKey = this.aliPublicKey
-	}
-
-	if publicKey == nil {
-		if this.isProduction {
-			// TODO https://docs.open.alipay.com/api_9/alipay.open.app.alipaycert.download 下载新的证书
+	if sign != "" {
+		publicKey, err := this.getAliPayPublicKey(certSN)
+		if err != nil {
+			return err
 		}
-		return kAliPublicKeyNotFound
-	}
 
-	if ok, err := verifyData([]byte(content), sign, publicKey); ok == false {
-		return err
+		if ok, err := verifyData([]byte(content), sign, publicKey); ok == false {
+			return err
+		}
 	}
 
 	err = json.Unmarshal(data, result)
@@ -293,22 +301,85 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 }
 
 func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
-	var publicKey *rsa.PublicKey
-
-	if this.isProduction {
-		publicKey = this.aliPublicKeyList[this.aliPublicCertSN]
-	} else {
-		publicKey = this.aliPublicKey
+	var certSN = data.Get(kCertSNNodeName)
+	if certSN == "" {
+		certSN = this.aliPublicCertSN
 	}
 
-	//if publicKey == nil {
-	//	if this.isProduction {
-	//		// TODO https://docs.open.alipay.com/api_9/alipay.open.app.alipaycert.download 下载新的证书
-	//	}
-	//	return kAliPublicKeyNotFound
-	//}
+	publicKey, err := this.getAliPayPublicKey(certSN)
+	if err != nil {
+		return false, err
+	}
 
 	return verifySign(data, publicKey)
+}
+
+func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err error) {
+	this.mu.Lock()
+	defer this.mu.Unlock()
+
+	key = this.aliPublicKeyList[certSN]
+
+	if this.isProduction {
+		key = this.aliPublicKeyList[certSN]
+	} else {
+		key = this.aliPublicKey
+	}
+
+	if key == nil {
+		if this.isProduction {
+			cert, err := this.downloadAliPayCert(certSN)
+			if err != nil {
+				return nil, err
+			}
+
+			var ok bool
+			key, ok = cert.PublicKey.(*rsa.PublicKey)
+			if ok == false {
+				return nil, kAliPublicKeyNotFound
+			}
+		} else {
+			return nil, kAliPublicKeyNotFound
+		}
+	}
+	return key, nil
+}
+
+func (this *Client) CertDownload(param CertDownload) (result *CertDownloadRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}
+
+func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, err error) {
+	var cp = CertDownload{}
+	cp.AliPayCertSN = certSN
+	rsp, err := this.CertDownload(cp)
+	if err != nil {
+		return nil, err
+	}
+	certBytes, err := base64.StdEncoding.DecodeString(rsp.Content.AliPayCertContent)
+	if err != nil {
+		return nil, err
+	}
+
+	cert, err = crypto4go.ParseCertificate(certBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	key, ok := cert.PublicKey.(*rsa.PublicKey)
+	if ok == false {
+		return nil, nil
+	}
+
+	this.aliPublicCertSN = getCertSN(cert)
+	this.aliPublicKeyList[this.aliPublicCertSN] = key
+
+	if this.aliPublicKey == nil {
+		this.aliPublicKey = key
+	}
+
+	return cert, nil
 }
 
 func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, certSN, sign string) {
@@ -373,11 +444,11 @@ func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.
 }
 
 func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
-	sign := data.Get("sign")
+	sign := data.Get(kSignNodeName)
 
 	var keys = make([]string, 0, 0)
 	for key := range data {
-		if key == "sign" || key == "sign_type" {
+		if key == kSignNodeName || key == kSignTypeNodeName || key == kCertSNNodeName {
 			continue
 		}
 		keys = append(keys, key)
