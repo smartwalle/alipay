@@ -58,7 +58,7 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 	}
 
 	var pub *rsa.PublicKey
-	if len(aliPublicKey) > 0 && isProduction == false {
+	if len(aliPublicKey) > 0 {
 		pub, err = crypto4go.ParsePublicKey(crypto4go.FormatPublicKey(aliPublicKey))
 		if err != nil {
 			return nil, err
