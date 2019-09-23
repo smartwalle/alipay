@@ -11,6 +11,29 @@ AliPay SDK for Golang
 
 [@zwh8800](https://github.com/zwh8800) 
 
+## 安装
+
+##### 启用 Go module
+
+```
+go get github.com/smartwalle/alipay/v2
+```
+
+```
+import github.com/smartwalle/alipay/v2
+```
+
+##### 未启用 Go module
+
+```
+go get github.com/smartwalle/alipay
+```
+
+```
+import github.com/smartwalle/alipay
+```
+
+
 ## 帮助
 
 在集成的过程中有遇到问题，欢迎加 QQ 群 564704807 讨论。
