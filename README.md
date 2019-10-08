@@ -46,27 +46,14 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 
 ## v3 版本如何初始化
 
-截止本次更新(2019-08-28)，支付宝的沙箱环境并未支持公钥证书，考虑到大家开发测试方便，所以本分支保留了沙箱环境下对普通公钥的支持，如果是生产环境则只支持公钥证书，不支持普通公钥。
+沙箱环境和生产环境现已全部支持公钥证书，从安全角度考虑，推荐大家进行升级，所以本项目最新版本不再提供对普通公钥的支持。所以 alipay.New() 不再需要传递 aliPublicKey 参数，
 
-**需要特别注意以下内容**
-
-#### 沙箱环境
-
-初始化函数传递的参数信息和老版本一样，aliPublicKey 是从支付宝管理后台-沙箱应用处获取的支付宝公钥。
-
-```
-var client, err = alipay.New(appID, aliPublicKey, privateKey, false)
-```
-
-
-#### 生产环境
-
-初始化函数传递的参数信息不再需要 aliPublicKey, 传了也无所谓，会自动过滤掉。
 
 **下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名。**
 
+
 ```
-var client, err = alipay.New(appID, "", privateKey, true)
+var client, err = alipay.New(appID, privateKey, true)
 ```
 
 另外，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
@@ -223,9 +210,12 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 #### 创建 Wap 支付
 
 ``` Golang
-var aliPublicKey = "" // 可选，支付宝提供给我们用于签名验证的公钥，通过支付宝管理后台获取
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
-var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
+var client, err = alipay.New(appId, privateKey, false)
+
+client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
+client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
+client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 
 // 将 key 的验证调整到初始化阶段
 if err != nil {
@@ -255,11 +245,6 @@ fmt.Println(payURL)
 
 支持自动对支付宝返回的数据进行签名验证，详细信息请参考[自行实现验签](https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120).
 
-如果需要开启自动验签，只需要在初始化 AliPay 对象的时候提供 **aliPublicKey** 参数，该参数的值为支付宝管理后台获取到的支付宝公钥，如下：
-
-``` Golang
-var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
-```
 
 #### Return URL
 
@@ -270,12 +255,10 @@ var p = alipay.TradeWapPay{}
 p.ReturnURL = "http://xxx/return"
 ```
 
-这时候我们需要对支付宝提供的参数进行签名验证，当然，前提是我们在 alipay.New(...) 初始化方法中有正确提供 **支付宝公钥**：
+这时候我们需要对支付宝提供的参数进行签名验证：
 
 
 ```Golang
-var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
-
 http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
 	ok, err := client.VerifySign(req.Form)
@@ -290,9 +273,6 @@ http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 我们需要在提供的 Notify URL 服务中获取相关的参数并进行验证:
 
 ```Golang
-
-var client, err = alipay.New(appId, aliPublicKey, privateKey, false)
- 
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
 	if noti != nil {
@@ -310,9 +290,6 @@ http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 
 应用私钥是我们通过工具生成的私钥，调用支付宝接口的时候，我们需要使用该私钥对参数进行签名。
 
-#### 关于支付宝公钥 (aliPublicKey)
-
-支付宝公钥是从支付宝管理后台获取 **(不是我们通过工具生成的公钥)**，该公钥是支付宝提供给我们用于验证支付宝接口返回数据的有效性 (我们需要使用该公钥对支付宝返回的数据进行签名验证)。现已被**支付宝公钥证书**取代。
 
 #### 关于 alipay.New() 函数中的最后一个参数 isProduction
 

@@ -32,7 +32,6 @@ type Client struct {
 	apiDomain          string
 	notifyVerifyDomain string
 	appPrivateKey      *rsa.PrivateKey // 应用私钥
-	aliPublicKey       *rsa.PublicKey  // 支付宝公钥
 	Client             *http.Client
 
 	appCertSN        string
@@ -45,21 +44,12 @@ type Client struct {
 
 // New 初始化支付宝客户端
 // appId - 支付宝应用 id
-// aliPublicKey - 支付宝公钥，创建支付宝应用之后，从支付宝后台获取
 // privateKey - 应用私钥，开发者自己生成
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
-func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Client, err error) {
+func New(appId, privateKey string, isProduction bool) (client *Client, err error) {
 	pri, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
 		pri, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var pub *rsa.PublicKey
-	if len(aliPublicKey) > 0 && isProduction == false {
-		pub, err = crypto4go.ParsePublicKey(crypto4go.FormatPublicKey(aliPublicKey))
 		if err != nil {
 			return nil, err
 		}
@@ -69,7 +59,6 @@ func New(appId, aliPublicKey, privateKey string, isProduction bool) (client *Cli
 	client.isProduction = isProduction
 	client.appId = appId
 	client.appPrivateKey = pri
-	client.aliPublicKey = pub
 	client.mu = &sync.Mutex{}
 
 	client.Client = http.DefaultClient
@@ -125,9 +114,6 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 	this.aliPublicKeyList[this.aliPublicCertSN] = key
 	this.mu.Unlock()
 
-	if this.aliPublicKey == nil {
-		this.aliPublicKey = key
-	}
 	return nil
 }
 
@@ -320,11 +306,7 @@ func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err e
 
 	key = this.aliPublicKeyList[certSN]
 
-	if this.isProduction {
-		key = this.aliPublicKeyList[certSN]
-	} else {
-		key = this.aliPublicKey
-	}
+	key = this.aliPublicKeyList[certSN]
 
 	if key == nil {
 		if this.isProduction {
@@ -374,10 +356,6 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 
 	this.aliPublicCertSN = getCertSN(cert)
 	this.aliPublicKeyList[this.aliPublicCertSN] = key
-
-	if this.aliPublicKey == nil {
-		this.aliPublicKey = key
-	}
 
 	return cert, nil
 }
