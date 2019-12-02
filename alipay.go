@@ -22,8 +22,12 @@ import (
 )
 
 var (
-	kSignNotFound         = errors.New("alipay: sign content not found")
-	kAliPublicKeyNotFound = errors.New("alipay: alipay public key not found")
+	ErrSignNotFound         = errors.New("alipay: sign content not found")
+	ErrAliPublicKeyNotFound = errors.New("alipay: alipay public key not found")
+)
+
+const (
+	kAliPayPublicKeySN = "alipay-public-key"
 )
 
 type Client struct {
@@ -75,6 +79,24 @@ func New(appId, privateKey string, isProduction bool) (client *Client, err error
 
 func (this *Client) IsProduction() bool {
 	return this.isProduction
+}
+
+// LoadAliPayPublicKey 加载支付宝公钥
+func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
+	var pub *rsa.PublicKey
+	var err error
+	if len(aliPublicKey) < 0 {
+		return ErrAliPublicKeyNotFound
+	}
+	pub, err = crypto4go.ParsePublicKey(crypto4go.FormatPublicKey(aliPublicKey))
+	if err != nil {
+		return err
+	}
+	this.mu.Lock()
+	this.aliPublicCertSN = kAliPayPublicKeySN
+	this.aliPublicKeyList[this.aliPublicCertSN] = pub
+	this.mu.Unlock()
+	return nil
 }
 
 // LoadAppPublicCert 加载应用公钥证书
@@ -247,7 +269,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 				if errRsp != nil {
 					return errRsp
 				}
-				return kSignNotFound
+				return ErrSignNotFound
 			}
 		}
 	} else if errorIndex > 0 {
@@ -260,7 +282,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 			return errRsp
 		}
 	} else {
-		return kSignNotFound
+		return ErrSignNotFound
 	}
 
 	if sign != "" {
@@ -288,10 +310,6 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 
 func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
 	var certSN = data.Get(kCertSNNodeName)
-	if certSN == "" {
-		certSN = this.aliPublicCertSN
-	}
-
 	publicKey, err := this.getAliPayPublicKey(certSN)
 	if err != nil {
 		return false, err
@@ -303,6 +321,10 @@ func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
 func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err error) {
 	this.mu.Lock()
 	defer this.mu.Unlock()
+
+	if certSN == "" {
+		certSN = this.aliPublicCertSN
+	}
 
 	key = this.aliPublicKeyList[certSN]
 
@@ -316,10 +338,10 @@ func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err e
 			var ok bool
 			key, ok = cert.PublicKey.(*rsa.PublicKey)
 			if ok == false {
-				return nil, kAliPublicKeyNotFound
+				return nil, ErrAliPublicKeyNotFound
 			}
 		} else {
-			return nil, kAliPublicKeyNotFound
+			return nil, ErrAliPublicKeyNotFound
 		}
 	}
 	return key, nil

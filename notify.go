@@ -60,6 +60,9 @@ func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
+	if err = req.ParseForm(); err != nil {
+		return nil, err
+	}
 
 	noti = &TradeNotification{}
 	noti.AppId = req.FormValue("app_id")

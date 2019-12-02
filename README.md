@@ -41,13 +41,10 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 
 * v1 - 最老的版本，实现了完整的支付功能，目前已停止更新维护；
 * v2 - 在 v1 的基础上进行了一些优化和规范调整，目前已停止更新维护；
-* v3 - 支持公钥证书签名和验签，详情可以参考 [https://docs.open.alipay.com/291/105974/](https://docs.open.alipay.com/291/105974/) 和 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/)，为目前主要维护分支；
+* v3 - 支持**公钥证书**和**普通公钥**进行签名验证，详情可以参考 [https://docs.open.alipay.com/291/105974/](https://docs.open.alipay.com/291/105974/) 和 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/)，为目前主要维护分支；
 * master - 和主要维护分支同步；
 
 ## v3 版本如何初始化
-
-沙箱环境和生产环境现已全部支持公钥证书，从安全角度考虑，推荐大家进行升级，所以本项目最新版本不再提供对普通公钥的支持。所以 alipay.New() 不再需要传递 aliPublicKey 参数，
-
 
 **下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名。**
 
@@ -56,13 +53,23 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 var client, err = alipay.New(appID, privateKey, true)
 ```
 
-另外，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
+##### 公钥证书
+如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
 ```
 client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
 client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
 client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
+
+##### 普通公钥
+
+```
+client.LoadAliPayPublicKey("aliPublicKey")
+```
+
+需要注意**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
+
 
 ## 已实现接口
 
