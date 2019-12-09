@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"crypto"
 	"net/url"
 	"strings"
 )
@@ -71,4 +72,28 @@ func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error
 func (this *Client) OpenAuthTokenApp(param OpenAuthTokenApp) (result *OpenAuthTokenAppRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
+}
+
+// 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串 https://docs.open.alipay.com/218/105325/
+func (this *Client) SignLoginAuth(param LoginOauthInfo) (result string, err error) {
+	var p = url.Values{}
+	p.Add("app_id", this.appId)
+	p.Add("method", param.APIName())
+
+	var ps = param.Params()
+	if ps != nil {
+		for key, value := range ps {
+			p.Add(key, value)
+		}
+	}
+
+	p.Add("sign_type", kSignTypeRSA2)
+
+	sign, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
+	if err != nil {
+		return "", err
+	}
+	p.Add("sign", sign)
+
+	return p.Encode(), err
 }
