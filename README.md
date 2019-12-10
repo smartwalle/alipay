@@ -183,13 +183,25 @@ client.LoadAliPayPublicKey("aliPublicKey")
 
     alipay.system.oauth.token - **SystemOauthToken()**
     
-* **支付宝会员授权信息查询接口**
+* **支付宝会员授权信息查询**
     
     alipay.user.info.share - **UserInfoShare()** 
     
 * **App支付宝登录**
     
     com.alipay.account.auth - **AccountAuth()**
+    
+* **支付宝个人协议页面签约**
+    
+    alipay.user.agreement.page.sign - **AgreementPageSign()**
+    
+* **支付宝个人代扣协议查询**
+    
+    alipay.user.agreement.query - **AgreementQuery()**
+    
+* **支付宝个人代扣协议解约**
+    
+    alipay.user.agreement.unsign - **AgreementUnsign()**
 
 
 #### 通知

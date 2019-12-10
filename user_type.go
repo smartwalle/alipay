@@ -1,52 +1,5 @@
 package alipay
 
-type AgreementQuery struct {
-	PersonalProductCode string `json:"personal_product_code"`  // 协议产品码，商户和支付宝签约时确定，商户可咨询技术支持
-	AlipayUserId        string `json:"alipay_user_id"`         // 用户的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成;本参数与alipay_logon_id不可同时为空，若都填写，则以本参数为准，优先级高于alipay_logon_id
-	AlipayLogonId       string `json:"alipay_logon_id"`        // 用户的支付宝登录账号，支持邮箱或手机号码格式。本参数与alipay_user_id不可同时为空，若都填写，则以alipay_user_id为准
-	SignScene           string `json:"sign_scene"`             // 签约协议场景，商户和支付宝签约时确定，商户可咨询技术支持
-	ExternalAgreementNo string `jsson:"external_agreement_no"` // 代扣协议中标示用户的唯一签约号(确保在商户系统中 唯一)。
-	ThirdPartyType      string `jsson:"third_party_type"`      // 签约第三方主体类型。对于三方协议，表示当前用户和哪一类的第三方主体进行签约
-	AgreementNo         string `json:"agreement_no"`           // 支付宝系统中用以唯一标识用户签约记录的编号（用户签约成功后的协议号），如果传了该参数，其他参数会被忽略
-	AppAuthToken        string `json:"-"`
-}
-
-type AgreementQueryRsp struct {
-	Content struct {
-		Code                string `json:"code"`
-		Msg                 string `json:"msg"`
-		SubCode             string `json:"sub_code"`
-		SubMsg              string `json:"sub_msg"`
-		ValidTime           string `json:"valid_time"`            // 协议生效时间，格式为 yyyyMM-dd HH:mm:ss
-		AlipayLogonId       string `json:"alipay_logon_id"`       // 返回脱敏的支付宝账号
-		InvalidTime         string `json:"invalid_time"`          // 协议失效时间，格式为 yyyyMM-dd HH:mm:ss
-		PricipalType        string `json:"pricipal_type"`         // 签约主体类型。 CARD:支付宝账号 CUSTOMER:支付宝用户
-		DeviceId            string `json:"device_id"`             // 设备Id
-		PrincipalId         string `json:"principal_id"`          // 签约主体标识。当principal_type为CARD时，该字段为支付宝用户号;当principal_type为CUSTOMER时，该字段为支付宝用户标识。
-		SignScene           string `json:"sign_scene"`            // 签约协议的场景
-		AgreementNo         string `json:"agreement_no"`          // 用户签约成功后的协议号
-		ThirdPartyType      string `json:"third_party_type"`      // 签约第三方主体类型。对于三方协议，表示当前用户和哪一类的第三方主体进行签约。 1.PARTNER（平台商户）;2.MERCHANT（集团商户），集团下子商户可共享用户签约内容;默认为PARTNER
-		Status              string `json:"status"`                // 协议当前状态 1.TEMP：暂存，协议未生效过；2.NORMAL：正常；3.STOP：暂停
-		SignTime            string `json:"sign_time"`             // 协议签约时间，格式为 yyyyMM-dd HH:mm:ss
-		PersonalProductCode string `json:"personal_product_code"` // 协议产品码，商户和支付宝签约时确定，不同业务场景对应不同的签约产品码
-		ExternalAgreementNo string `json:"external_agreement_no"` // 代扣协议中标示用户的唯一签约号(确保在商户系统中唯一)
-		ZmOpenId            string `json:"zm_open_id"`            // 用户的芝麻信用 openId，供商户查询用户芝麻信用使用。
-		ExternalLogonId     string `json:"external_logon_id"`     // 外部登录Id
-	} `json:"alipay_user_agreement_query_response"`
-	Sign string `json:"sign"`
-}
-
-func (this AgreementQuery) APIName() string {
-	return "alipay.user.agreement.query"
-}
-
-func (this AgreementQuery) Params() map[string]string {
-	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-
-	return m
-}
-
 type ZmAuthParams struct {
 	BuckleAppId      string `json:"buckle_app_id"`      // 商户在芝麻端申请的appId
 	BuckleMerchantId string `json:"buckle_merchant_id"` // 商户在芝麻端申请的 merchantId
@@ -89,6 +42,9 @@ type PeriodRuleParams struct {
 	TotalPayments int    `json:"total_payments"`
 }
 
+// --------------------------------------------------------------------------------
+// https://docs.open.alipay.com/api_2/alipay.user.agreement.page.sign
+// 支付宝个人协议页面签约接口
 type AgreementPageSign struct {
 	AppAuthToken        string            `json:"-"`
 	ReturnURL           string            `json:"-"`
@@ -148,6 +104,58 @@ func (this AgreementPageSign) Params() map[string]string {
 	return m
 }
 
+// --------------------------------------------------------------------------------
+// https://docs.open.alipay.com/api_2/alipay.user.agreement.query
+// 支付宝个人代扣协议查询接口
+type AgreementQuery struct {
+	PersonalProductCode string `json:"personal_product_code"`  // 协议产品码，商户和支付宝签约时确定，商户可咨询技术支持
+	AlipayUserId        string `json:"alipay_user_id"`         // 用户的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成;本参数与alipay_logon_id不可同时为空，若都填写，则以本参数为准，优先级高于alipay_logon_id
+	AlipayLogonId       string `json:"alipay_logon_id"`        // 用户的支付宝登录账号，支持邮箱或手机号码格式。本参数与alipay_user_id不可同时为空，若都填写，则以alipay_user_id为准
+	SignScene           string `json:"sign_scene"`             // 签约协议场景，商户和支付宝签约时确定，商户可咨询技术支持
+	ExternalAgreementNo string `jsson:"external_agreement_no"` // 代扣协议中标示用户的唯一签约号(确保在商户系统中 唯一)。
+	ThirdPartyType      string `jsson:"third_party_type"`      // 签约第三方主体类型。对于三方协议，表示当前用户和哪一类的第三方主体进行签约
+	AgreementNo         string `json:"agreement_no"`           // 支付宝系统中用以唯一标识用户签约记录的编号（用户签约成功后的协议号），如果传了该参数，其他参数会被忽略
+	AppAuthToken        string `json:"-"`
+}
+
+type AgreementQueryRsp struct {
+	Content struct {
+		Code                string `json:"code"`
+		Msg                 string `json:"msg"`
+		SubCode             string `json:"sub_code"`
+		SubMsg              string `json:"sub_msg"`
+		ValidTime           string `json:"valid_time"`            // 协议生效时间，格式为 yyyyMM-dd HH:mm:ss
+		AlipayLogonId       string `json:"alipay_logon_id"`       // 返回脱敏的支付宝账号
+		InvalidTime         string `json:"invalid_time"`          // 协议失效时间，格式为 yyyyMM-dd HH:mm:ss
+		PricipalType        string `json:"pricipal_type"`         // 签约主体类型。 CARD:支付宝账号 CUSTOMER:支付宝用户
+		DeviceId            string `json:"device_id"`             // 设备Id
+		PrincipalId         string `json:"principal_id"`          // 签约主体标识。当principal_type为CARD时，该字段为支付宝用户号;当principal_type为CUSTOMER时，该字段为支付宝用户标识。
+		SignScene           string `json:"sign_scene"`            // 签约协议的场景
+		AgreementNo         string `json:"agreement_no"`          // 用户签约成功后的协议号
+		ThirdPartyType      string `json:"third_party_type"`      // 签约第三方主体类型。对于三方协议，表示当前用户和哪一类的第三方主体进行签约。 1.PARTNER（平台商户）;2.MERCHANT（集团商户），集团下子商户可共享用户签约内容;默认为PARTNER
+		Status              string `json:"status"`                // 协议当前状态 1.TEMP：暂存，协议未生效过；2.NORMAL：正常；3.STOP：暂停
+		SignTime            string `json:"sign_time"`             // 协议签约时间，格式为 yyyyMM-dd HH:mm:ss
+		PersonalProductCode string `json:"personal_product_code"` // 协议产品码，商户和支付宝签约时确定，不同业务场景对应不同的签约产品码
+		ExternalAgreementNo string `json:"external_agreement_no"` // 代扣协议中标示用户的唯一签约号(确保在商户系统中唯一)
+		ZmOpenId            string `json:"zm_open_id"`            // 用户的芝麻信用 openId，供商户查询用户芝麻信用使用。
+		ExternalLogonId     string `json:"external_logon_id"`     // 外部登录Id
+	} `json:"alipay_user_agreement_query_response"`
+	Sign string `json:"sign"`
+}
+
+func (this AgreementQuery) APIName() string {
+	return "alipay.user.agreement.query"
+}
+
+func (this AgreementQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+// --------------------------------------------------------------------------------
+// https://docs.open.alipay.com/api_2/alipay.user.agreement.unsign
+// 支付宝个人代扣协议解约接口
 type AgreementUnsign struct {
 	AppAuthToken        string `json:"-"`
 	NotifyURL           string `json:"-"`
