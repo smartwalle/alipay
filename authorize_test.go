@@ -1,8 +1,9 @@
 package alipay_test
 
 import (
-	"github.com/smartwalle/alipay/v3"
 	"testing"
+
+	"github.com/smartwalle/alipay/v3"
 )
 
 func TestClient_PublicAppAuthorize(t *testing.T) {
@@ -59,4 +60,20 @@ func TestClient_OpenAuthTokenApp(t *testing.T) {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.AppAuthToken, rsp.Content.UserId)
+}
+
+func TestClient_SignLoginAuth(t *testing.T) {
+	t.Log("========== SignLoginAuth ==========")
+	var p = alipay.LoginOauthInfo{}
+	p.Pid = "2088123456789012"
+	p.TargetID = "kkkkk091125"
+	p.AuthType = "AUTHACCOUNT"
+	result, err := client.SignLoginAuth(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result == "" {
+		t.Fatal(err)
+	}
+	t.Log(result)
 }
