@@ -138,17 +138,17 @@ type OpenAuthTokenAppRsp struct {
 
 // --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/218/105327/
-type LoginOauthInfo struct {
+type AccountAuth struct {
 	Pid      string `json:"pid"`
-	TargetID string `json:"target_id"`
+	TargetId string `json:"target_id"`
 	AuthType string `json:"auth_type"`
 }
 
-func (this LoginOauthInfo) APIName() string {
+func (this AccountAuth) APIName() string {
 	return "alipay.open.auth.sdk.code.get"
 }
 
-func (this LoginOauthInfo) Params() map[string]string {
+func (this AccountAuth) Params() map[string]string {
 	var m = make(map[string]string)
 	m["apiname"] = "com.alipay.account.auth"
 	m["app_name"] = "mc"
@@ -156,7 +156,7 @@ func (this LoginOauthInfo) Params() map[string]string {
 	m["pid"] = this.Pid
 	m["product_id"] = "APP_FAST_LOGIN"
 	m["scope"] = "kuaijie"
-	m["target_id"] = this.TargetID
+	m["target_id"] = this.TargetId
 	m["auth_type"] = this.AuthType
 	return m
 }

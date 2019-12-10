@@ -186,6 +186,10 @@ client.LoadAliPayPublicKey("aliPublicKey")
 * **支付宝会员授权信息查询接口**
     
     alipay.user.info.share - **UserInfoShare()** 
+    
+* **App支付宝登录**
+    
+    com.alipay.account.auth - **AccountAuth()**
 
 
 #### 通知

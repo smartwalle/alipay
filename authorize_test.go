@@ -62,13 +62,13 @@ func TestClient_OpenAuthTokenApp(t *testing.T) {
 	t.Log(rsp.Content.AppAuthToken, rsp.Content.UserId)
 }
 
-func TestClient_SignLoginAuth(t *testing.T) {
-	t.Log("========== SignLoginAuth ==========")
-	var p = alipay.LoginOauthInfo{}
+func TestClient_AccountAuth(t *testing.T) {
+	t.Log("========== AccountAuth ==========")
+	var p = alipay.AccountAuth{}
 	p.Pid = "2088123456789012"
-	p.TargetID = "kkkkk091125"
+	p.TargetId = "kkkkk091125"
 	p.AuthType = "AUTHACCOUNT"
-	result, err := client.SignLoginAuth(p)
+	result, err := client.AccountAuth(p)
 	if err != nil {
 		t.Fatal(err)
 	}
