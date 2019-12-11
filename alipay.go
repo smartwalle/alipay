@@ -31,19 +31,19 @@ const (
 )
 
 type Client struct {
+	mu                 sync.Mutex
 	isProduction       bool
 	appId              string
 	apiDomain          string
 	notifyVerifyDomain string
-	appPrivateKey      *rsa.PrivateKey // 应用私钥
 	Client             *http.Client
+	location           *time.Location
 
+	appPrivateKey    *rsa.PrivateKey // 应用私钥
 	appCertSN        string
 	rootCertSN       string
 	aliPublicCertSN  string
 	aliPublicKeyList map[string]*rsa.PublicKey
-
-	mu *sync.Mutex
 }
 
 // New 初始化支付宝客户端
@@ -51,6 +51,11 @@ type Client struct {
 // privateKey - 应用私钥，开发者自己生成
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
 func New(appId, privateKey string, isProduction bool) (client *Client, err error) {
+	location, err := time.LoadLocation("Asia/Chongqing")
+	if err != nil {
+		return nil, err
+	}
+
 	pri, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
 		pri, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
@@ -58,14 +63,10 @@ func New(appId, privateKey string, isProduction bool) (client *Client, err error
 			return nil, err
 		}
 	}
-
 	client = &Client{}
 	client.isProduction = isProduction
 	client.appId = appId
-	client.appPrivateKey = pri
-	client.mu = &sync.Mutex{}
 
-	client.Client = http.DefaultClient
 	if client.isProduction {
 		client.apiDomain = kProductionURL
 		client.notifyVerifyDomain = kProductionMAPIURL
@@ -73,6 +74,10 @@ func New(appId, privateKey string, isProduction bool) (client *Client, err error
 		client.apiDomain = kSandboxURL
 		client.notifyVerifyDomain = kSandboxURL
 	}
+	client.Client = http.DefaultClient
+	client.location = location
+
+	client.appPrivateKey = pri
 	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
 	return client, nil
 }
