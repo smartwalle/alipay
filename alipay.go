@@ -191,7 +191,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	p.Add("format", kFormat)
 	p.Add("charset", kCharset)
 	p.Add("sign_type", kSignTypeRSA2)
-	p.Add("timestamp", time.Now().Format(kTimeFormat))
+	p.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
 	p.Add("version", kVersion)
 	if this.appCertSN != "" {
 		p.Add("app_cert_sn", this.appCertSN)
