@@ -406,6 +406,12 @@ type GoodsDetailItem struct {
 	ShowUrl       string `json:"show_url"`
 }
 
+type AgreementParams struct {
+	AgreementNo   string `json:"agreement_no,omitempty"`
+	AuthConfirmNo string `json:"auth_confirm_no,omitempty"`
+	ApplyToken    string `json:"apply_token,omitempty"`
+}
+
 // --------------------------------------------------------------------------------
 // https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type TradePay struct {
@@ -425,6 +431,7 @@ type TradePay struct {
 	TerminalId         string             `json:"terminal_id,omitempty"`         // 可选 商户机具终端编号
 	AuthConfirmMode    string             `json:"auth_confirm_mode,omitempty"`
 	TerminalParams     string             `json:"terminal_params,omitempty"`
+	AgreementParams    *AgreementParams   `json:"agreement_params,omitempty"`
 }
 
 func (this TradePay) APIName() string {
