@@ -298,10 +298,8 @@ http.HandleFunc("/return", func(rep http.ResponseWriter, req *http.Request) {
 ```Golang
 http.HandleFunc("/alipay", func(rep http.ResponseWriter, req *http.Request) {
 	var noti, _ = client.GetTradeNotification(req)
-	if noti != nil && noti.TradeStatus == "TRADE_SUCCESS" {
-		fmt.Println("支付成功")
-	} else {
-		fmt.Println("支付失败")
+	if noti != nil {
+		fmt.Println("交易状态为:", noti.TradeStatus)
 	}
 	alipay.AckNotification(rep) // 确认收到通知消息
 })
