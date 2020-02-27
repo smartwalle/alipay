@@ -418,3 +418,53 @@ func (this *FundTransUniTransferRsp) IsSuccess() bool {
 	}
 	return false
 }
+
+// FundTransCommonQuery 转账业务单据查询接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.common.query/
+type FundTransCommonQuery struct {
+	AppAuthToken   string `json:"-"`                 // 可选
+	ProductCode    string `json:"product_code"`      // 必选 业务产品码， 收发现金红包固定为：STD_RED_PACKET； 单笔无密转账到支付宝账户固定为：TRANS_ACCOUNT_NO_PWD； 单笔无密转账到银行卡固定为：TRANS_BANKCARD_NO_PWD
+	BizScene       string `json:"biz_scene"`         // 必选 描述特定的业务场景，可传的参数如下： PERSONAL_COLLECTION：C2C现金红包-领红包； DIRECT_TRANSFER：B2C现金红包、单笔无密转账到支付宝/银行卡
+	OutBizNo       string `json:"out_biz_no"`        // 可选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
+	OrderId        string `json:"order_id"`          // 可选 支付宝转账单据号
+	PayFundOrderId string `json:"pay_fund_order_id"` // 可选 支付宝支付资金流水号
+}
+
+func (this FundTransCommonQuery) APIName() string {
+	return "alipay.fund.trans.common.query"
+}
+
+func (this FundTransCommonQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+// FundTransCommonQueryRsp 转账业务单据查询接口响应参数
+type FundTransCommonQueryRsp struct {
+	Content struct {
+		Code             Code    `json:"code"`
+		Msg              string  `json:"msg"`
+		SubCode          string  `json:"sub_code"`
+		SubMsg           string  `json:"sub_msg"`
+		OrderId          string  `json:"order_id"`           // 支付宝转账订单号
+		PayFundOrderId   string  `json:"pay_fund_order_id"`  // 支付宝支付资金流水号
+		OutBizNo         string  `json:"out_biz_no"`         // 用户订单号
+		TransAmount      float64 `json:"trans_amount"`       // 付款金额
+		Status           string  `json:"status"`             // 转账单据状态。 SUCCESS：成功（对转账到银行卡的单据, 该状态可能变为退票[REFUND]状态）； FAIL：失败（具体失败原因请参见error_code以及fail_reason返回值）； DEALING：处理中； REFUND：退票；
+		PayDate          string  `json:"pay_date"`           // 支付时间
+		ArrivalTimeEnd   string  `json:"arrival_time_end"`   // 预计到账时间
+		OrderFee         string  `json:"order_fee"`          // 预计收费金额
+		ErrorCode        string  `json:"error_code"`         // 查询到的订单状态为FAIL失败或REFUND退票时，返回错误代码
+		FailReason       string  `json:"fail_reason"`        // 查询到的订单状态为FAIL失败或REFUND退票时，返回具体的原因。
+		DeductBillInfo   string  `json:"deduct_bill_info"`   // 商户查询代扣订单信息时返回其在代扣请求中传入的账单属性
+		TransferBillInfo string  `json:"transfer_bill_info"` // 商户在查询代发订单信息时返回其在代发请求中传入的账单属性。
+	} `json:"alipay_fund_trans_common_query_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *FundTransCommonQueryRsp) IsSuccess() bool {
+	if this.Content.Code == CodeSuccess {
+		return true
+	}
+	return false
+}

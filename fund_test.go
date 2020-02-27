@@ -76,3 +76,17 @@ func TestClient_FundTransUniTransfer(t *testing.T) {
 	}
 	t.Log(rsp)
 }
+
+func TestClient_FundTransCommonQuery(t *testing.T) {
+	t.Log("========== FundTransCommonQuery ==========")
+	var param = alipay.FundTransCommonQuery{
+		ProductCode: "TRANS_ACCOUNT_NO_PWD",
+		BizScene:    "DIRECT_TRANSFER",
+		OutBizNo:    "1111",
+	}
+	rsp, err := client.FundTransCommonQuery(param)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(rsp)
+}
