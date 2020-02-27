@@ -24,9 +24,17 @@ const (
 	kCertificateEnd   = "-----END CERTIFICATE-----"
 )
 
+// Code 支付宝接口响应 code https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
+type Code string
+
 const (
-	// https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
-	K_SUCCESS_CODE = "10000"
+	CodeSuccess          Code = "10000" // 接口调用成功
+	CodeUnknowError      Code = "20000" // 服务不可用
+	CodeInvalidAuthToken Code = "20001" // 授权权限不足
+	CodeMissingParam     Code = "40001" // 缺少必选参数
+	CodeInvalidParam     Code = "40002" // 非法的参数
+	CodeBusinessFailed   Code = "40004" // 业务处理失败
+	CodePermissionDenied Code = "40006" // 权限不足
 )
 
 type Param interface {
@@ -38,7 +46,7 @@ type Param interface {
 }
 
 type ErrorRsp struct {
-	Code    string `json:"code"`
+	Code    Code   `json:"code"`
 	Msg     string `json:"msg"`
 	SubCode string `json:"sub_code"`
 	SubMsg  string `json:"sub_msg"`
@@ -48,7 +56,6 @@ func (this *ErrorRsp) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
 
-// --------------------------------------------------------------------------------
 type CertDownload struct {
 	AppAuthToken string `json:"-"`              // 可选
 	AliPayCertSN string `json:"alipay_cert_sn"` // 支付宝公钥证书序列号
@@ -66,7 +73,7 @@ func (this CertDownload) Params() map[string]string {
 
 type CertDownloadRsp struct {
 	Content struct {
-		Code              string `json:"code"`
+		Code              Code   `json:"code"`
 		Msg               string `json:"msg"`
 		SubCode           string `json:"sub_code"`
 		SubMsg            string `json:"sub_msg"`

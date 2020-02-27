@@ -47,8 +47,11 @@ type Client struct {
 }
 
 // New 初始化支付宝客户端
+//
 // appId - 支付宝应用 id
+//
 // privateKey - 应用私钥，开发者自己生成
+//
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
 func New(appId, privateKey string, isProduction bool) (client *Client, err error) {
 	location, err := time.LoadLocation("Asia/Chongqing")
@@ -270,7 +273,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 			}
 
 			// alipay.open.app.alipaycert.download(应用支付宝公钥证书下载) 没有返回 sign 字段，所以再判断一次 code
-			if errRsp.Code != K_SUCCESS_CODE {
+			if errRsp.Code != CodeSuccess {
 				if errRsp != nil {
 					return errRsp
 				}

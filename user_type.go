@@ -42,9 +42,7 @@ type PeriodRuleParams struct {
 	TotalPayments int    `json:"total_payments,omitempty"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.agreement.page.sign
-// 支付宝个人协议页面签约接口
+// AgreementPageSign 支付宝个人协议页面签约接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.page.sign
 type AgreementPageSign struct {
 	AppAuthToken        string             `json:"-"`
 	ReturnURL           string             `json:"-"`
@@ -69,9 +67,10 @@ type AgreementPageSign struct {
 	PeriodRuleParams    *PeriodRuleParams  `json:"period_rule_params,omitempty"`
 }
 
+// AgreementPageSignRsp 支付宝个人协议页面签约接口请响应参数
 type AgreementPageSignRsp struct {
 	Content struct {
-		Code                string `json:"code"`
+		Code                Code   `json:"code"`
 		Msg                 string `json:"msg"`
 		SubCode             string `json:"sub_code"`
 		SubMsg              string `json:"sub_msg"`
@@ -104,9 +103,7 @@ func (this AgreementPageSign) Params() map[string]string {
 	return m
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.agreement.query
-// 支付宝个人代扣协议查询接口
+// AgreementQuery 支付宝个人代扣协议查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.query
 type AgreementQuery struct {
 	PersonalProductCode string `json:"personal_product_code,omitempty"`  // 协议产品码，商户和支付宝签约时确定，商户可咨询技术支持
 	AlipayUserId        string `json:"alipay_user_id,omitempty"`         // 用户的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成;本参数与alipay_logon_id不可同时为空，若都填写，则以本参数为准，优先级高于alipay_logon_id
@@ -118,9 +115,10 @@ type AgreementQuery struct {
 	AppAuthToken        string `json:"-"`
 }
 
+// AgreementQueryRsp 支付宝个人代扣协议查询接口响应参数
 type AgreementQueryRsp struct {
 	Content struct {
-		Code                string `json:"code"`
+		Code                Code   `json:"code"`
 		Msg                 string `json:"msg"`
 		SubCode             string `json:"sub_code"`
 		SubMsg              string `json:"sub_msg"`
@@ -153,9 +151,7 @@ func (this AgreementQuery) Params() map[string]string {
 	return m
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.agreement.unsign
-// 支付宝个人代扣协议解约接口
+// AgreementUnsign 支付宝个人代扣协议解约接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.unsign
 type AgreementUnsign struct {
 	AppAuthToken        string `json:"-"`
 	NotifyURL           string `json:"-"`
@@ -169,15 +165,6 @@ type AgreementUnsign struct {
 	ExtendParams        string `json:"extend_params,omitempty"`
 	OperateType         string `json:"operate_type,omitempty"`
 }
-type AgreementUnsignRsp struct {
-	Content struct {
-		Code    string `json:"code"`
-		Msg     string `json:"msg"`
-		SubCode string `json:"sub_code"`
-		SubMsg  string `json:"sub_msg"`
-	} `json:"agreement_unsign_response"`
-	Sign string `json:"sign"`
-}
 
 func (this AgreementUnsign) APIName() string {
 	return "alipay.user.agreement.unsign"
@@ -188,4 +175,15 @@ func (this AgreementUnsign) Params() map[string]string {
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
+}
+
+// AgreementUnsignRsp 支付宝个人代扣协议解约接口响应参数
+type AgreementUnsignRsp struct {
+	Content struct {
+		Code    Code   `json:"code"`
+		Msg     string `json:"msg"`
+		SubCode string `json:"sub_code"`
+		SubMsg  string `json:"sub_msg"`
+	} `json:"agreement_unsign_response"`
+	Sign string `json:"sign"`
 }

@@ -9,7 +9,7 @@ func TestClient_UserCertifyOpenInitialize(t *testing.T) {
 	t.Log("========== UserCertifyOpenInitialize ==========")
 	var p = alipay.UserCertifyOpenInitialize{}
 	p.OuterOrderNo = "xxxx"
-	p.BizCode = alipay.K_CERTIFY_BIZ_CODE_FACE
+	p.BizCode = alipay.CertifyBizCodeFace
 	p.IdentityParam.IdentityType = "CERT_INFO"
 	p.IdentityParam.CertType = "IDENTITY_CARD"
 	p.IdentityParam.CertName = "沙箱环境"
@@ -19,7 +19,7 @@ func TestClient_UserCertifyOpenInitialize(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.CertifyId)
@@ -44,7 +44,7 @@ func TestClient_UserCertifyOpenQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.Msg)

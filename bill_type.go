@@ -1,6 +1,6 @@
 package alipay
 
-// https://docs.open.alipay.com/api_15/alipay.data.dataservice.bill.downloadurl.query
+// BillDownloadURLQuery 查询对账单下载地址接口请求参数 https://docs.open.alipay.com/api_15/alipay.data.dataservice.bill.downloadurl.query
 type BillDownloadURLQuery struct {
 	AppAuthToken string `json:"-"` // 可选
 	BillType     string `json:"bill_type"`
@@ -17,9 +17,10 @@ func (this BillDownloadURLQuery) Params() map[string]string {
 	return m
 }
 
+// BillDownloadURLQueryRsp 查询对账单下载地址接口响应参数
 type BillDownloadURLQueryRsp struct {
 	Content struct {
-		Code            string `json:"code"`
+		Code            Code   `json:"code"`
 		Msg             string `json:"msg"`
 		SubCode         string `json:"sub_code"`
 		SubMsg          string `json:"sub_msg"`

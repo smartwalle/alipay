@@ -1,7 +1,6 @@
 package alipay
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
+// TradeWapPay 手机网站支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.wap.pay/
 type TradeWapPay struct {
 	Trade
 	QuitURL    string `json:"quit_url,omitempty"`

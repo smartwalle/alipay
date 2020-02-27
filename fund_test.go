@@ -16,7 +16,7 @@ func TestClient_FundTransToAccountTransfer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.Msg)
@@ -33,7 +33,7 @@ func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.Msg)
@@ -49,6 +49,28 @@ func TestClient_FundAuthOrderAppFreeze(t *testing.T) {
 	p.ProductCode = "PRE_AUTH_ONLINE"
 
 	rsp, err := client.FundAuthOrderAppFreeze(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(rsp)
+}
+
+func TestClient_FundTransUniTransfer(t *testing.T) {
+	t.Log("========== FundTransUniTransfer ==========")
+	var param = alipay.FundTransUniTransfer{
+		OutBizNo:    "1111",
+		TransAmount: "10.00",
+		ProductCode: "TRANS_ACCOUNT_NO_PWD",
+		BizScene:    "DIRECT_TRANSFER",
+		OrderTitle:  "remark",
+		PayeeInfo: &alipay.PayeeInfo{
+			Identity:     "xwmkjn7612@sandbox.com",
+			IdentityType: "ALIPAY_LOGON_ID",
+			Name:         "沙箱环境",
+		},
+		Remark: "remark",
+	}
+	rsp, err := client.FundTransUniTransfer(param)
 	if err != nil {
 		t.Fatal(err)
 	}

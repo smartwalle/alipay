@@ -1,21 +1,18 @@
 package alipay
 
-// FundTransToAccountTransfer https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
-// 单笔转账到支付宝账户接口
+// FundTransToAccountTransfer 单笔转账到支付宝账户接口 https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
 func (this *Client) FundTransToAccountTransfer(param FundTransToAccountTransfer) (result *FundTransToAccountTransferRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundTransOrderQuery https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
-// 查询转账订单接口
+// FundTransOrderQuery 查询转账订单接口 https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
 func (this *Client) FundTransOrderQuery(param FundTransOrderQuery) (result *FundTransOrderQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// FundAuthOrderVoucherCreate https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
-// 资金授权发码接口
+// FundAuthOrderVoucherCreate 资金授权发码接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
 func (this *Client) FundAuthOrderVoucherCreate(param FundAuthOrderVoucherCreate) (result *FundAuthOrderVoucherCreateRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err

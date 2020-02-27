@@ -27,7 +27,7 @@ func (this *Client) TradeAppPay(param TradeAppPay) (result string, err error) {
 	return p.Encode(), err
 }
 
-// TradeFastPayRefundQuery 统一收单交易退款查询 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
+// TradeFastPayRefundQuery 统一收单交易退款查询接口 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 func (this *Client) TradeFastPayRefundQuery(param TradeFastPayRefundQuery) (result *TradeFastPayRefundQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
@@ -57,13 +57,13 @@ func (this *Client) TradeRefund(param TradeRefund) (result *TradeRefundRsp, err 
 	return result, err
 }
 
-// TradePreCreate 统一收单线下交易预创建 https://docs.open.alipay.com/api_1/alipay.trade.precreate/
+// TradePreCreate 统一收单线下交易预创建接口 https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 func (this *Client) TradePreCreate(param TradePreCreate) (result *TradePreCreateRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// TradeQuery 统一收单线下交易查询 https://docs.open.alipay.com/api_1/alipay.trade.query/
+// TradeQuery 统一收单线下交易查询接口 https://docs.open.alipay.com/api_1/alipay.trade.query/
 func (this *Client) TradeQuery(param TradeQuery) (result *TradeQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err

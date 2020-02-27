@@ -1,6 +1,5 @@
 package alipay
 
-// --------------------------------------------------------------------------------
 type Trade struct {
 	NotifyURL string `json:"-"`
 	ReturnURL string `json:"-"`
@@ -30,8 +29,7 @@ type Trade struct {
 	TimeoutExpress   string `json:"timeout_express,omitempty"`   // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.app.pay
+// TradePagePay 统一收单下单并支付页面接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 type TradePagePay struct {
 	Trade
 	AuthToken   string         `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
@@ -63,15 +61,16 @@ func (this TradePagePay) Params() map[string]string {
 	return m
 }
 
-// --------------------------------------------------------------------------------
+type TradeStatus string
+
 const (
-	K_TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY" //（交易创建，等待买家付款）
-	K_TRADE_STATUS_TRADE_CLOSED   = "TRADE_CLOSED"   //（未付款交易超时关闭，或支付完成后全额退款）
-	K_TRADE_STATUS_TRADE_SUCCESS  = "TRADE_SUCCESS"  //（交易支付成功）
-	K_TRADE_STATUS_TRADE_FINISHED = "TRADE_FINISHED" //（交易结束，不可退款）
+	TradeStatusWaitBuyerPay TradeStatus = "WAIT_BUYER_PAY" //（交易创建，等待买家付款）
+	TradeStatusClosed       TradeStatus = "TRADE_CLOSED"   //（未付款交易超时关闭，或支付完成后全额退款）
+	TradeStatusSuccess      TradeStatus = "TRADE_SUCCESS"  //（交易支付成功）
+	TradeStatusFinished     TradeStatus = "TRADE_FINISHED" //（交易结束，不可退款）
 )
 
-// https://docs.open.alipay.com/api_1/alipay.trade.query/
+// TradeQuery 统一收单线下交易查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.query/
 type TradeQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 订单支付时传入的商户订单号, 与 TradeNo 二选一
@@ -88,17 +87,17 @@ func (this TradeQuery) Params() map[string]string {
 	return m
 }
 
+// TradeQueryRsp 统一收单线下交易查询接口响应参数
 type TradeQueryRsp struct {
 	Content struct {
-		Code    string `json:"code"`
-		Msg     string `json:"msg"`
-		SubCode string `json:"sub_code"`
-		SubMsg  string `json:"sub_msg"`
-
+		Code                Code             `json:"code"`
+		Msg                 string           `json:"msg"`
+		SubCode             string           `json:"sub_code"`
+		SubMsg              string           `json:"sub_msg"`
 		TradeNo             string           `json:"trade_no"`                      // 支付宝交易号
 		OutTradeNo          string           `json:"out_trade_no"`                  // 商家订单号
 		BuyerLogonId        string           `json:"buyer_logon_id"`                // 买家支付宝账号
-		TradeStatus         string           `json:"trade_status"`                  // 交易状态
+		TradeStatus         TradeStatus      `json:"trade_status"`                  // 交易状态
 		TotalAmount         string           `json:"total_amount"`                  // 交易的订单金额
 		TransCurrency       string           `json:"trans_currency"`                // 标价币种
 		SettleCurrency      string           `json:"settle_currency"`               // 订单结算币种
@@ -153,14 +152,13 @@ type VoucherDetail struct {
 }
 
 func (this *TradeQueryRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.close/
+// TradeClose 统一收单交易关闭接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.close/
 type TradeClose struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	NotifyURL    string `json:"-"`                      // 可选
@@ -180,9 +178,10 @@ func (this TradeClose) Params() map[string]string {
 	return m
 }
 
+// TradeCloseRsp 统一收单交易关闭接口响应参数
 type TradeCloseRsp struct {
 	Content struct {
-		Code       string `json:"code"`
+		Code       Code   `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
 		SubMsg     string `json:"sub_msg"`
@@ -192,8 +191,7 @@ type TradeCloseRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.refund/
+// TradeRefund 统一收单交易退款接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type TradeRefund struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -216,9 +214,10 @@ func (this TradeRefund) Params() map[string]string {
 	return m
 }
 
+// TradeRefundRsp 统一收单交易退款接口响应参数
 type TradeRefundRsp struct {
 	Content struct {
-		Code                 string              `json:"code"`
+		Code                 Code                `json:"code"`
 		Msg                  string              `json:"msg"`
 		SubCode              string              `json:"sub_code"`
 		SubMsg               string              `json:"sub_msg"`
@@ -236,7 +235,7 @@ type TradeRefundRsp struct {
 }
 
 func (this *TradeRefundRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
@@ -248,8 +247,7 @@ type RefundDetailItem struct {
 	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
+// TradeFastPayRefundQuery 统一收单交易退款查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 type TradeFastPayRefundQuery struct {
 	AppAuthToken string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -267,9 +265,10 @@ func (this TradeFastPayRefundQuery) Params() map[string]string {
 	return m
 }
 
+// TradeFastPayRefundQueryRsp 统一收单交易退款查询接口响应参数
 type TradeFastPayRefundQueryRsp struct {
 	Content struct {
-		Code         string `json:"code"`
+		Code         Code   `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
 		SubMsg       string `json:"sub_msg"`
@@ -284,14 +283,13 @@ type TradeFastPayRefundQueryRsp struct {
 }
 
 func (this *TradeFastPayRefundQueryRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.order.settle
+// TradeOrderSettle 统一收单交易结算接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 type TradeOrderSettle struct {
 	AppAuthToken      string              `json:"-"`                  // 可选
 	OutRequestNo      string              `json:"out_request_no"`     // 必须 结算请求流水号 开发者自行生成并保证唯一性
@@ -318,9 +316,10 @@ type RoyaltyParameter struct {
 	Desc             string  `json:"desc"`                        // 可选 分账描述
 }
 
+// TradeOrderSettleRsp 统一收单交易结算接口响应参数
 type TradeOrderSettleRsp struct {
 	Content struct {
-		Code    string `json:"code"`
+		Code    Code   `json:"code"`
 		Msg     string `json:"msg"`
 		SubCode string `json:"sub_code"`
 		SubMsg  string `json:"sub_msg"`
@@ -329,8 +328,7 @@ type TradeOrderSettleRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.create/
+// TradeCreate 统一收单交易创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.create/
 type TradeCreate struct {
 	Trade
 	AppAuthToken string `json:"-"` // 可选
@@ -353,9 +351,10 @@ func (this TradeCreate) Params() map[string]string {
 	return m
 }
 
+// TradeCreateRsp 统一收单交易创建接口响应参数
 type TradeCreateRsp struct {
 	Content struct {
-		Code       string `json:"code"`
+		Code       Code   `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
 		SubMsg     string `json:"sub_msg"`
@@ -412,8 +411,7 @@ type AgreementParams struct {
 	ApplyToken    string `json:"apply_token,omitempty"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.pay/
+// TradePay 统一收单交易支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type TradePay struct {
 	Trade
 	AppAuthToken string `json:"-"` // 可选
@@ -445,9 +443,10 @@ func (this TradePay) Params() map[string]string {
 	return m
 }
 
+// TradePayRsp 统一收单交易支付接口响应参数
 type TradePayRsp struct {
 	Content struct {
-		Code                string           `json:"code"`
+		Code                Code             `json:"code"`
 		Msg                 string           `json:"msg"`
 		SubCode             string           `json:"sub_code"`
 		SubMsg              string           `json:"sub_msg"`
@@ -471,14 +470,13 @@ type TradePayRsp struct {
 }
 
 func (this *TradePayRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
+// TradeAppPay App支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 type TradeAppPay struct {
 	Trade
 	TimeExpire string `json:"time_expire,omitempty"` // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
@@ -494,8 +492,7 @@ func (this TradeAppPay) Params() map[string]string {
 	return m
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.precreate/
+// TradePreCreate 统一收单线下交易预创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type TradePreCreate struct {
 	Trade
 	AppAuthToken       string             `json:"-"`                      // 可选
@@ -516,9 +513,10 @@ func (this TradePreCreate) Params() map[string]string {
 	return m
 }
 
+// TradePreCreateRsp 统一收单线下交易预创建接口响应参数
 type TradePreCreateRsp struct {
 	Content struct {
-		Code       string `json:"code"`
+		Code       Code   `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
 		SubMsg     string `json:"sub_msg"`
@@ -529,14 +527,13 @@ type TradePreCreateRsp struct {
 }
 
 func (this *TradePreCreateRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.cancel/
+// TradeCancel 统一收单交易撤销接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.cancel/
 type TradeCancel struct {
 	AppAuthToken string `json:"-"` // 可选
 	NotifyURL    string `json:"-"` // 可选
@@ -556,9 +553,10 @@ func (this TradeCancel) Params() map[string]string {
 	return m
 }
 
+// TradeCancelRsp 统一收单交易撤销接口响应参数
 type TradeCancelRsp struct {
 	Content struct {
-		Code       string `json:"code"`
+		Code       Code   `json:"code"`
 		Msg        string `json:"msg"`
 		SubCode    string `json:"sub_code"`
 		SubMsg     string `json:"sub_msg"`
@@ -571,14 +569,13 @@ type TradeCancelRsp struct {
 }
 
 func (this *TradeCancelRsp) IsSuccess() bool {
-	if this.Content.Code == K_SUCCESS_CODE {
+	if this.Content.Code == CodeSuccess {
 		return true
 	}
 	return false
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
+// TradeOrderInfoSync 支付宝订单信息同步接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
 type TradeOrderInfoSync struct {
 	AppAuthToken string `json:"-"`              // 可选
 	OutRequestNo string `json:"out_request_no"` // 必选 标识一笔交易多次请求，同一笔交易多次信息同步时需要保证唯一
@@ -597,9 +594,10 @@ func (this TradeOrderInfoSync) Params() map[string]string {
 	return m
 }
 
+// TradeOrderInfoSyncRsp 支付宝订单信息同步接口响应参数
 type TradeOrderInfoSyncRsp struct {
 	Content struct {
-		Code        string `json:"code"`
+		Code        Code   `json:"code"`
 		Msg         string `json:"msg"`
 		SubCode     string `json:"sub_code"`
 		SubMsg      string `json:"sub_msg"`

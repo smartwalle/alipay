@@ -10,8 +10,7 @@ const (
 	kSandboxAppToAppAuth    = "https://openauth.alipaydev.com/oauth2/appToAppAuth.htm"
 )
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_9/alipay.system.oauth.token
+// SystemOauthToken 换取授权访问令牌接口请求参数 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 type SystemOauthToken struct {
 	AppAuthToken string `json:"-"` // 可选
 	GrantType    string `json:"-"` // 值为 authorization_code 时，代表用code换取；值为refresh_token时，代表用refresh_token换取
@@ -36,9 +35,10 @@ func (this SystemOauthToken) Params() map[string]string {
 	return m
 }
 
+// SystemOauthTokenRsp 换取授权访问令牌接口请求参数
 type SystemOauthTokenRsp struct {
 	Content struct {
-		Code         string `json:"code"`
+		Code         Code   `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
 		SubMsg       string `json:"sub_msg"`
@@ -57,8 +57,7 @@ type SystemOauthTokenRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.info.share
+// UserInfoShare 支付宝会员授权信息查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.info.share
 type UserInfoShare struct {
 	AppAuthToken string `json:"-"` // 可选
 	AuthToken    string `json:"-"` // 是
@@ -75,9 +74,10 @@ func (this UserInfoShare) Params() map[string]string {
 	return m
 }
 
+// UserInfoShareRsp 支付宝会员授权信息查询接口响应参数
 type UserInfoShareRsp struct {
 	Content struct {
-		Code               string `json:"code"`
+		Code               Code   `json:"code"`
 		Msg                string `json:"msg"`
 		SubCode            string `json:"sub_code"`
 		SubMsg             string `json:"sub_msg"`
@@ -96,8 +96,7 @@ type UserInfoShareRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
+// OpenAuthTokenApp 换取应用授权令牌请求参数 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
 type OpenAuthTokenApp struct {
 	GrantType    string `json:"grant_type"` // 值为 authorization_code 时，代表用code换取；值为refresh_token时，代表用refresh_token换取
 	Code         string `json:"code"`
@@ -120,9 +119,10 @@ func (this OpenAuthTokenApp) Params() map[string]string {
 	return m
 }
 
+// OpenAuthTokenAppRsp 换取应用授权令牌响应参数
 type OpenAuthTokenAppRsp struct {
 	Content struct {
-		Code            string `json:"code"`
+		Code            Code   `json:"code"`
 		Msg             string `json:"msg"`
 		SubCode         string `json:"sub_code"`
 		SubMsg          string `json:"sub_msg"`
@@ -136,8 +136,7 @@ type OpenAuthTokenAppRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/218/105327/
+// AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口请求参数 https://docs.open.alipay.com/218/105327/
 type AccountAuth struct {
 	Pid      string `json:"pid"`
 	TargetId string `json:"target_id"`

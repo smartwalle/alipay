@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// PublicAppAuthorize 用户信息授权(网站支付宝登录快速接入) https://docs.open.alipay.com/289/105656#s3 (https://docs.open.alipay.com/263/105809)
+// PublicAppAuthorize 用户信息授权接口(网站支付宝登录快速接入) https://docs.open.alipay.com/289/105656#s3 (https://docs.open.alipay.com/263/105809)
 func (this *Client) PublicAppAuthorize(scopes []string, redirectURI, state string) (result *url.URL, err error) {
 	var domain = kSandboxPublicAppAuthorize
 	if this.isProduction {
@@ -28,17 +28,17 @@ func (this *Client) PublicAppAuthorize(scopes []string, redirectURI, state strin
 	return result, nil
 }
 
-// SystemOauthToken 换取授权访问令牌 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
+// SystemOauthToken 换取授权访问令牌接口 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 func (this *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	if result != nil {
 		if result.Error != nil {
-			result.Content.Code = result.Error.Code
+			result.Content.Code = Code(result.Error.Code)
 			result.Content.Msg = result.Error.Msg
 			result.Content.SubCode = result.Error.SubCode
 			result.Content.SubMsg = result.Error.SubMsg
 		} else {
-			result.Content.Code = K_SUCCESS_CODE
+			result.Content.Code = CodeSuccess
 		}
 	}
 	return result, err
@@ -50,7 +50,7 @@ func (this *Client) UserInfoShare(param UserInfoShare) (result *UserInfoShareRsp
 	return result, err
 }
 
-// AppToAppAuth 第三方应用授权 https://docs.open.alipay.com/20160728150111277227/intro
+// AppToAppAuth 第三方应用授权接口 https://docs.open.alipay.com/20160728150111277227/intro
 func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error) {
 	var domain = kSandboxAppToAppAuth
 	if this.isProduction {
@@ -68,13 +68,13 @@ func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error
 	return result, nil
 }
 
-// OpenAuthTokenApp 换取应用授权令牌 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
+// OpenAuthTokenApp 换取应用授权令牌接口 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
 func (this *Client) OpenAuthTokenApp(param OpenAuthTokenApp) (result *OpenAuthTokenAppRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
 
-// AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串 https://docs.open.alipay.com/218/105327
+// AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口 https://docs.open.alipay.com/218/105327
 func (this *Client) AccountAuth(param AccountAuth) (result string, err error) {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)

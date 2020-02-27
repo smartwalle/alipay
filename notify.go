@@ -71,7 +71,7 @@ func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 	noti.NotifyType = req.FormValue("notify_type")
 	noti.NotifyTime = req.FormValue("notify_time")
 	noti.TradeNo = req.FormValue("trade_no")
-	noti.TradeStatus = req.FormValue("trade_status")
+	noti.TradeStatus = TradeStatus(req.FormValue("trade_status"))
 	noti.TotalAmount = req.FormValue("total_amount")
 	noti.ReceiptAmount = req.FormValue("receipt_amount")
 	noti.InvoiceAmount = req.FormValue("invoice_amount")

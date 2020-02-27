@@ -21,7 +21,7 @@ func TestClient_SystemOauthToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.UserId, rsp.Content.AccessToken)
@@ -35,7 +35,7 @@ func TestClient_UserInfoShare(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.UserId)
@@ -56,7 +56,7 @@ func TestClient_OpenAuthTokenApp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.K_SUCCESS_CODE {
+	if rsp.Content.Code != alipay.CodeSuccess {
 		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
 	}
 	t.Log(rsp.Content.AppAuthToken, rsp.Content.UserId)

@@ -1,16 +1,15 @@
 package alipay
 
-// --------------------------------------------------------------------------------
 type CertifyBizCode string
 
 const (
-	K_CERTIFY_BIZ_CODE_FACE            CertifyBizCode = "FACE"            // 多因子人脸认证
-	K_CERTIFY_BIZ_CODE_CERT_PHOTO      CertifyBizCode = "CERT_PHOTO"      // 多因子证照认证
-	K_CERTIFY_BIZ_CODE_CERT_PHOTO_FACE CertifyBizCode = "CERT_PHOTO_FACE" // 多因子证照和人脸认证
-	K_CERTIFY_BIZ_CODE_SMART_FACE      CertifyBizCode = "SMART_FACE"      // 多因子快捷认证
+	CertifyBizCodeFace          CertifyBizCode = "FACE"            // 多因子人脸认证
+	CertifyBizCodeCertPhoto     CertifyBizCode = "CERT_PHOTO"      // 多因子证照认证
+	CertifyBizCodeCertPhotoFace CertifyBizCode = "CERT_PHOTO_FACE" // 多因子证照和人脸认证
+	CertifyBizCodeSmartFace     CertifyBizCode = "SMART_FACE"      // 多因子快捷认证
 )
 
-// https://docs.open.alipay.com/api_2/alipay.user.certify.open.initialize
+// UserCertifyOpenInitialize 身份认证初始化服务接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.certify.open.initialize
 type UserCertifyOpenInitialize struct {
 	AppAuthToken        string         `json:"-"`                               // 可选
 	OuterOrderNo        string         `json:"outer_order_no"`                  // 必选  商户请求的唯一标识，商户要保证其唯一性，值为32位长度的字母数字组合。建议：前面几位字符是商户自定义的简称，中间可以使用一段时间，后段可以使用一个随机或递增序列
@@ -41,9 +40,10 @@ func (this UserCertifyOpenInitialize) Params() map[string]string {
 	return m
 }
 
+// UserCertifyOpenInitializeRsp 身份认证初始化服务接口响应参数
 type UserCertifyOpenInitializeRsp struct {
 	Content struct {
-		Code      string `json:"code"`
+		Code      Code   `json:"code"`
 		Msg       string `json:"msg"`
 		SubCode   string `json:"sub_code"`
 		SubMsg    string `json:"sub_msg"`
@@ -52,8 +52,7 @@ type UserCertifyOpenInitializeRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
+// UserCertifyOpenCertify 身份认证开始认证接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
 type UserCertifyOpenCertify struct {
 	AppAuthToken string `json:"-"`          // 可选
 	CertifyId    string `json:"certify_id"` // 必选 本次申请操作的唯一标识，由开放认证初始化接口调用后生成，后续的操作都需要用到
@@ -69,9 +68,10 @@ func (this UserCertifyOpenCertify) Params() map[string]string {
 	return m
 }
 
+// UserCertifyOpenCertifyRsp 身份认证开始认证接口响应参数
 type UserCertifyOpenCertifyRsp struct {
 	Content struct {
-		Code    string `json:"code"`
+		Code    Code   `json:"code"`
 		Msg     string `json:"msg"`
 		SubCode string `json:"sub_code"`
 		SubMsg  string `json:"sub_msg"`
@@ -79,8 +79,7 @@ type UserCertifyOpenCertifyRsp struct {
 	Sign string `json:"sign"`
 }
 
-// --------------------------------------------------------------------------------
-// https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
+// UserCertifyOpenQuery 身份认证记录查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
 type UserCertifyOpenQuery struct {
 	AppAuthToken string `json:"-"`          // 可选
 	CertifyId    string `json:"certify_id"` // 必选 本次申请操作的唯一标识，由开放认证初始化接口调用后生成，后续的操作都需要用到
@@ -96,9 +95,10 @@ func (this UserCertifyOpenQuery) Params() map[string]string {
 	return m
 }
 
+// UserCertifyOpenQueryRsp 身份认证记录查询接口响应参数
 type UserCertifyOpenQueryRsp struct {
 	Content struct {
-		Code         string `json:"code"`
+		Code         Code   `json:"code"`
 		Msg          string `json:"msg"`
 		SubCode      string `json:"sub_code"`
 		SubMsg       string `json:"sub_msg"`
