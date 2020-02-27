@@ -62,3 +62,9 @@ func (this *Client) FundTransCommonQuery(param FundTransCommonQuery) (result *Fu
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
+
+// FundAccountQuery 支付宝资金账户资产查询接口  https://docs.open.alipay.com/api_28/alipay.fund.account.query
+func (this *Client) FundAccountQuery(param FundAccountQuery) (result *FundAccountQueryRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}

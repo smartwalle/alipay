@@ -27,6 +27,10 @@ const (
 // Code 支付宝接口响应 code https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
 type Code string
 
+func (c Code) IsSuccess() bool {
+	return c == CodeSuccess
+}
+
 const (
 	CodeSuccess          Code = "10000" // 接口调用成功
 	CodeUnknowError      Code = "20000" // 服务不可用

@@ -468,3 +468,52 @@ func (this *FundTransCommonQueryRsp) IsSuccess() bool {
 	}
 	return false
 }
+
+// FundAccountQuery 支付宝资金账户资产查询接口请求参数  https://docs.open.alipay.com/api_28/alipay.fund.account.query
+type FundAccountQuery struct {
+	AppAuthToken       string `json:"-"`                    // 可选
+	AliPayUserId       string `json:"alipay_user_id"`       // 必选 蚂蚁统一会员ID
+	MerchantUserId     string `json:"merchant_user_id"`     // 特殊可选 商户会员的唯一标识。如果传入的user_id为虚拟账户userId，此字段必传并比对一致性。
+	AccountProductCode string `json:"account_product_code"` // 特殊可选 开户产品码。如果查询托管子户余额，必传且必须传入与开户时传入的值一致。
+	AccountType        string `json:"account_type"`         // 特殊可选 查询的账号类型，如查询托管账户值为TRUSTEESHIP_ACCOUNT，查询余额账户值为ACCTRANS_ACCOUNT。查询余额账户时必填。
+	AccountSceneCode   string `json:"account_scene_code"`   // 特殊可选 开户场景码，与开户产品码不可同时传递。
+	ExtInfo            string `json:"ext_info"`             // 可选 	JSON格式，传递业务扩展参数。
+}
+
+func (this FundAccountQuery) APIName() string {
+	return "alipay.fund.account.query"
+}
+
+func (this FundAccountQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+// FundAccountQueryRsp 支付宝资金账户资产查询接口响应参数
+type FundAccountQueryRsp struct {
+	Content struct {
+		Code            Code   `json:"code"`
+		Msg             string `json:"msg"`
+		SubCode         string `json:"sub_code"`
+		SubMsg          string `json:"sub_msg"`
+		AvailableAmount string `json:"available_amount"`
+		ExtCardInfo     struct {
+			CardNo       string `json:"card_no"`
+			BankAccName  string `json:"bank_acc_name"`
+			CardBranch   string `json:"card_branch"`
+			CardBank     string `json:"card_bank"`
+			CardLocation string `json:"card_location"`
+			CardDeposit  string `json:"card_deposit"`
+			Status       string `json:"status"`
+		}
+	} `json:"alipay_fund_account_query_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *FundAccountQueryRsp) IsSuccess() bool {
+	if this.Content.Code == CodeSuccess {
+		return true
+	}
+	return false
+}

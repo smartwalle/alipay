@@ -90,3 +90,15 @@ func TestClient_FundTransCommonQuery(t *testing.T) {
 	}
 	t.Log(rsp)
 }
+
+func TestClient_FundAccountQuery(t *testing.T) {
+	t.Log("========== FundAccountQuery ==========")
+	var param = alipay.FundAccountQuery{
+		AliPayUserId: "2088102169227503",
+	}
+	rsp, err := client.FundAccountQuery(param)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(rsp)
+}
