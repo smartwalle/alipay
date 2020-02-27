@@ -53,3 +53,9 @@ func (this *Client) FundAuthOrderAppFreeze(param FundAuthOrderAppFreeze) (result
 	}
 	return p.Encode(), err
 }
+
+// FundTransUniTransfer 单笔转账接口 https://docs.open.alipay.com/api_28/alipay.fund.trans.uni.transfer/
+func (this *Client) FundTransUniTransfer(param FundTransUniTransfer) (result *FundTransUniTransferRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}
