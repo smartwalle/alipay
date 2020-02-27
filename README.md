@@ -202,6 +202,18 @@ client.LoadAliPayPublicKey("aliPublicKey")
 * **支付宝个人代扣协议解约**
     
     alipay.user.agreement.unsign - **AgreementUnsign()**
+    
+* **支单笔转账接口**
+    
+    alipay.fund.trans.uni.transfer - **FundTransUniTransfer()**
+    
+* **转账业务单据查询接口**
+    
+    alipay.fund.trans.common.query - **FundTransCommonQuery()**
+    
+* **支付宝资金账户资产查询接口**
+    
+    alipay.fund.account.query - **FundAccountQuery()**
 
 
 #### 通知
