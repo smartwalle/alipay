@@ -46,6 +46,20 @@ type Client struct {
 	aliPublicKeyList map[string]*rsa.PublicKey
 }
 
+type OptionFunc func(c *Client)
+
+func WithTimeLocation(location *time.Location) OptionFunc {
+	return func(c *Client) {
+		c.location = location
+	}
+}
+
+func WithHTTPClient(client *http.Client) OptionFunc {
+	return func(c *Client) {
+		c.Client = client
+	}
+}
+
 // New 初始化支付宝客户端
 //
 // appId - 支付宝应用 id
@@ -53,15 +67,15 @@ type Client struct {
 // privateKey - 应用私钥，开发者自己生成
 //
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
-func New(appId, privateKey string, isProduction bool) (client *Client, err error) {
+func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (client *Client, err error) {
 	location, err := time.LoadLocation("Asia/Chongqing")
 	if err != nil {
 		return nil, err
 	}
 
-	pri, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
+	priKey, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
-		pri, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
+		priKey, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
 		if err != nil {
 			return nil, err
 		}
@@ -80,8 +94,13 @@ func New(appId, privateKey string, isProduction bool) (client *Client, err error
 	client.Client = http.DefaultClient
 	client.location = location
 
-	client.appPrivateKey = pri
+	client.appPrivateKey = priKey
 	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
+
+	for _, opt := range opts {
+		opt(client)
+	}
+
 	return client, nil
 }
 
