@@ -34,4 +34,3 @@ vendor/
 .DS_Store
 .idea
 *.iml
-go.sum
