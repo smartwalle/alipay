@@ -122,14 +122,14 @@ func (this OpenAuthTokenApp) Params() map[string]string {
 // OpenAuthTokenAppRsp 换取应用授权令牌响应参数 新版返回值 参见https://opendocs.alipay.com/open/20160728150111277227/intro
 type OpenAuthTokenAppRsp struct {
 	Content struct {
-		Code   Code    `json:"code"`
-		Msg    string  `json:"msg"`
-		Tokens []Token `json:"tokens"`
+		Code   Code             `json:"code"`
+		Msg    string           `json:"msg"`
+		Tokens []*OpenAuthToken `json:"tokens"`
 	} `json:"alipay_open_auth_token_app_response"`
 	Sign string `json:"sign"`
 }
 
-type Token struct {
+type OpenAuthToken struct {
 	AppAuthToken    string `json:"app_auth_token"`    // 授权令牌信息
 	AppRefreshToken string `json:"app_refresh_token"` // 令牌信息
 	AuthAppId       string `json:"auth_app_id"`       // 授权方应用id
