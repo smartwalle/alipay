@@ -119,21 +119,23 @@ func (this OpenAuthTokenApp) Params() map[string]string {
 	return m
 }
 
-// OpenAuthTokenAppRsp 换取应用授权令牌响应参数
+// OpenAuthTokenAppRsp 换取应用授权令牌响应参数 新版返回值 参见https://opendocs.alipay.com/open/20160728150111277227/intro
 type OpenAuthTokenAppRsp struct {
 	Content struct {
-		Code            Code   `json:"code"`
-		Msg             string `json:"msg"`
-		SubCode         string `json:"sub_code"`
-		SubMsg          string `json:"sub_msg"`
-		AppAuthToken    string `json:"app_auth_token"`
-		UserId          string `json:"user_id"`
-		AuthAppId       string `json:"auth_app_id"`
-		ExpiresIn       int64  `json:"expires_in"`
-		ReExpiresIn     int64  `json:"re_expires_in"`
-		AppRefreshToken string `json:"app_refresh_token"`
+		Code   Code    `json:"code"`
+		Msg    string  `json:"msg"`
+		Tokens []Token `json:"tokens"`
 	} `json:"alipay_open_auth_token_app_response"`
 	Sign string `json:"sign"`
+}
+
+type Token struct {
+	AppAuthToken    string `json:"app_auth_token"`    // 授权令牌信息
+	AppRefreshToken string `json:"app_refresh_token"` // 令牌信息
+	AuthAppId       string `json:"auth_app_id"`       // 授权方应用id
+	ExpiresIn       int64  `json:"expires_in"`        // 令牌有效期
+	ReExpiresIn     int64  `json:"re_expires_in"`     // 有效期
+	UserId          string `json:"user_id"`           // 支付宝用户标识
 }
 
 // AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口请求参数 https://docs.open.alipay.com/218/105327/
