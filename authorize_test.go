@@ -57,9 +57,12 @@ func TestClient_OpenAuthTokenApp(t *testing.T) {
 		t.Fatal(err)
 	}
 	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+		t.Fatal(rsp.Content.Msg)
 	}
-	t.Log(rsp.Content.AppAuthToken, rsp.Content.UserId)
+	tokens := rsp.Content.Tokens
+	for _, token := range tokens {
+		t.Log(token.AppAuthToken, token.UserId)
+	}
 }
 
 func TestClient_AccountAuth(t *testing.T) {
