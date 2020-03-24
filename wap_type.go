@@ -14,6 +14,7 @@ func (this TradeWapPay) APIName() string {
 
 func (this TradeWapPay) Params() map[string]string {
 	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	m["return_url"] = this.ReturnURL
 	return m

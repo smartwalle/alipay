@@ -1,8 +1,9 @@
 package alipay
 
 type Trade struct {
-	NotifyURL string `json:"-"`
-	ReturnURL string `json:"-"`
+	NotifyURL    string `json:"-"`
+	ReturnURL    string `json:"-"`
+	AppAuthToken string `json:"-"` // 可选
 
 	// biz content，这四个参数是必须的
 	Subject     string `json:"subject"`      // 订单标题
@@ -56,6 +57,7 @@ func (this TradePagePay) APIName() string {
 
 func (this TradePagePay) Params() map[string]string {
 	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	m["return_url"] = this.ReturnURL
 	return m
@@ -331,8 +333,6 @@ type TradeOrderSettleRsp struct {
 // TradeCreate 统一收单交易创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.create/
 type TradeCreate struct {
 	Trade
-	AppAuthToken string `json:"-"` // 可选
-
 	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
 	BuyerId            string             `json:"buyer_id"`
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"`
@@ -414,8 +414,6 @@ type AgreementParams struct {
 // TradePay 统一收单交易支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type TradePay struct {
 	Trade
-	AppAuthToken string `json:"-"` // 可选
-
 	Scene    string `json:"scene"`               // 必须 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code, bar_code, wave_code
 	AuthCode string `json:"auth_code,omitempty"` // 必须 支付授权码
 	AuthNo   string `json:"auth_no,omitempty"`   // 可选 预授权冻结交易号
@@ -488,6 +486,7 @@ func (this TradeAppPay) APIName() string {
 
 func (this TradeAppPay) Params() map[string]string {
 	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
@@ -495,7 +494,6 @@ func (this TradeAppPay) Params() map[string]string {
 // TradePreCreate 统一收单线下交易预创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type TradePreCreate struct {
 	Trade
-	AppAuthToken       string             `json:"-"`                      // 可选
 	DiscountableAmount string             `json:"discountable_amount"`    // 可选 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000] 如果该值未传入，但传入了【订单总金额】，【不可打折金额】则该值默认为【订单总金额】-【不可打折金额】
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"` // 可选 订单包含的商品列表信息.Json格式. 其它说明详见：“商品明细说明”
 	OperatorId         string             `json:"operator_id"`            // 可选 商户操作员编号
