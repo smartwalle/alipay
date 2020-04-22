@@ -442,22 +442,22 @@ func (this FundTransCommonQuery) Params() map[string]string {
 // FundTransCommonQueryRsp 转账业务单据查询接口响应参数
 type FundTransCommonQueryRsp struct {
 	Content struct {
-		Code             Code    `json:"code"`
-		Msg              string  `json:"msg"`
-		SubCode          string  `json:"sub_code"`
-		SubMsg           string  `json:"sub_msg"`
-		OrderId          string  `json:"order_id"`           // 支付宝转账订单号
-		PayFundOrderId   string  `json:"pay_fund_order_id"`  // 支付宝支付资金流水号
-		OutBizNo         string  `json:"out_biz_no"`         // 用户订单号
-		TransAmount      float64 `json:"trans_amount"`       // 付款金额
-		Status           string  `json:"status"`             // 转账单据状态。 SUCCESS：成功（对转账到银行卡的单据, 该状态可能变为退票[REFUND]状态）； FAIL：失败（具体失败原因请参见error_code以及fail_reason返回值）； DEALING：处理中； REFUND：退票；
-		PayDate          string  `json:"pay_date"`           // 支付时间
-		ArrivalTimeEnd   string  `json:"arrival_time_end"`   // 预计到账时间
-		OrderFee         string  `json:"order_fee"`          // 预计收费金额
-		ErrorCode        string  `json:"error_code"`         // 查询到的订单状态为FAIL失败或REFUND退票时，返回错误代码
-		FailReason       string  `json:"fail_reason"`        // 查询到的订单状态为FAIL失败或REFUND退票时，返回具体的原因。
-		DeductBillInfo   string  `json:"deduct_bill_info"`   // 商户查询代扣订单信息时返回其在代扣请求中传入的账单属性
-		TransferBillInfo string  `json:"transfer_bill_info"` // 商户在查询代发订单信息时返回其在代发请求中传入的账单属性。
+		Code             Code   `json:"code"`
+		Msg              string `json:"msg"`
+		SubCode          string `json:"sub_code"`
+		SubMsg           string `json:"sub_msg"`
+		OrderId          string `json:"order_id"`           // 支付宝转账订单号
+		PayFundOrderId   string `json:"pay_fund_order_id"`  // 支付宝支付资金流水号
+		OutBizNo         string `json:"out_biz_no"`         // 用户订单号
+		TransAmount      string `json:"trans_amount"`       // 付款金额
+		Status           string `json:"status"`             // 转账单据状态。 SUCCESS：成功（对转账到银行卡的单据, 该状态可能变为退票[REFUND]状态）； FAIL：失败（具体失败原因请参见error_code以及fail_reason返回值）； DEALING：处理中； REFUND：退票；
+		PayDate          string `json:"pay_date"`           // 支付时间
+		ArrivalTimeEnd   string `json:"arrival_time_end"`   // 预计到账时间
+		OrderFee         string `json:"order_fee"`          // 预计收费金额
+		ErrorCode        string `json:"error_code"`         // 查询到的订单状态为FAIL失败或REFUND退票时，返回错误代码
+		FailReason       string `json:"fail_reason"`        // 查询到的订单状态为FAIL失败或REFUND退票时，返回具体的原因。
+		DeductBillInfo   string `json:"deduct_bill_info"`   // 商户查询代扣订单信息时返回其在代扣请求中传入的账单属性
+		TransferBillInfo string `json:"transfer_bill_info"` // 商户在查询代发订单信息时返回其在代发请求中传入的账单属性。
 	} `json:"alipay_fund_trans_common_query_response"`
 	Sign string `json:"sign"`
 }
