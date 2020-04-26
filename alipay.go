@@ -28,6 +28,7 @@ var (
 
 const (
 	kAliPayPublicKeySN = "alipay-public-key"
+	kAppAuthToken      = "app_auth_token"
 )
 
 type Client struct {
@@ -231,6 +232,9 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	var ps = param.Params()
 	if ps != nil {
 		for key, value := range ps {
+			if key == kAppAuthToken && value == "" {
+				continue
+			}
 			p.Add(key, value)
 		}
 	}
