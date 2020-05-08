@@ -486,7 +486,7 @@ func (this TradeAppPay) APIName() string {
 
 func (this TradeAppPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken // 不需要传递此参数
+	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
