@@ -477,7 +477,8 @@ func (this *TradePayRsp) IsSuccess() bool {
 // TradeAppPay App支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 type TradeAppPay struct {
 	Trade
-	TimeExpire string `json:"time_expire,omitempty"` // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
+	TimeExpire  string         `json:"time_expire,omitempty"`  // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
+	GoodsDetail []*GoodsDetail `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
 }
 
 func (this TradeAppPay) APIName() string {
