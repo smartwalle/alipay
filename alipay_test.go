@@ -2,8 +2,9 @@ package alipay_test
 
 import (
 	"fmt"
-	"github.com/smartwalle/alipay/v3"
 	"os"
+
+	alipay "github.com/smartwalle/alipay/v3"
 )
 
 var (
