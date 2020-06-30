@@ -86,8 +86,22 @@ func TestClient_TradeRefund(t *testing.T) {
 	t.Log("========== TradeRefund ==========")
 	var p = alipay.TradeRefund{}
 	p.RefundAmount = "10"
-	p.OutTradeNo = "trade_no_20170623011121"
+	p.OutTradeNo = "trade_no_20170623021123"
+	p.OutRequestNo = "1"
 	rsp, err := client.TradeRefund(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", rsp.Content)
+}
+
+func TestClient_TradeFastPayRefundQuery(t *testing.T) {
+	t.Log("========== TradeFastPayRefundQuery ==========")
+	var p = alipay.TradeFastPayRefundQuery{}
+	p.OutTradeNo = "trade_no_20170623021123"
+	p.OutRequestNo = "1"
+
+	rsp, err := client.TradeFastPayRefundQuery(p)
 	if err != nil {
 		t.Fatal(err)
 	}
