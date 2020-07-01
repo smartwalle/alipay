@@ -75,9 +75,10 @@ const (
 
 // TradeQuery 统一收单线下交易查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.query/
 type TradeQuery struct {
-	AppAuthToken string `json:"-"`                      // 可选
-	OutTradeNo   string `json:"out_trade_no,omitempty"` // 订单支付时传入的商户订单号, 与 TradeNo 二选一
-	TradeNo      string `json:"trade_no,omitempty"`     // 支付宝交易号
+	AppAuthToken string   `json:"-"`                       // 可选
+	OutTradeNo   string   `json:"out_trade_no,omitempty"`  // 订单支付时传入的商户订单号, 与 TradeNo 二选一
+	TradeNo      string   `json:"trade_no,omitempty"`      // 支付宝交易号
+	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户通过上送该字段来定制查询返回信息 TRADE_SETTLE_INFO
 }
 
 func (this TradeQuery) APIName() string {
@@ -140,6 +141,7 @@ type TradeQueryRsp struct {
 
 type FundBill struct {
 	FundChannel string  `json:"fund_channel"`       // 交易使用的资金渠道，详见 支付渠道列表
+	BankCode    string  `json:"bank_code"`          // 银行卡支付时的银行代码
 	Amount      string  `json:"amount"`             // 该支付工具类型所使用的金额
 	RealAmount  float64 `json:"real_amount,string"` // 渠道实际付款金额
 }
@@ -259,10 +261,11 @@ type RefundDetailItem struct {
 
 // TradeFastPayRefundQuery 统一收单交易退款查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 type TradeFastPayRefundQuery struct {
-	AppAuthToken string `json:"-"`                      // 可选
-	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
-	TradeNo      string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
-	OutRequestNo string `json:"out_request_no"`         // 必须 请求退款接口时，传入的退款请求号，如果在退款请求时未传入，则该值为创建交易时的外部交易号
+	AppAuthToken string   `json:"-"`                       // 可选
+	OutTradeNo   string   `json:"out_trade_no,omitempty"`  // 与 TradeNo 二选一
+	TradeNo      string   `json:"trade_no,omitempty"`      // 与 OutTradeNo 二选一
+	OutRequestNo string   `json:"out_request_no"`          // 必须 请求退款接口时，传入的退款请求号，如果在退款请求时未传入，则该值为创建交易时的外部交易号
+	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户通过上送该参数来定制同步需要额外返回的信息字段，数组格式。 refund_detail_item_list
 }
 
 func (this TradeFastPayRefundQuery) APIName() string {
@@ -278,16 +281,17 @@ func (this TradeFastPayRefundQuery) Params() map[string]string {
 // TradeFastPayRefundQueryRsp 统一收单交易退款查询接口响应参数
 type TradeFastPayRefundQueryRsp struct {
 	Content struct {
-		Code         Code   `json:"code"`
-		Msg          string `json:"msg"`
-		SubCode      string `json:"sub_code"`
-		SubMsg       string `json:"sub_msg"`
-		TradeNo      string `json:"trade_no"`       // 支付宝交易号
-		OutTradeNo   string `json:"out_trade_no"`   // 创建交易传入的商户订单号
-		OutRequestNo string `json:"out_request_no"` // 本笔退款对应的退款请求号
-		RefundReason string `json:"refund_reason"`  // 发起退款时，传入的退款原因
-		TotalAmount  string `json:"total_amount"`   // 发该笔退款所对应的交易的订单金额
-		RefundAmount string `json:"refund_amount"`  // 本次退款请求，对应的退款金额
+		Code                 Code                `json:"code"`
+		Msg                  string              `json:"msg"`
+		SubCode              string              `json:"sub_code"`
+		SubMsg               string              `json:"sub_msg"`
+		TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
+		OutTradeNo           string              `json:"out_trade_no"`                      // 创建交易传入的商户订单号
+		OutRequestNo         string              `json:"out_request_no"`                    // 本笔退款对应的退款请求号
+		RefundReason         string              `json:"refund_reason"`                     // 发起退款时，传入的退款原因
+		TotalAmount          string              `json:"total_amount"`                      // 发该笔退款所对应的交易的订单金额
+		RefundAmount         string              `json:"refund_amount"`                     // 本次退款请求，对应的退款金额
+		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 本次退款使用的资金渠道；
 	} `json:"alipay_trade_fastpay_refund_query_response"`
 	Sign string `json:"sign"`
 }

@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/smartwalle/crypto4go"
 	"io"
 	"io/ioutil"
@@ -277,6 +278,8 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 
 	var dataStr = string(data)
+
+	fmt.Println(dataStr)
 
 	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 

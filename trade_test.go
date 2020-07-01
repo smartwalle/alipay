@@ -82,12 +82,28 @@ func TestClient_TradePay(t *testing.T) {
 	t.Log(rsp.Content.Msg)
 }
 
+func TestClient_TradeQuery(t *testing.T) {
+	t.Log("TradeQuery")
+	var p = alipay.TradeQuery{}
+	p.OutTradeNo = "trade_no_20170623021124"
+	p.QueryOptions = []string{"TRADE_SETTLE_INFO"}
+
+	rsp, err := client.TradeQuery(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rsp.Content.Code != alipay.CodeSuccess {
+		t.Fatal(rsp.Content.Code, rsp.Content.Msg, rsp.Content.SubMsg)
+	}
+	t.Log(rsp.Content.Msg)
+}
+
 func TestClient_TradeRefund(t *testing.T) {
 	t.Log("========== TradeRefund ==========")
 	var p = alipay.TradeRefund{}
-	p.RefundAmount = "10"
-	p.OutTradeNo = "trade_no_20170623021123"
-	p.OutRequestNo = "1"
+	p.RefundAmount = "100"
+	p.OutTradeNo = "trade_no_20170623021124"
+	p.OutRequestNo = "111"
 	rsp, err := client.TradeRefund(p)
 	if err != nil {
 		t.Fatal(err)
@@ -98,8 +114,9 @@ func TestClient_TradeRefund(t *testing.T) {
 func TestClient_TradeFastPayRefundQuery(t *testing.T) {
 	t.Log("========== TradeFastPayRefundQuery ==========")
 	var p = alipay.TradeFastPayRefundQuery{}
-	p.OutTradeNo = "trade_no_20170623021123"
-	p.OutRequestNo = "1"
+	p.OutTradeNo = "trade_no_20170623021124"
+	p.OutRequestNo = "11"
+	p.QueryOptions = []string{"refund_detail_item_list"}
 
 	rsp, err := client.TradeFastPayRefundQuery(p)
 	if err != nil {
