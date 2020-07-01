@@ -135,6 +135,7 @@ type TradeQueryRsp struct {
 		DiscountGoodsDetail string           `json:"discount_goods_detail"`         // 本次交易支付所使用的单品券优惠的商品优惠信息
 		IndustrySepcDetail  string           `json:"industry_sepc_detail"`          // 行业特殊信息（例如在医保卡支付业务中，向用户返回医疗信息）。
 		VoucherDetailList   []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
+		TradeSettleInfo     *TradeSettleInfo `json:"trade_settle_info,omitempty"`   // 返回的交易结算信息，包含分账、补差等信息
 	} `json:"alipay_trade_query_response"`
 	Sign string `json:"sign"`
 }
@@ -154,6 +155,19 @@ type VoucherDetail struct {
 	MerchantContribute string `json:"merchant_contribute"` // 商家出资（特指发起交易的商家出资金额）
 	OtherContribute    string `json:"other_contribute"`    // 其他出资方出资金额，可能是支付宝，可能是品牌商，或者其他方，也可能是他们的一起出资
 	Memo               string `json:"memo"`                // 优惠券备注信息
+}
+
+type TradeSettleInfo struct {
+	TradeSettleDetailList []*TradeSettleDetail `json:"trade_settle_detail_list"`
+}
+
+type TradeSettleDetail struct {
+	OperationType     string `json:"operation_type"`
+	OperationSerialNo string `json:"operation_serial_no"`
+	OperationDate     string `json:"operation_dt"`
+	TransOut          string `json:"trans_out"`
+	TransIn           string `json:"trans_in"`
+	Amount            string `json:"amount"`
 }
 
 func (this *TradeQueryRsp) IsSuccess() bool {
