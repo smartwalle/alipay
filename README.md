@@ -43,6 +43,8 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 * v2 - 在 v1 的基础上进行了一些优化和规范调整，目前已停止更新维护；
 * v3 - 支持**公钥证书**和**普通公钥**进行签名验证，详情可以参考 [https://docs.open.alipay.com/291/105974/](https://docs.open.alipay.com/291/105974/) 和 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/)，为目前主要维护分支；
 * master - 和主要维护分支同步；
+  
+**推荐使用 v3 版本**
 
 ## v3 版本如何初始化
 
