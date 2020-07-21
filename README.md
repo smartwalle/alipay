@@ -68,8 +68,7 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 client.LoadAliPayPublicKey("aliPublicKey")
 ```
 
-需要注意**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
-
+特别注意：**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
 
 ## 已实现接口
 
