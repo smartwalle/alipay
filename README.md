@@ -164,6 +164,10 @@ client.LoadAliPayPublicKey("aliPublicKey")
 	
 	alipay.data.dataservice.bill.downloadurl.query - **BillDownloadURLQuery()**
 	
+* **支付宝商家账户当前余额查询**
+	
+	alipay.data.bill.balance.query - **BillBalanceQuery()**
+	
 * **身份认证初始化服务**
 
     alipay.user.certify.open.initialize - **UserCertifyOpenInitialize()**
