@@ -69,11 +69,6 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 //
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
 func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (client *Client, err error) {
-	location, err := time.LoadLocation("Asia/Chongqing")
-	if err != nil {
-		return nil, err
-	}
-
 	priKey, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
 		priKey, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
@@ -93,7 +88,7 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (clien
 		client.notifyVerifyDomain = kSandboxURL
 	}
 	client.Client = http.DefaultClient
-	client.location = location
+	client.location = time.Local
 
 	client.appPrivateKey = priKey
 	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
