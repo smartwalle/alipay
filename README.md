@@ -27,7 +27,7 @@ import github.com/smartwalle/alipay
 
 在集成的过程中有遇到问题，欢迎加 QQ 群 564704807 讨论，或者使用微信扫描下方的二维码。
 
-![smartwalle](http://smartwalle.tk/smartwalle.jpeg)
+![smartwalle](http://smartwalle.github.io/smartwalle.jpeg)
 
 
 ## 其它支付
