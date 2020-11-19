@@ -31,7 +31,7 @@ type Trade struct {
 	TimeExpire       string                 `json:"time_expire,omitempty"`       // 该笔订单绝对超时时间，格式为yyyy-MM-dd HH:mm:ss
 }
 
-// TradePagePay 统一收单下单并支付页面接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay
+// TradePagePay 统一收单下单并支付页面接口请求参数 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
 type TradePagePay struct {
 	Trade
 	AuthToken   string         `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
