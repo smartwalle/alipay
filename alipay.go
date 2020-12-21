@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/md5"
 	"crypto/rsa"
@@ -45,6 +46,8 @@ type Client struct {
 	rootCertSN       string
 	aliPublicCertSN  string
 	aliPublicKeyList map[string]*rsa.PublicKey
+
+	logger logger
 }
 
 type OptionFunc func(c *Client)
@@ -202,6 +205,18 @@ func (this *Client) LoadAliPayRootCertFromFile(filename string) error {
 	return this.LoadAliPayRootCert(string(b))
 }
 
+// RegisterLogger 注册日志记录者
+func (this *Client) RegisterLogger(logger logger) {
+	this.logger = logger
+}
+
+// log 记录日志
+func (this *Client) log(resp *http.Response) {
+	if this.logger != nil {
+		this.logger.recordLog(resp)
+	}
+}
+
 func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	var p = url.Values{}
 	p.Add("app_id", this.appId)
@@ -261,6 +276,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	resp, err := this.Client.Do(req)
 	if resp != nil {
 		defer resp.Body.Close()
+		defer this.log(resp)
 	}
 	if err != nil {
 		return err
@@ -270,6 +286,9 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	if err != nil {
 		return err
 	}
+
+	resp.Body.Close()
+	resp.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // resp.Body 无法多次读取，利用该方式重新写入 resp.Body 用于记录日志
 
 	var dataStr = string(data)
 

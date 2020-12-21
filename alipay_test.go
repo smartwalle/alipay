@@ -37,4 +37,13 @@ func init() {
 		// 使用支付宝公钥
 		fmt.Println("加载公钥", client.LoadAliPayPublicKey(aliPublicKey))
 	}
+
+	// 测试日志
+	logFile, outputError := os.OpenFile("log.txt", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+	if outputError != nil {
+		fmt.Println("打开日志文件失败", err)
+		os.Exit(-1)
+	}
+
+	client.RegisterLogger(alipay.NewFileLogger(logFile))
 }
