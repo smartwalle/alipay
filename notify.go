@@ -97,6 +97,8 @@ func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 	noti.Sign = req.FormValue("sign")
 	noti.PassbackParams = req.FormValue("passback_params")
 	noti.VoucherDetailList = req.FormValue("voucher_detail_list")
+	noti.AgreementNo = req.FormValue("agreement_no")
+	noti.ExternalAgreementNo = req.FormValue("external_agreement_no")
 
 	//if len(noti.NotifyId) == 0 {
 	//	return nil, errors.New("不是有效的 Notify")
