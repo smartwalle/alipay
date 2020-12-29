@@ -9,7 +9,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"github.com/smartwalle/crypto4go"
 	"io"
 	"io/ioutil"
 	"math"
@@ -19,6 +18,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/smartwalle/crypto4go"
 )
 
 var (
@@ -479,13 +480,20 @@ func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	}
 
 	sort.Strings(keys)
+	var buf strings.Builder
 
-	var pList = make([]string, 0, 0)
-	for _, key := range keys {
-		pList = append(pList, key+"="+data.Get(key))
+	for _, k := range keys {
+		vs := data[k]
+		for _, v := range vs {
+			if buf.Len() > 0 {
+				buf.WriteByte('&')
+			}
+			buf.WriteString(k)
+			buf.WriteByte('=')
+			buf.WriteString(v)
+		}
 	}
-	var s = strings.Join(pList, "&")
-
+	s := buf.String()
 	return verifyData([]byte(s), sign, key)
 }
 
