@@ -472,11 +472,11 @@ func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
 	sign := data.Get(kSignNodeName)
 
 	var keys = make([]string, 0, 0)
-	for key := range data {
-		if key == kSignNodeName || key == kSignTypeNodeName || key == kCertSNNodeName {
+	for k := range data {
+		if k == kSignNodeName || k == kSignTypeNodeName || k == kCertSNNodeName {
 			continue
 		}
-		keys = append(keys, key)
+		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
