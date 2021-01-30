@@ -1,6 +1,6 @@
 package alipay
 
-// FundTransToAccountTransfer 单笔转账到支付宝账户接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
+// FundTransToAccountTransfer 单笔转账到支付宝账户接口请求参数 https://opendocs.alipay.com/apis/api_33/alipay.fund.trans.toaccount.transfer
 type FundTransToAccountTransfer struct {
 	AppAuthToken  string `json:"-"`               // 可选
 	OutBizNo      string `json:"out_biz_no"`      // 必选 商户转账唯一订单号
