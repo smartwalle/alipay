@@ -149,7 +149,7 @@ type FundAuthOrderFreeze struct {
 }
 
 func (this FundAuthOrderFreeze) APIName() string {
-	return "alipay.fund.auth.order.voucher.create"
+	return "alipay.fund.auth.order.app.freeze"
 }
 
 func (this FundAuthOrderFreeze) Params() map[string]string {
