@@ -301,7 +301,7 @@ http.HandleFunc("/return", func (rep http.ResponseWriter, req *http.Request) {
 req.ParseForm()
 ok, err := client.VerifySign(req.Form)
 fmt.Println(ok, err)
-}
+})
 ```
 
 #### 异步验证支付结果
