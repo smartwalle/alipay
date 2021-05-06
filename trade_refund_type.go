@@ -42,8 +42,5 @@ type TradeRefundAsyncRsp struct {
 }
 
 func (this *TradeRefundAsyncRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	return this.Content.Code == CodeSuccess
 }
