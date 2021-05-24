@@ -108,3 +108,66 @@ type UserCertifyOpenQueryRsp struct {
 	} `json:"alipay_user_certify_open_query_response"`
 	Sign string `json:"sign"`
 }
+
+// UserCertdocCertverifyPreconsult 实名证件信息比对验证预咨询接口请求参数 https://opendocs.alipay.com/apis/api_2/alipay.user.certdoc.certverify.preconsult
+type UserCertdocCertverifyPreconsult struct {
+	AppAuthToken string                 `json:"-"`         // 可选
+	UserName     string                 `json:"user_name"` // 真实姓名
+	CertType     string                 `json:"cert_type"` // 证件类型。暂仅支持 IDENTITY_CARD （身份证）。	ID
+	CertNo       string                 `json:"cert_no"`   // 证件号
+	Mobile       string                 `json:"mobile"`    // 手机号码 可选
+	LogonId      string                 `json:"logon_id"`  // 支付宝登录名 可选
+	ExtInfo      map[string]interface{} `json:"ext_info"`  // 拓展字段,JSON格式 可选
+}
+
+func (this UserCertdocCertverifyPreconsult) APIName() string {
+	return "alipay.user.certdoc.certverify.preconsult"
+}
+
+func (this UserCertdocCertverifyPreconsult) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+// UserCertdocCertverifyPreconsultRsp 实名证件信息比对验证预咨询接口响应参数
+type UserCertdocCertverifyPreconsultRsp struct {
+	Content struct {
+		Code     Code   `json:"code"`
+		Msg      string `json:"msg"`
+		SubCode  string `json:"sub_code"`
+		SubMsg   string `json:"sub_msg"`
+		VerifyId string `json:"verify_id"`
+	} `json:"alipay_user_certdoc_certverify_preconsult_response"`
+	Sign string `json:"sign"`
+}
+
+// UserCertdocCertverifyConsult 实名证件信息比对验证咨询接口请求参数 https://opendocs.alipay.com/apis/api_2/alipay.user.certdoc.certverify.consult
+type UserCertdocCertverifyConsult struct {
+	AppAuthToken string `json:"-"`         // 可选
+	VerifyId     string `json:"verify_id"` // 信息校验验证ID。通过alipay.user.certdoc.certverify.preconsult(实名证件信息比对验证预咨询)接口获取
+}
+
+func (this UserCertdocCertverifyConsult) APIName() string {
+	return "alipay.user.certdoc.certverify.consult"
+}
+
+func (this UserCertdocCertverifyConsult) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+// UserCertdocCertverifyConsultRsp 实名证件信息比对验证咨询接口响应参数
+type UserCertdocCertverifyConsultRsp struct {
+	Content struct {
+		Code       Code   `json:"code"`
+		Msg        string `json:"msg"`
+		SubCode    string `json:"sub_code"`
+		SubMsg     string `json:"sub_msg"`
+		Passed     string `json:"passed"`
+		FailReason string `json:"fail_reason"`
+		FailParams string `json:"fail_params"`
+	} `json:"alipay_user_certdoc_certverify_consult_response"`
+	Sign string `json:"sign"`
+}
