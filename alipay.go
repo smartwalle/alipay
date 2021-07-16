@@ -62,6 +62,13 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 	}
 }
 
+func WithAPIEndpoints(apiDomain, notifyVerifyDomain string) OptionFunc {
+	return func(c *Client) {
+		c.apiDomain = apiDomain
+		c.notifyVerifyDomain = notifyVerifyDomain
+	}
+}
+
 // New 初始化支付宝客户端
 //
 // appId - 支付宝应用 id
