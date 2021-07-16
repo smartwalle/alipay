@@ -86,3 +86,9 @@ func (this *Client) TradeOrderInfoSync(param TradeOrderInfoSync) (result *TradeO
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
+
+// TradeRefundAsync 统一收单交易退款(异步)接口 https://opendocs.alipay.com/pre-apis/api_pre/alipay.trade.refund.apply
+func (this *Client) TradeRefundAsync(param TradeRefundAsync) (result *TradeRefundAsyncRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}

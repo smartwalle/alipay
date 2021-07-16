@@ -124,3 +124,19 @@ func TestClient_TradeFastPayRefundQuery(t *testing.T) {
 	}
 	t.Logf("%v", rsp.Content)
 }
+
+func TestClient_TradeRefundAsync(t *testing.T) {
+	t.Log("========== TradeRefundAsync ==========")
+	var p = alipay.TradeRefundAsync{}
+	p.OutTradeNo = "20150320010101001"
+	p.RefundAmount = "10.12"
+	p.RefundReason = "测试退款"
+	p.OutRequestNo = "20150320010101001uk"
+	p.NotifyURL = "http://127.0.0.1:9090/notify/ali-refund"
+
+	rsp, err := client.TradeRefundAsync(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", rsp.Content)
+}
