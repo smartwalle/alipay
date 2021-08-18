@@ -184,6 +184,6 @@ type AgreementUnsignRsp struct {
 		Msg     string `json:"msg"`
 		SubCode string `json:"sub_code"`
 		SubMsg  string `json:"sub_msg"`
-	} `json:"agreement_unsign_response"`
+	} `json:"alipay_user_agreement_unsign_response"`
 	Sign string `json:"sign"`
 }
