@@ -9,21 +9,21 @@ AliPay SDK for Golang
 ##### 启用 Go module
 
 ```
-go get github.com/smartwalle/alipay/v3
+go get github.com/NeoclubTechnology/alipay/v3
 ```
 
 ```
-import github.com/smartwalle/alipay/v3
+import github.com/NeoclubTechnology/alipay/v3
 ```
 
 ##### 未启用 Go module
 
 ```
-go get github.com/smartwalle/alipay
+go get github.com/NeoclubTechnology/alipay
 ```
 
 ```
-import github.com/smartwalle/alipay
+import github.com/NeoclubTechnology/alipay
 ```
 
 ## 帮助
