@@ -122,9 +122,11 @@ func (this OpenAuthTokenApp) Params() map[string]string {
 // OpenAuthTokenAppRsp 换取应用授权令牌响应参数 新版返回值 参见 https://opendocs.alipay.com/open/20160728150111277227/intro
 type OpenAuthTokenAppRsp struct {
 	Content struct {
-		Code   Code             `json:"code"`
-		Msg    string           `json:"msg"`
-		Tokens []*OpenAuthToken `json:"tokens"`
+		Code    Code             `json:"code"`
+		Msg     string           `json:"msg"`
+		SubCode Code             `json:"sub_code"`
+		SubMsg  string           `json:"sub_msg"`
+		Tokens  []*OpenAuthToken `json:"tokens"`
 	} `json:"alipay_open_auth_token_app_response"`
 	Sign string `json:"sign"`
 }
