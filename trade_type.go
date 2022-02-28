@@ -273,6 +273,7 @@ type RefundDetailItem struct {
 	FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 支付渠道列表
 	Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
+	FundType    string `json:"fund_type"`    // 渠道所使用的资金类型
 }
 
 // TradeFastPayRefundQuery 统一收单交易退款查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
@@ -307,7 +308,12 @@ type TradeFastPayRefundQueryRsp struct {
 		RefundReason         string              `json:"refund_reason"`                     // 发起退款时，传入的退款原因
 		TotalAmount          string              `json:"total_amount"`                      // 发该笔退款所对应的交易的订单金额
 		RefundAmount         string              `json:"refund_amount"`                     // 本次退款请求，对应的退款金额
+		RefundStatus         string              `json:"refund_status"`                     // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败；
+		RefundRoyaltys       []*RefundRoyalty    `json:"refund_royaltys"`                   // 退分账明细信息
+		GMTRefundPay         string              `json:"gmt_refund_pay"`                    // 退款时间。
 		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 本次退款使用的资金渠道；
+		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额；
+		DepositBackInfo      []*DepositBackInfo  `json:"deposit_back_info"`                 // 银行卡冲退信息
 	} `json:"alipay_trade_fastpay_refund_query_response"`
 	Sign string `json:"sign"`
 }
@@ -317,6 +323,24 @@ func (this *TradeFastPayRefundQueryRsp) IsSuccess() bool {
 		return true
 	}
 	return false
+}
+
+type RefundRoyalty struct {
+	RefundAmount  string `json:"refund_amount"`
+	RoyaltyType   string `json:"royalty_type"`
+	ResultCode    string `json:"result_code"`
+	TransOut      string `json:"trans_out"`
+	TransOutEmail string `json:"trans_out_email"`
+	TransIn       string `json:"trans_in"`
+	TransInEmail  string `json:"trans_in_email"`
+}
+
+type DepositBackInfo struct {
+	HasDepositBack     string `json:"has_deposit_back"`
+	DBackStatus        string `json:"dback_status"`
+	DBackAmount        string `json:"dback_amount"`
+	BankAckTime        string `json:"bank_ack_time"`
+	ESTBankReceiptTime string `json:"est_bank_receipt_time"`
 }
 
 // TradeOrderSettle 统一收单交易结算接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.order.settle
