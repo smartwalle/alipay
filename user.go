@@ -30,8 +30,8 @@ func (this *Client) AgreementUnsign(param AgreementUnsign) (result *AgreementUns
 	return result, err
 }
 
-// AgreementExecutionplanModify 周期性扣款协议执行计划修改接口 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
-func (this *Client) AgreementExecutionplanModify(param AgreementExecutionplanModify) (result *AgreementExecutionplanModifyRsp, err error) {
+// AgreementExecutionPlanModify 周期性扣款协议执行计划修改接口 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
+func (this *Client) AgreementExecutionPlanModify(param AgreementExecutionPlanModify) (result *AgreementExecutionPlanModifyRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
 	return result, err
 }

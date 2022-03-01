@@ -188,8 +188,8 @@ type AgreementUnsignRsp struct {
 	Sign string `json:"sign"`
 }
 
-// AgreementExecutionplanModify 周期性扣款协议执行计划修改接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
-type AgreementExecutionplanModify struct {
+// AgreementExecutionPlanModify 周期性扣款协议执行计划修改接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
+type AgreementExecutionPlanModify struct {
 	AppAuthToken string `json:"-"`
 	NotifyURL    string `json:"-"`
 	AgreementNo  string `json:"agreement_no,omitempty"` // 支付宝系统中用以唯一标识用户签约记录的编号（用户签约成功后的协议号）
@@ -197,19 +197,19 @@ type AgreementExecutionplanModify struct {
 	Memo         string `json:"memo,omitempty"`         // 具体修改原因
 }
 
-func (this AgreementExecutionplanModify) APIName() string {
+func (this AgreementExecutionPlanModify) APIName() string {
 	return "alipay.user.agreement.executionplan.modify"
 }
 
-func (this AgreementExecutionplanModify) Params() map[string]string {
+func (this AgreementExecutionPlanModify) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
 
-// AgreementExecutionplanModifyRsp 周期性扣款协议执行计划修改相应参数
-type AgreementExecutionplanModifyRsp struct {
+// AgreementExecutionPlanModifyRsp 周期性扣款协议执行计划修改相应参数
+type AgreementExecutionPlanModifyRsp struct {
 	Content struct {
 		Code        Code   `json:"code"`
 		Msg         string `json:"msg"`
