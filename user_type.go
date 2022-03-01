@@ -187,3 +187,36 @@ type AgreementUnsignRsp struct {
 	} `json:"agreement_unsign_response"`
 	Sign string `json:"sign"`
 }
+
+// AgreementExecutionplanModify 周期性扣款协议执行计划修改接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
+type AgreementExecutionplanModify struct {
+	AppAuthToken string `json:"-"`
+	NotifyURL    string `json:"-"`
+	AgreementNo  string `json:"agreement_no,omitempty"` // 支付宝系统中用以唯一标识用户签约记录的编号（用户签约成功后的协议号）
+	DeductTime   string `json:"deduct_time,omitempty"`  // 商户下一次扣款时间
+	Memo         string `json:"memo,omitempty"`         // 具体修改原因
+}
+
+func (this AgreementExecutionplanModify) APIName() string {
+	return "alipay.user.agreement.executionplan.modify"
+}
+
+func (this AgreementExecutionplanModify) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
+	return m
+}
+
+// AgreementExecutionplanModifyRsp 周期性扣款协议执行计划修改相应参数
+type AgreementExecutionplanModifyRsp struct {
+	Content struct {
+		Code        Code   `json:"code"`
+		Msg         string `json:"msg"`
+		SubCode     string `json:"sub_code"`
+		SubMsg      string `json:"sub_msg"`
+		AgreementNo string `json:"agreement_no"`
+		DeductTime  string `json:"deduct_time"`
+	} `json:"alipay_user_agreement_executionplan_modify_response"`
+	Sign string `json:"sign"`
+}
