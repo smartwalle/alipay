@@ -29,7 +29,7 @@ type TradeNotification struct {
 	BuyerPayAmount      string      `json:"buyer_pay_amount"`      // 付款金额
 	PointAmount         string      `json:"point_amount"`          // 集分宝金额
 	RefundFee           string      `json:"refund_fee"`            // 总退款金额
-	Subject             string      `json:"subject"`               // 总退款金额
+	Subject             string      `json:"subject"`               // 商品的标题/交易标题/订单标题/订单关键字等，是请求时对应的参数，原样通知回来。
 	Body                string      `json:"body"`                  // 商品描述
 	GmtCreate           string      `json:"gmt_create"`            // 交易创建时间
 	GmtPayment          string      `json:"gmt_payment"`           // 交易付款时间
