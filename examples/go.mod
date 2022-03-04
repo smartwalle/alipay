@@ -1,4 +1,4 @@
-module github.com/smartwalle/alipay/cmd
+module github.com/smartwalle/alipay/examples
 
 go 1.12
 
