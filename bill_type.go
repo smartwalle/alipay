@@ -66,14 +66,14 @@ type AccountLogItem struct {
 
 type BillAccountLogQueryResp struct {
 	Content struct {
-		Code       Code             `json:"code"`
-		Msg        string           `json:"msg"`
-		SubCode    string           `json:"sub_code"`
-		SubMsg     string           `json:"sub_msg"`
-		PageNo     string           `json:"page_no"`
-		PageSize   string           `json:"page_size"`
-		TotalSize  string           `json:"total_size"`
-		DetailList []AccountLogItem `json:"detail_list"`
+		Code       Code              `json:"code"`
+		Msg        string            `json:"msg"`
+		SubCode    string            `json:"sub_code"`
+		SubMsg     string            `json:"sub_msg"`
+		PageNo     string            `json:"page_no"`
+		PageSize   string            `json:"page_size"`
+		TotalSize  string            `json:"total_size"`
+		DetailList []*AccountLogItem `json:"detail_list"`
 	} `json:"alipay_data_bill_accountlog_query_response"`
 	Sign string `json:"sign"`
 }
