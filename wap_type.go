@@ -19,3 +19,19 @@ func (this TradeWapPay) Params() map[string]string {
 	m["return_url"] = this.ReturnURL
 	return m
 }
+
+// TradeWapMergePay 无线Wap合并支付接口2.0 https://opendocs.alipay.com/open/028xra
+type TradeWapMergePay struct {
+	AppAuthToken string `json:"-"`            // 可选
+	PreOrderNo   string `json:"pre_order_no"` // 必选 预下单号。通过 alipay.trade.merge.precreate(统一收单合并支付预创建接口)返回。
+}
+
+func (this TradeWapMergePay) APIName() string {
+	return "alipay.trade.wap.merge.pay"
+}
+
+func (this TradeWapMergePay) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}

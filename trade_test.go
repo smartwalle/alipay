@@ -140,3 +140,14 @@ func TestClient_TradeRefundAsync(t *testing.T) {
 	}
 	t.Logf("%v", rsp.Content)
 }
+
+func TestClient_TradeMergePreCreate(t *testing.T) {
+	t.Log("========== TradeMergePreCreate ==========")
+	var p = alipay.TradeMergePreCreate{}
+
+	rsp, err := client.TradeMergePreCreate(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", rsp.Content)
+}

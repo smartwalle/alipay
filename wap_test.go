@@ -22,3 +22,15 @@ func TestClient_TradeWapPay(t *testing.T) {
 	}
 	t.Log(url)
 }
+
+func TestClient_TradeWapMergePay(t *testing.T) {
+	t.Log("========== TradeWapMergePay ==========")
+	var p = alipay.TradeWapMergePay{}
+	p.PreOrderNo = "QUICK_WAP_WAY"
+
+	url, err := client.TradeWapMergePay(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(url)
+}

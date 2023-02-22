@@ -11,34 +11,58 @@ type Trade struct {
 	TotalAmount string `json:"total_amount"` // 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
 	ProductCode string `json:"product_code"` // 销售产品码，与支付宝签约的产品码名称。 参考官方文档, App 支付时默认值为 QUICK_MSECURITY_PAY
 
-	Body               string `json:"body,omitempty"`                 // 订单描述
-	BusinessParams     string `json:"business_params,omitempty"`      // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
-	DisablePayChannels string `json:"disable_pay_channels,omitempty"` // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
-	EnablePayChannels  string `json:"enable_pay_channels,omitempty"`  // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
+	Body               string         `json:"body,omitempty"`                 // 订单描述
+	GoodsDetail        []*GoodsDetail `json:"goods_detail,omitempty"`         // 可选 订单包含的商品列表信息，Json格式，详见商品明细说明
+	BusinessParams     string         `json:"business_params,omitempty"`      // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
+	DisablePayChannels string         `json:"disable_pay_channels,omitempty"` // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
+	EnablePayChannels  string         `json:"enable_pay_channels,omitempty"`  // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
+	SpecifiedChannel   string         `json:"specified_channel,omitempty"`    // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
 	//ExtUserInfo        string `json:"ext_user_info,omitempty"`        // 外部指定买家
-	ExtendParams        map[string]interface{} `json:"extend_params,omitempty"`         // 业务扩展参数，详见下面的“业务扩展参数说明”
-	AgreementSignParams interface{}            `json:"agreement_sign_params,omitempty"` // 签约参数。如果希望在sdk中支付并签约，需要在这里传入签约信息。 周期扣款场景 product_code 为 CYCLE_PAY_AUTH 时必填。
-	GoodsType           string                 `json:"goods_type,omitempty"`            // 商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
-	InvoiceInfo         string                 `json:"invoice_info,omitempty"`          // 开票信息
-	PassbackParams      string                 `json:"passback_params,omitempty"`       // 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
-	PromoParams         string                 `json:"promo_params,omitempty"`          // 优惠参数 注：仅与支付宝协商后可用
-	RoyaltyInfo         string                 `json:"royalty_info,omitempty"`          // 描述分账信息，json格式，详见分账参数说明
-	SellerId            string                 `json:"seller_id,omitempty"`             // 收款支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
-	SettleInfo          string                 `json:"settle_info,omitempty"`           // 描述结算信息，json格式，详见结算参数说明
-	SpecifiedChannel    string                 `json:"specified_channel,omitempty"`     // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
-	StoreId             string                 `json:"store_id,omitempty"`              // 商户门店编号。该参数用于请求参数中以区分各门店，非必传项。
-	SubMerchant         string                 `json:"sub_merchant,omitempty"`          // 间连受理商户信息体，当前只对特殊银行机构特定场景下使用此字段
-	TimeoutExpress      string                 `json:"timeout_express,omitempty"`       // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
-	TimeExpire          string                 `json:"time_expire,omitempty"`           // 该笔订单绝对超时时间，格式为yyyy-MM-dd HH:mm:ss
+	ExtendParams        *ExtendParams `json:"extend_params,omitempty"`         // 可选 业务扩展参数，详见下面的“业务扩展参数说明”
+	AgreementSignParams *SignParams   `json:"agreement_sign_params,omitempty"` // 签约参数。如果希望在sdk中支付并签约，需要在这里传入签约信息。 周期扣款场景 product_code 为 CYCLE_PAY_AUTH 时必填。
+	GoodsType           string        `json:"goods_type,omitempty"`            // 商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
+	InvoiceInfo         string        `json:"invoice_info,omitempty"`          // 开票信息
+	PassbackParams      string        `json:"passback_params,omitempty"`       // 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
+	PromoParams         string        `json:"promo_params,omitempty"`          // 优惠参数 注：仅与支付宝协商后可用
+	RoyaltyInfo         string        `json:"royalty_info,omitempty"`          // 描述分账信息，json格式，详见分账参数说明
+	SellerId            string        `json:"seller_id,omitempty"`             // 收款支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+	SettleInfo          string        `json:"settle_info,omitempty"`           // 描述结算信息，json格式，详见结算参数说明
+	StoreId             string        `json:"store_id,omitempty"`              // 商户门店编号。该参数用于请求参数中以区分各门店，非必传项。
+	SubMerchant         string        `json:"sub_merchant,omitempty"`          // 间连受理商户信息体，当前只对特殊银行机构特定场景下使用此字段
+	TimeoutExpress      string        `json:"timeout_express,omitempty"`       // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+	TimeExpire          string        `json:"time_expire,omitempty"`           // 该笔订单绝对超时时间，格式为yyyy-MM-dd HH:mm:ss
+	MerchantOrderNo     string        `json:"merchant_order_no,omitempty"`     // 可选 商户的原始订单号
+	ExtUserInfo         *ExtUserInfo  `json:"ext_user_info,omitempty"`         // 可选 外部指定买家
+	QueryOptions        []string      `json:"query_options,omitempty"`         // 可选 通知参数选项。 商户通过传递该参数来定制需要异步通知的额外字段，数组格式。包括但不限于：["hyb_amount","enterprise_pay_info"]
+}
+
+type SignParams struct {
+	PersonalProductCode string             `json:"personal_product_code"`        // 必选 个人签约产品码，商户和支付宝签约时确定。
+	SignScene           string             `json:"sign_scene"`                   // 必选 协议签约场景，商户和支付宝签约时确定，商户可咨询技术支持。
+	ExternalAgreementNo string             `json:"external_agreement_no"`        // 可选 商户签约号，代扣协议中标示用户的唯一签约号（确保在商户系统中唯一）。 格式规则：支持大写小写字母和数字，最长32位。 商户系统按需传入，如果同一用户在同一产品码、同一签约场景下，签订了多份代扣协议，那么需要指定并传入该值。
+	ExternalLogonId     string             `json:"external_logon_id"`            // 可选 用户在商户网站的登录账号，用于在签约页面展示，如果为空，则不展示
+	AccessParams        *AccessParams      `json:"access_params"`                // 必选 请按当前接入的方式进行填充，且输入值必须为文档中的参数取值范围。
+	SubMerchant         *SubMerchantParams `json:"sub_merchant,omitempty"`       // 可选 此参数用于传递子商户信息，无特殊需求时不用关注。目前商户代扣、海外代扣、淘旅行信用住产品支持传入该参数（在销售方案中“是否允许自定义子商户信息”需要选是）。
+	PeriodRuleParams    *PeriodRuleParams  `json:"period_rule_params,omitempty"` // 可选 周期管控规则参数period_rule_params，在签约周期扣款产品（如CYCLE_PAY_AUTH_P）时必传，在签约其他产品时无需传入。 周期扣款产品，会按照这里传入的参数提示用户，并对发起扣款的时间、金额、次数等做相应限制。
+	SignNotifyURL       string             `json:"sign_notify_url"`              // 可选 签约成功后商户用于接收异步通知的地址。如果不传入，签约与支付的异步通知都会发到外层notify_url参数传入的地址；如果外层也未传入，签约与支付的异步通知都会发到商户appid配置的网关地址。
+}
+
+type ExtUserInfo struct {
+	Name          string `json:"name"`            //  可选 指定买家姓名。 注： need_check_info=T时该参数才有效
+	Mobile        string `json:"mobile"`          //  可选 指定买家手机号。 注：该参数暂不校验
+	CertType      string `json:"cert_type"`       //  可选 指定买家证件类型。 枚举值：IDENTITY_CARD：身份证；PASSPORT：护照；OFFICER_CARD：军官证；SOLDIER_CARD：士兵证；HOKOU：户口本。如有其它类型需要支持，请与蚂蚁金服工作人员联系。注： need_check_info=T时该参数才有效，支付宝会比较买家在支付宝留存的证件类型与该参数传入的值是否匹配。
+	CertNo        string `json:"cert_no"`         //  可选 买家证件号。 注：need_check_info=T时该参数才有效，支付宝会比较买家在支付宝留存的证件号码与该参数传入的值是否匹配。
+	MinAge        string `json:"min_age"`         //  可选 允许的最小买家年龄。 买家年龄必须大于等于所传数值注：1. need_check_info=T时该参数才有效  2. min_age为整数，必须大于等于0
+	NeedCheckInfo string `json:"need_check_info"` //  可选 是否强制校验买家信息； 需要强制校验传：T;不需要强制校验传：F或者不传；当传T时，支付宝会校验支付买家的信息与接口上传递的cert_type、cert_no、name或age是否匹配，只有接口传递了信息才会进行对应项的校验；只要有任何一项信息校验不匹配交易都会失败。如果传递了need_check_info，但是没有传任何校验项，则不进行任何校验。默认为不校验。
+	IdentityHash  string `json:"identity_hash"`   //  可选 买家加密身份信息。当指定了此参数且指定need_check_info=T时，支付宝会对买家身份进行校验，校验逻辑为买家姓名、买家证件号拼接后的字符串，以sha256算法utf-8编码计算hash，若与传入的值不匹配则会拦截本次支付。注意：如果同时指定了用户明文身份信息（name，cert_type，cert_no中任意一个），则忽略identity_hash以明文参数校验。
 }
 
 // TradePagePay 统一收单下单并支付页面接口请求参数 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
 type TradePagePay struct {
 	Trade
-	AuthToken   string         `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
-	GoodsDetail []*GoodsDetail `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
-	QRPayMode   string         `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
-	QRCodeWidth string         `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
+	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
+	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
+	QRCodeWidth string `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
 }
 
 type GoodsDetail struct {
@@ -523,8 +547,6 @@ func (this *TradePayRsp) IsSuccess() bool {
 // TradeAppPay App支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 type TradeAppPay struct {
 	Trade
-	TimeExpire  string         `json:"time_expire,omitempty"`  // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
-	GoodsDetail []*GoodsDetail `json:"goods_detail,omitempty"` // 订单包含的商品列表信息，Json格式，详见商品明细说明
 }
 
 func (this TradeAppPay) APIName() string {
@@ -651,4 +673,92 @@ type TradeOrderInfoSyncRsp struct {
 		BuyerUserId string `json:"buyer_user_id"`
 	} `json:"alipay_trade_orderinfo_sync_response"`
 	Sign string `json:"sign"`
+}
+
+// TradeMergePreCreate 统一收单合并支付预创建接口请求参数 https://opendocs.alipay.com/open/028xr9
+type TradeMergePreCreate struct {
+	NotifyURL    string `json:"-"` // 可选
+	AppAuthToken string `json:"-"` // 可选
+
+	OutMergeNo     string         `json:"out_merge_no"`    // 可选 如果已经和支付宝约定要求子订单明细必须同时支付成功或者同时支付失败则必须传入此参数，且该参数必须在商户端唯一，否则可以不需要填。
+	TimeExpire     string         `json:"time_expire"`     // 可选 订单绝对超时时间。格式为yyyy-MM-dd HH:mm:ss。
+	TimeoutExpress string         `json:"timeout_express"` // 可选 合并支付订单相对超时时间。从商户合并预下单请求时间开始计算。 请求合并的所有订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。默认值为15d。
+	OrderDetails   []*OrderDetail `json:"order_details"`   // 必选 子订单详情
+}
+
+func (this TradeMergePreCreate) APIName() string {
+	return "alipay.trade.merge.precreate"
+}
+
+func (this TradeMergePreCreate) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	m["notify_url"] = this.NotifyURL
+	return m
+}
+
+type OrderDetail struct {
+	AppId          string         `json:"app_id"`                  // 必选 订单明细的应用唯一标识（16位纯数字），指商家的app_id。
+	OutTradeNo     string         `json:"out_trade_no"`            // 必选 商户订单号,64个字符以内、只能包含字母、数字、下划线；需保证在商户端不重复
+	SellerId       string         `json:"seller_id"`               // 可选 卖家支付宝用户ID。 如果该值与seller_logon_id同时为空，则卖家默认为app_id对应的支付宝用户ID
+	SellerLogonId  string         `json:"seller_logon_id"`         // 可选 卖家支付宝logon_id。 支持手机和Email格式,如果该值与seller_id同时传入,将以seller_id为准
+	ProductCode    string         `json:"product_code"`            // 必选 销售产品码，与支付宝签约的产品码名称
+	TotalAmount    string         `json:"total_amount"`            // 必选 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+	Subject        string         `json:"subject"`                 // 必选 订单标题
+	Body           string         `json:"body"`                    // 可选 对交易或商品的描述
+	ShowURL        string         `json:"show_url"`                // 可选 商品的展示地址
+	GoodsDetail    []*GoodsDetail `json:"goods_detail,omitempty"`  // 可选 订单包含的商品列表信息，Json格式，详见商品明细说明
+	ExtendParams   *ExtendParams  `json:"extend_params,omitempty"` // 可选 业务扩展参数
+	SubMerchant    *Merchant      `json:"sub_merchant,omitempty"`  // 可选 二级商户信息，当前只对直付通特定场景下使用此字段
+	SettleInfo     *SettleInfo    `json:"settle_info,omitempty"`   // 可选 描述结算信息，json格式，详见结算参数说明; 直付通场景下必传
+	PassbackParams string         `json:"passback_params"`         // 可选 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝只会在同步返回（包括跳转回商户网站）和异步通知时将该参数原样返回。
+}
+
+type ExtendParams struct {
+	SysServiceProviderId string `json:"sys_service_provider_id"` // 可选 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
+	HBFQNum              string `json:"hb_fq_num"`               // 可选 使用花呗分期要进行的分期数
+	HBFQSellerPercent    string `json:"hb_fq_seller_percent"`    // 可选 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
+	IndustryRefluxInfo   string `json:"industry_reflux_info"`    // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
+	CardType             string `json:"card_type"`               // 可选 卡类型
+	SpecifiedSellerName  string `json:"specified_seller_name"`   // 可选 特殊场景下，允许商户指定交易展示的卖家名称
+}
+
+type Merchant struct {
+	MerchantId   string `json:"merchant_id"`   // 必选 支付宝二级商户编号。 间连受理商户的支付宝商户编号，通过间连商户入驻接口后由支付宝生成。直付通和机构间连业务场景下必传。
+	MerchantType string `json:"merchant_type"` // 可选 二级商户编号类型。 枚举值：alipay:支付宝分配的间联商户编号；目前仅支持alipay，默认可以不传。
+}
+
+type SettleInfo struct {
+	SettleDetailInfos []*SettleDetailInfo `json:"settle_detail_infos"` // 必选 结算详细信息，json数组，目前只支持一条。
+	SettlePeriodTime  string              `json:"settle_period_time"`  // 可选 该笔订单的超期自动确认结算时间，到达期限后，将自动确认结算。此字段只在签约账期结算模式时有效。取值范围：1d～365d。d-天。 该参数数值不接受小数点。
+}
+
+type SettleDetailInfo struct {
+	TransInType      string `json:"trans_in_type"`      // 必选 结算收款方的账户类型。 cardAliasNo：结算收款方的银行卡编号;userId：表示是支付宝账号对应的支付宝唯一用户号;loginName：表示是支付宝登录号；defaultSettle：表示结算到商户进件时设置的默认结算账号，结算主体为门店时不支持传defaultSettle；
+	TransIn          string `json:"trans_in"`           // 必选 结算收款方。当结算收款方类型是cardAliasNo时，本参数为用户在支付宝绑定的卡编号；结算收款方类型是userId时，本参数为用户的支付宝账号对应的支付宝唯一用户号，以2088开头的纯16位数字；当结算收款方类型是loginName时，本参数为用户的支付宝登录号；当结算收款方类型是defaultSettle时，本参数不能传值，保持为空。
+	SummaryDimension string `json:"summary_dimension"`  // 可选 结算汇总维度，按照这个维度汇总成批次结算，由商户指定。 目前需要和结算收款方账户类型为cardAliasNo配合使用
+	SettleEntityId   string `json:"settle_entity_id"`   // 可选 结算主体标识。当结算主体类型为SecondMerchant时，为二级商户的SecondMerchantID；当结算主体类型为Store时，为门店的外标。
+	SettleEntityType string `json:"settle_entity_type"` // 可选 结算主体类型。 二级商户:SecondMerchant;商户或者直连商户门店:Store
+	Amount           string `json:"amount"`             // 可选 结算的金额，单位为元。在创建订单和支付接口时必须和交易金额相同。在结算确认接口时必须等于交易金额减去已退款金额。
+}
+
+// TradeMergePreCreateRsp 统一收单合并支付预创建接口响应参数
+type TradeMergePreCreateRsp struct {
+	Content struct {
+		Code               Code              `json:"code"`
+		Msg                string            `json:"msg"`
+		SubCode            string            `json:"sub_code"`
+		SubMsg             string            `json:"sub_msg"`
+		OutMergeNo         string            `json:"out_merge_no"`
+		PreOrderNo         string            `json:"pre_order_no"`
+		OrderDetailResults []*PreOrderResult `json:"order_detail_results"`
+	} `json:"alipay_trade_merge_precreate_response"`
+	Sign string `json:"sign"`
+}
+
+type PreOrderResult struct {
+	AppId      string `json:"app_id"`
+	OutTradeNo string `json:"out_trade_no"`
+	Success    bool   `json:"success"`
+	ResultCode string `json:"result_code"`
 }

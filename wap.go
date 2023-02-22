@@ -16,3 +16,18 @@ func (this *Client) TradeWapPay(param TradeWapPay) (result *url.URL, err error) 
 
 	return result, err
 }
+
+// TradeWapMergePay 无线Wap合并支付接口2.0 https://opendocs.alipay.com/open/028xra
+func (this *Client) TradeWapMergePay(param TradeWapMergePay) (result *url.URL, err error) {
+	p, err := this.URLValues(param)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err = url.Parse(this.apiDomain + "?" + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}

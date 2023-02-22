@@ -92,3 +92,9 @@ func (this *Client) TradeRefundAsync(param TradeRefundAsync) (result *TradeRefun
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
+
+// TradeMergePreCreate 统一收单合并支付预创建接口请求参数 https://opendocs.alipay.com/open/028xr9
+func (this *Client) TradeMergePreCreate(param TradeMergePreCreate) (result *TradeMergePreCreateRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}
