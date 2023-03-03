@@ -94,7 +94,18 @@ func (this *Client) TradeRefundAsync(param TradeRefundAsync) (result *TradeRefun
 }
 
 // TradeMergePreCreate 统一收单合并支付预创建接口请求参数 https://opendocs.alipay.com/open/028xr9
+// TODO TradeMergePreCreate 接口未经测试
 func (this *Client) TradeMergePreCreate(param TradeMergePreCreate) (result *TradeMergePreCreateRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
+}
+
+// TradeAppMergePay App合并支付接口 https://opendocs.alipay.com/open/028py8
+// TODO TradeAppMergePay 接口未经测试
+func (this *Client) TradeAppMergePay(param TradeAppPay) (result string, err error) {
+	p, err := this.URLValues(param)
+	if err != nil {
+		return "", err
+	}
+	return p.Encode(), err
 }

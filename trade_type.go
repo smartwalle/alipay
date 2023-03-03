@@ -762,3 +762,19 @@ type PreOrderResult struct {
 	Success    bool   `json:"success"`
 	ResultCode string `json:"result_code"`
 }
+
+// TradeAppMergePay App合并支付接口 https://opendocs.alipay.com/open/028py8
+type TradeAppMergePay struct {
+	AppAuthToken string `json:"-"`            // 可选
+	PreOrderNo   string `json:"pre_order_no"` // 必选 预下单号。通过 alipay.trade.merge.precreate(统一收单合并支付预创建接口)返回。
+}
+
+func (this TradeAppMergePay) APIName() string {
+	return "alipay.trade.app.merge.pay"
+}
+
+func (this TradeAppMergePay) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
