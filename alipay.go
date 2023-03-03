@@ -10,10 +10,10 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -41,9 +41,15 @@ type Client struct {
 	Client             *http.Client
 	location           *time.Location
 
+	// 内容加密
+	encryptNeed bool
+	encryptIV   []byte
+	encryptType string
+	encryptKey  []byte
+
 	appPrivateKey    *rsa.PrivateKey // 应用私钥
-	appCertSN        string
-	rootCertSN       string
+	appPublicCertSN  string
+	aliRootCertSN    string
 	aliPublicCertSN  string
 	aliPublicKeyList map[string]*rsa.PublicKey
 }
@@ -105,6 +111,24 @@ func (this *Client) IsProduction() bool {
 	return this.isProduction
 }
 
+// SetEncryptKey 接口内容加密密钥 https://opendocs.alipay.com/common/02mse3
+func (this *Client) SetEncryptKey(key string) error {
+	if key == "" {
+		this.encryptNeed = false
+		return nil
+	}
+
+	var data, err = base64.StdEncoding.DecodeString(key)
+	if err != nil {
+		return err
+	}
+	this.encryptNeed = true
+	this.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	this.encryptType = "AES"
+	this.encryptKey = data
+	return nil
+}
+
 // LoadAliPayPublicKey 加载支付宝公钥
 func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	var pub *rsa.PublicKey
@@ -129,13 +153,13 @@ func (this *Client) LoadAppPublicCert(s string) error {
 	if err != nil {
 		return err
 	}
-	this.appCertSN = getCertSN(cert)
+	this.appPublicCertSN = getCertSN(cert)
 	return nil
 }
 
 // LoadAppPublicCertFromFile 加载应用公钥证书
 func (this *Client) LoadAppPublicCertFromFile(filename string) error {
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -165,7 +189,7 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 
 // LoadAliPayPublicCertFromFile 加载支付宝公钥证书
 func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -188,13 +212,13 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 		}
 	}
 
-	this.rootCertSN = strings.Join(certSNList, "_")
+	this.aliRootCertSN = strings.Join(certSNList, "_")
 	return nil
 }
 
 // LoadAliPayRootCertFromFile 加载支付宝根证书
 func (this *Client) LoadAliPayRootCertFromFile(filename string) error {
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 
 	if err != nil {
 		return err
@@ -212,18 +236,28 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	p.Add("sign_type", kSignTypeRSA2)
 	p.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
 	p.Add("version", kVersion)
-	if this.appCertSN != "" {
-		p.Add("app_cert_sn", this.appCertSN)
+	if this.appPublicCertSN != "" {
+		p.Add("app_cert_sn", this.appPublicCertSN)
 	}
-	if this.rootCertSN != "" {
-		p.Add("alipay_root_cert_sn", this.rootCertSN)
+	if this.aliRootCertSN != "" {
+		p.Add("alipay_root_cert_sn", this.aliRootCertSN)
 	}
 
-	bytes, err := json.Marshal(param)
+	jsonBytes, err := json.Marshal(param)
 	if err != nil {
 		return nil, err
 	}
-	p.Add("biz_content", string(bytes))
+
+	var content = string(jsonBytes)
+	if this.encryptNeed {
+		jsonBytes, err = crypto4go.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV)
+		if err != nil {
+			return nil, err
+		}
+		content = base64.StdEncoding.EncodeToString(jsonBytes)
+		p.Add("encrypt_type", this.encryptType)
+	}
+	p.Add("biz_content", content)
 
 	var ps = param.Params()
 	if ps != nil {
@@ -267,68 +301,81 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	var dataStr = string(data)
+	var body = string(bodyBytes)
 
 	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 
-	var rootIndex = strings.LastIndex(dataStr, rootNodeName)
-	var errorIndex = strings.LastIndex(dataStr, kErrorResponse)
+	var rootIndex = strings.LastIndex(body, rootNodeName)
+	var errorIndex = strings.LastIndex(body, kErrorResponse)
 
 	var content string
 	var certSN string
 	var sign string
+	var contentBytes []byte
+	var jsonBytes []byte
 
 	if rootIndex > 0 {
-		content, certSN, sign = parseJSONSource(dataStr, rootNodeName, rootIndex)
-		if sign == "" {
-			var errRsp *ErrorRsp
-			if err = json.Unmarshal([]byte(content), &errRsp); err != nil {
-				return err
-			}
-
-			// alipay.open.app.alipaycert.download(应用支付宝公钥证书下载) 没有返回 sign 字段，所以再判断一次 code
-			if errRsp.Code != CodeSuccess {
-				if errRsp != nil {
-					return errRsp
-				}
-				return ErrSignNotFound
-			}
-		}
+		content, certSN, sign = parseJSONSource(body, rootNodeName, rootIndex)
+		contentBytes = []byte(content)
 	} else if errorIndex > 0 {
-		content, certSN, sign = parseJSONSource(dataStr, kErrorResponse, errorIndex)
-		if sign == "" {
-			var errRsp *ErrorRsp
-			if err = json.Unmarshal([]byte(content), &errRsp); err != nil {
-				return err
-			}
-			return errRsp
-		}
+		content, certSN, sign = parseJSONSource(body, kErrorResponse, errorIndex)
+		contentBytes = []byte(content)
 	} else {
 		return ErrSignNotFound
 	}
 
-	if sign != "" {
-		publicKey, err := this.getAliPayPublicKey(certSN)
-		if err != nil {
+	// 没有签名数据直接返回
+	if sign == "" {
+		var errRsp *ErrorRsp
+		if err = json.Unmarshal(contentBytes, &errRsp); err != nil {
 			return err
 		}
-
-		if ok, err := verifyData([]byte(content), sign, publicKey); ok == false {
-			return err
+		if errRsp.Code != CodeSuccess {
+			return errRsp
 		}
 	}
 
-	err = json.Unmarshal(data, result)
+	// 解密并重组 JSON 数据
+	jsonBytes, err = this.decrypt(body, content)
+	if err != nil {
+		return err
+	}
+
+	// 验签
+	publicKey, err := this.getAliPayPublicKey(certSN)
+	if err != nil {
+		return err
+	}
+	if ok, err := verifyData(contentBytes, sign, publicKey); ok == false {
+		return err
+	}
+
+	err = json.Unmarshal(jsonBytes, result)
 	if err != nil {
 		return err
 	}
 
 	return err
+}
+
+func (this *Client) decrypt(body, content string) ([]byte, error) {
+	if len(content) > 1 && content[0] == '"' {
+		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
+		if err != nil {
+			return nil, err
+		}
+		plaintext, err := crypto4go.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV)
+		if err != nil {
+			return nil, err
+		}
+		body = strings.Replace(body, content, string(plaintext), 1)
+	}
+	return []byte(body), nil
 }
 
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {

@@ -26,6 +26,9 @@ func init() {
 		os.Exit(-1)
 	}
 
+	// 加载内容密钥（可选），详情查看 https://opendocs.alipay.com/common/02mse3
+	fmt.Println("加载内容密钥", client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="))
+
 	// 下面两种方式只能二选一
 	var cert = true
 	if cert {

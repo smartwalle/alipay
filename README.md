@@ -71,6 +71,17 @@ client.LoadAliPayPublicKey("aliPublicKey")
 
 特别注意：**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
 
+##### 接口内容加密
+
+详细内容访问 [https://opendocs.alipay.com/common/02mse3](https://opendocs.alipay.com/common/02mse3) 进行了解。
+
+如果需要开启该功能，只需调用一下 SetEncryptKey() 方法。
+```
+client.SetEncryptKey("key")
+```
+
+如果不开启，则不需要调用该方法。
+
 ## 已实现接口
 
 #### 手机网站支付API

@@ -42,10 +42,10 @@ const (
 )
 
 type Param interface {
-	// 用于提供访问的 method
+	// APIName 用于提供访问的 method
 	APIName() string
 
-	// 返回参数列表
+	// Params 返回参数列表
 	Params() map[string]string
 }
 
