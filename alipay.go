@@ -23,6 +23,7 @@ import (
 )
 
 var (
+	ErrBadResponse          = errors.New("alipay: bad response")
 	ErrSignNotFound         = errors.New("alipay: sign content not found")
 	ErrAliPublicKeyNotFound = errors.New("alipay: alipay public key not found")
 )
@@ -249,7 +250,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	}
 
 	var content = string(jsonBytes)
-	if this.encryptNeed {
+	if this.encryptNeed && param.APIName() != kCertDownloadAPI {
 		jsonBytes, err = crypto4go.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV)
 		if err != nil {
 			return nil, err
@@ -326,11 +327,11 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		content, certSN, sign = parseJSONSource(body, kErrorResponse, errorIndex)
 		contentBytes = []byte(content)
 	} else {
-		return ErrSignNotFound
+		return ErrBadResponse
 	}
 
 	// 没有签名数据直接返回
-	if sign == "" {
+	if sign == "" && param.APIName() != kCertDownloadAPI {
 		var errRsp *ErrorRsp
 		if err = json.Unmarshal(contentBytes, &errRsp); err != nil {
 			return err
@@ -347,12 +348,14 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 
 	// 验签
-	publicKey, err := this.getAliPayPublicKey(certSN)
-	if err != nil {
-		return err
-	}
-	if ok, err := verifyData(contentBytes, sign, publicKey); ok == false {
-		return err
+	if param.APIName() != kCertDownloadAPI {
+		publicKey, err := this.getAliPayPublicKey(certSN)
+		if err != nil {
+			return err
+		}
+		if ok, err := verifyData(contentBytes, sign, publicKey); ok == false {
+			return err
+		}
 	}
 
 	err = json.Unmarshal(jsonBytes, result)

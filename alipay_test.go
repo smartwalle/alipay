@@ -3,6 +3,7 @@ package alipay_test
 import (
 	"fmt"
 	"os"
+	"testing"
 
 	alipay "github.com/smartwalle/alipay/v3"
 )
@@ -40,4 +41,15 @@ func init() {
 		// 使用支付宝公钥
 		fmt.Println("加载公钥", client.LoadAliPayPublicKey(aliPublicKey))
 	}
+}
+
+func TestClient_CertDownload(t *testing.T) {
+	t.Log("========== CertDownload ==========")
+	var p = alipay.CertDownload{}
+	p.AliPayCertSN = ""
+	rsp, err := client.CertDownload(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(rsp.Content.AliPayCertContent)
 }

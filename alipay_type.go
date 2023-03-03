@@ -60,13 +60,18 @@ func (this *ErrorRsp) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
 
+const (
+	kCertDownloadAPI = "alipay.open.app.alipaycert.download"
+)
+
+// CertDownload 应用支付宝公钥证书下载 https://opendocs.alipay.com/common/06ue2z
 type CertDownload struct {
 	AppAuthToken string `json:"-"`              // 可选
 	AliPayCertSN string `json:"alipay_cert_sn"` // 支付宝公钥证书序列号
 }
 
 func (this CertDownload) APIName() string {
-	return "alipay.open.app.alipaycert.download"
+	return kCertDownloadAPI
 }
 
 func (this CertDownload) Params() map[string]string {
