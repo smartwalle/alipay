@@ -55,7 +55,7 @@ func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	return false
 }
 
-func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotification, err error) {
+func (this *Client) GetTradeNotification(req *http.Request) (notification *TradeNotification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
@@ -63,41 +63,41 @@ func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 		return nil, err
 	}
 
-	noti = &TradeNotification{}
-	noti.AppId = req.FormValue("app_id")
-	noti.AuthAppId = req.FormValue("auth_app_id")
-	noti.NotifyId = req.FormValue("notify_id")
-	noti.NotifyType = req.FormValue("notify_type")
-	noti.NotifyTime = req.FormValue("notify_time")
-	noti.TradeNo = req.FormValue("trade_no")
-	noti.TradeStatus = TradeStatus(req.FormValue("trade_status"))
-	noti.TotalAmount = req.FormValue("total_amount")
-	noti.ReceiptAmount = req.FormValue("receipt_amount")
-	noti.InvoiceAmount = req.FormValue("invoice_amount")
-	noti.BuyerPayAmount = req.FormValue("buyer_pay_amount")
-	noti.SellerId = req.FormValue("seller_id")
-	noti.SellerEmail = req.FormValue("seller_email")
-	noti.BuyerId = req.FormValue("buyer_id")
-	noti.BuyerLogonId = req.FormValue("buyer_logon_id")
-	noti.FundBillList = req.FormValue("fund_bill_list")
-	noti.Charset = req.FormValue("charset")
-	noti.PointAmount = req.FormValue("point_amount")
-	noti.OutTradeNo = req.FormValue("out_trade_no")
-	noti.OutBizNo = req.FormValue("out_biz_no")
-	noti.GmtCreate = req.FormValue("gmt_create")
-	noti.GmtPayment = req.FormValue("gmt_payment")
-	noti.GmtRefund = req.FormValue("gmt_refund")
-	noti.GmtClose = req.FormValue("gmt_close")
-	noti.Subject = req.FormValue("subject")
-	noti.Body = req.FormValue("body")
-	noti.RefundFee = req.FormValue("refund_fee")
-	noti.Version = req.FormValue("version")
-	noti.SignType = req.FormValue("sign_type")
-	noti.Sign = req.FormValue("sign")
-	noti.PassbackParams = req.FormValue("passback_params")
-	noti.VoucherDetailList = req.FormValue("voucher_detail_list")
-	noti.AgreementNo = req.FormValue("agreement_no")
-	noti.ExternalAgreementNo = req.FormValue("external_agreement_no")
+	notification = &TradeNotification{}
+	notification.AppId = req.FormValue("app_id")
+	notification.AuthAppId = req.FormValue("auth_app_id")
+	notification.NotifyId = req.FormValue("notify_id")
+	notification.NotifyType = req.FormValue("notify_type")
+	notification.NotifyTime = req.FormValue("notify_time")
+	notification.TradeNo = req.FormValue("trade_no")
+	notification.TradeStatus = TradeStatus(req.FormValue("trade_status"))
+	notification.TotalAmount = req.FormValue("total_amount")
+	notification.ReceiptAmount = req.FormValue("receipt_amount")
+	notification.InvoiceAmount = req.FormValue("invoice_amount")
+	notification.BuyerPayAmount = req.FormValue("buyer_pay_amount")
+	notification.SellerId = req.FormValue("seller_id")
+	notification.SellerEmail = req.FormValue("seller_email")
+	notification.BuyerId = req.FormValue("buyer_id")
+	notification.BuyerLogonId = req.FormValue("buyer_logon_id")
+	notification.FundBillList = req.FormValue("fund_bill_list")
+	notification.Charset = req.FormValue("charset")
+	notification.PointAmount = req.FormValue("point_amount")
+	notification.OutTradeNo = req.FormValue("out_trade_no")
+	notification.OutBizNo = req.FormValue("out_biz_no")
+	notification.GmtCreate = req.FormValue("gmt_create")
+	notification.GmtPayment = req.FormValue("gmt_payment")
+	notification.GmtRefund = req.FormValue("gmt_refund")
+	notification.GmtClose = req.FormValue("gmt_close")
+	notification.Subject = req.FormValue("subject")
+	notification.Body = req.FormValue("body")
+	notification.RefundFee = req.FormValue("refund_fee")
+	notification.Version = req.FormValue("version")
+	notification.SignType = req.FormValue("sign_type")
+	notification.Sign = req.FormValue("sign")
+	notification.PassbackParams = req.FormValue("passback_params")
+	notification.VoucherDetailList = req.FormValue("voucher_detail_list")
+	notification.AgreementNo = req.FormValue("agreement_no")
+	notification.ExternalAgreementNo = req.FormValue("external_agreement_no")
 
 	//if len(noti.NotifyId) == 0 {
 	//	return nil, errors.New("不是有效的 Notify")
@@ -107,7 +107,7 @@ func (this *Client) GetTradeNotification(req *http.Request) (noti *TradeNotifica
 	if ok == false {
 		return nil, err
 	}
-	return noti, err
+	return notification, err
 }
 
 func (this *Client) AckNotification(w http.ResponseWriter) {
