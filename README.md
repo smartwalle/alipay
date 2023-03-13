@@ -65,6 +65,10 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 
 ##### 普通公钥
 
+需要注意此处用到的公钥是**支付宝公钥**，不是我们用工具生成的应用公钥。
+
+[如何查看支付宝公钥？](https://opendocs.alipay.com/common/057aqe)
+
 ```
 client.LoadAliPayPublicKey("aliPublicKey")
 ```
