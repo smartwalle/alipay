@@ -19,7 +19,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/smartwalle/crypto4go"
+	"github.com/smartwalle/ncrypto"
 )
 
 var (
@@ -43,10 +43,11 @@ type Client struct {
 	location           *time.Location
 
 	// 内容加密
-	encryptNeed bool
-	encryptIV   []byte
-	encryptType string
-	encryptKey  []byte
+	encryptNeed    bool
+	encryptIV      []byte
+	encryptType    string
+	encryptKey     []byte
+	encryptPadding ncrypto.Padding
 
 	appPrivateKey    *rsa.PrivateKey // 应用私钥
 	appPublicCertSN  string
@@ -77,9 +78,9 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 //
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
 func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (client *Client, err error) {
-	priKey, err := crypto4go.ParsePKCS1PrivateKey(crypto4go.FormatPKCS1PrivateKey(privateKey))
+	priKey, err := ncrypto.ParsePKCS1PrivateKey(ncrypto.FormatPKCS1PrivateKey(privateKey))
 	if err != nil {
-		priKey, err = crypto4go.ParsePKCS8PrivateKey(crypto4go.FormatPKCS8PrivateKey(privateKey))
+		priKey, err = ncrypto.ParsePKCS8PrivateKey(ncrypto.FormatPKCS8PrivateKey(privateKey))
 		if err != nil {
 			return nil, err
 		}
@@ -127,6 +128,7 @@ func (this *Client) SetEncryptKey(key string) error {
 	this.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	this.encryptType = "AES"
 	this.encryptKey = data
+	this.encryptPadding = ncrypto.NewPKCS5Padding()
 	return nil
 }
 
@@ -137,7 +139,7 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	if len(aliPublicKey) < 0 {
 		return ErrAliPublicKeyNotFound
 	}
-	pub, err = crypto4go.ParsePublicKey(crypto4go.FormatPublicKey(aliPublicKey))
+	pub, err = ncrypto.ParsePublicKey(ncrypto.FormatPublicKey(aliPublicKey))
 	if err != nil {
 		return err
 	}
@@ -150,7 +152,7 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 
 // LoadAppPublicCert 加载应用公钥证书
 func (this *Client) LoadAppPublicCert(s string) error {
-	cert, err := crypto4go.ParseCertificate([]byte(s))
+	cert, err := ncrypto.ParseCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -170,7 +172,7 @@ func (this *Client) LoadAppPublicCertFromFile(filename string) error {
 
 // LoadAliPayPublicCert 加载支付宝公钥证书
 func (this *Client) LoadAliPayPublicCert(s string) error {
-	cert, err := crypto4go.ParseCertificate([]byte(s))
+	cert, err := ncrypto.ParseCertificate([]byte(s))
 	if err != nil {
 		return err
 	}
@@ -207,7 +209,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	for _, certStr := range certStrList {
 		certStr = certStr + kCertificateEnd
 
-		var cert, _ = crypto4go.ParseCertificate([]byte(certStr))
+		var cert, _ = ncrypto.ParseCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
 		}
@@ -251,7 +253,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 
 	var content = string(jsonBytes)
 	if this.encryptNeed && param.APIName() != kCertDownloadAPI {
-		jsonBytes, err = crypto4go.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV)
+		jsonBytes, err = ncrypto.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV, this.encryptPadding)
 		if err != nil {
 			return nil, err
 		}
@@ -372,7 +374,7 @@ func (this *Client) decrypt(body, content string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		plaintext, err := crypto4go.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV)
+		plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
 		if err != nil {
 			return nil, err
 		}
@@ -441,7 +443,7 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 		return nil, err
 	}
 
-	cert, err = crypto4go.ParseCertificate(certBytes)
+	cert, err = ncrypto.ParseCertificate(certBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -510,7 +512,7 @@ func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	sig, err := crypto4go.RSASignWithKey([]byte(src), privateKey, hash)
+	sig, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
@@ -553,7 +555,7 @@ func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err erro
 		return false, err
 	}
 
-	if err = crypto4go.RSAVerifyWithKey(data, signBytes, key, crypto.SHA256); err != nil {
+	if err = ncrypto.RSAVerifyWithKey(data, signBytes, key, crypto.SHA256); err != nil {
 		return false, err
 	}
 	return true, nil
