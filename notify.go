@@ -110,11 +110,26 @@ func (this *Client) GetTradeNotification(req *http.Request) (notification *Trade
 	return notification, err
 }
 
+// AckNotification
+// Deprecated: use ACKNotification instead.
 func (this *Client) AckNotification(w http.ResponseWriter) {
 	AckNotification(w)
 }
 
+// ACKNotification 返回异步通知成功处理的消息给支付宝
+func (this *Client) ACKNotification(w http.ResponseWriter) {
+	ACKNotification(w)
+}
+
+// AckNotification
+// Deprecated: use ACKNotification instead.
 func AckNotification(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	w.Write(kSuccess)
+}
+
+// ACKNotification 返回异步通知成功处理的消息给支付宝
+func ACKNotification(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(kSuccess)
 }

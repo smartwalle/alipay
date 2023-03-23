@@ -129,4 +129,6 @@ func notify(c *gin.Context) {
 	}
 
 	log.Printf("订单 %s 支付成功 \n", outTradeNo)
+
+	aliClient.ACKNotification(c.Writer)
 }

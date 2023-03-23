@@ -7,22 +7,21 @@ AliPay SDK for Golang
 ## 安装
 
 ##### 启用 Go module
-
-```
+```go
 go get github.com/smartwalle/alipay/v3
 ```
 
-```
+```go
 import github.com/smartwalle/alipay/v3
 ```
 
 ##### 未启用 Go module
 
-```
+```go
 go get github.com/smartwalle/alipay
 ```
 
-```
+```go
 import github.com/smartwalle/alipay
 ```
 
@@ -49,7 +48,7 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 
 **下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名。**
 
-```
+```go
 var client, err = alipay.New(appID, privateKey, true)
 ```
 
@@ -57,7 +56,7 @@ var client, err = alipay.New(appID, privateKey, true)
 
 如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
-```
+```go
 client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
 client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
 client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
@@ -69,7 +68,7 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 
 [如何查看支付宝公钥？](https://opendocs.alipay.com/common/057aqe)
 
-```
+```go
 client.LoadAliPayPublicKey("aliPublicKey")
 ```
 
@@ -80,7 +79,7 @@ client.LoadAliPayPublicKey("aliPublicKey")
 详细内容访问 [https://opendocs.alipay.com/common/02mse3](https://opendocs.alipay.com/common/02mse3) 进行了解。
 
 如果需要开启该功能，只需调用一下 SetEncryptKey() 方法。
-```
+```go
 client.SetEncryptKey("key")
 ```
 
@@ -261,8 +260,7 @@ client.SetEncryptKey("key")
 请参考 [如何生成 RSA 密钥](https://docs.open.alipay.com/291/105971)。
 
 #### 创建 Wap 支付
-
-``` Golang
+```go
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client, err = alipay.New(appId, privateKey, false)
 
@@ -302,18 +300,18 @@ fmt.Println(payURL)
 
 发起支付的时候，当我们有提供 Return URL 参数，那么支付成功之后，支付宝将会重定向到该 URL，并附带上相关的参数。
 
-```Golang
+```go
 var p = alipay.TradeWapPay{}
 p.ReturnURL = "http://xxx/return"
 ```
 
 这时候我们需要对支付宝提供的参数进行签名验证：
 
-```Golang
-http.HandleFunc("/return", func (rep http.ResponseWriter, req *http.Request) {
-req.ParseForm()
-ok, err := client.VerifySign(req.Form)
-fmt.Println(ok, err)
+```go
+http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
+request.ParseForm()
+    ok, err := client.VerifySign(request.Form)
+    fmt.Println(ok, err)
 }
 ```
 
@@ -323,13 +321,13 @@ fmt.Println(ok, err)
 
 我们需要在提供的 Notify URL 服务中获取相关的参数并进行验证:
 
-```Golang
-http.HandleFunc("/alipay", func (rep http.ResponseWriter, req *http.Request) {
-var noti, _ = client.GetTradeNotification(req)
-if noti != nil {
-fmt.Println("交易状态为:", noti.TradeStatus)
-}
-alipay.AckNotification(rep) // 确认收到通知消息
+```go
+http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
+    var noti, _ = client.GetTradeNotification(request)
+    if noti != nil {
+        fmt.Println("交易状态为:", noti.TradeStatus)
+    }
+    alipay.ACKNotification(writer) // 确认收到通知消息
 })
 ```
 
