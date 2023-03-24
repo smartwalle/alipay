@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/md5"
 	"crypto/rsa"
@@ -231,19 +232,19 @@ func (this *Client) LoadAliPayRootCertFromFile(filename string) error {
 }
 
 func (this *Client) URLValues(param Param) (value url.Values, err error) {
-	var p = url.Values{}
-	p.Add("app_id", this.appId)
-	p.Add("method", param.APIName())
-	p.Add("format", kFormat)
-	p.Add("charset", kCharset)
-	p.Add("sign_type", kSignTypeRSA2)
-	p.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
-	p.Add("version", kVersion)
+	var values = url.Values{}
+	values.Add("app_id", this.appId)
+	values.Add("method", param.APIName())
+	values.Add("format", kFormat)
+	values.Add("charset", kCharset)
+	values.Add("sign_type", kSignTypeRSA2)
+	values.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
+	values.Add("version", kVersion)
 	if this.appPublicCertSN != "" {
-		p.Add("app_cert_sn", this.appPublicCertSN)
+		values.Add("app_cert_sn", this.appPublicCertSN)
 	}
 	if this.aliRootCertSN != "" {
-		p.Add("alipay_root_cert_sn", this.aliRootCertSN)
+		values.Add("alipay_root_cert_sn", this.aliRootCertSN)
 	}
 
 	jsonBytes, err := json.Marshal(param)
@@ -258,26 +259,26 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 			return nil, err
 		}
 		content = base64.StdEncoding.EncodeToString(jsonBytes)
-		p.Add("encrypt_type", this.encryptType)
+		values.Add("encrypt_type", this.encryptType)
 	}
-	p.Add("biz_content", content)
+	values.Add("biz_content", content)
 
-	var ps = param.Params()
-	if ps != nil {
-		for key, value := range ps {
+	var params = param.Params()
+	if params != nil {
+		for key, value := range params {
 			if key == kAppAuthToken && value == "" {
 				continue
 			}
-			p.Add(key, value)
+			values.Add(key, value)
 		}
 	}
 
-	sign, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
+	sign, err := signWithPKCS1v15(values, this.appPrivateKey, crypto.SHA256)
 	if err != nil {
 		return nil, err
 	}
-	p.Add("sign", sign)
-	return p, nil
+	values.Add("sign", sign)
+	return values, nil
 }
 
 func (this *Client) doRequest(method string, param Param, result interface{}) (err error) {
@@ -432,9 +433,9 @@ func (this *Client) CertDownload(param CertDownload) (result *CertDownloadRsp, e
 }
 
 func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, err error) {
-	var cp = CertDownload{}
-	cp.AliPayCertSN = certSN
-	rsp, err := this.CertDownload(cp)
+	var param = CertDownload{}
+	param.AliPayCertSN = certSN
+	rsp, err := this.CertDownload(param)
 	if err != nil {
 		return nil, err
 	}
@@ -498,55 +499,55 @@ func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, c
 	return content, certSN, sign
 }
 
-func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (s string, err error) {
-	if param == nil {
-		param = make(url.Values, 0)
+func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (sign string, err error) {
+	if values == nil {
+		values = make(url.Values, 0)
 	}
 
 	var pList = make([]string, 0, 0)
-	for key := range param {
-		var value = strings.TrimSpace(param.Get(key))
+	for key := range values {
+		var value = strings.TrimSpace(values.Get(key))
 		if len(value) > 0 {
 			pList = append(pList, key+"="+value)
 		}
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	sign, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
+	signBytes, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
-	s = base64.StdEncoding.EncodeToString(sign)
-	return s, nil
+	sign = base64.StdEncoding.EncodeToString(signBytes)
+	return sign, nil
 }
 
-func verifySign(data url.Values, key *rsa.PublicKey) (ok bool, err error) {
-	sign := data.Get(kSignNodeName)
+func verifySign(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
+	sign := values.Get(kSignNodeName)
 
 	var keys = make([]string, 0, 0)
-	for k := range data {
-		if k == kSignNodeName || k == kSignTypeNodeName || k == kCertSNNodeName {
+	for key := range values {
+		if key == kSignNodeName || key == kSignTypeNodeName || key == kCertSNNodeName {
 			continue
 		}
-		keys = append(keys, k)
+		keys = append(keys, key)
 	}
 
 	sort.Strings(keys)
-	var buf strings.Builder
 
-	for _, k := range keys {
-		vs := data[k]
+	var buffer bytes.Buffer
+	for _, key := range keys {
+		vs := values[key]
 		for _, v := range vs {
-			if buf.Len() > 0 {
-				buf.WriteByte('&')
+			if buffer.Len() > 0 {
+				buffer.WriteByte('&')
 			}
-			buf.WriteString(k)
-			buf.WriteByte('=')
-			buf.WriteString(v)
+			buffer.WriteString(key)
+			buffer.WriteByte('=')
+			buffer.WriteString(v)
 		}
 	}
-	s := buf.String()
-	return verifyData([]byte(s), sign, key)
+
+	return verifyData(buffer.Bytes(), sign, publicKey)
 }
 
 func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err error) {

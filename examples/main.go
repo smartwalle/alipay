@@ -72,16 +72,20 @@ func pay(c *gin.Context) {
 func callback(c *gin.Context) {
 	c.Request.ParseForm()
 
-	//ok, err := aliClient.VerifySign(c.Request.Form)
-	//if err != nil {
-	//	log.Println("回调验证签名发生错误", err)
-	//	return
-	//}
-	//
-	//if ok == false {
-	//	log.Println("回调验证签名未通过")
-	//	return
-	//}
+	ok, err := aliClient.VerifySign(c.Request.Form)
+	if err != nil {
+		log.Println("回调验证签名发生错误", err)
+		c.String(http.StatusBadRequest, "回调验证签名发生错误")
+		return
+	}
+
+	if ok == false {
+		log.Println("回调验证签名未通过")
+		c.String(http.StatusBadRequest, "回调验证签名未通过")
+		return
+	}
+
+	log.Println("回调验证签名通过")
 
 	var outTradeNo = c.Request.Form.Get("out_trade_no")
 	var p = alipay.TradeQuery{}
