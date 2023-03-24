@@ -356,7 +356,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		if err != nil {
 			return err
 		}
-		if ok, err := verifyData(contentBytes, sign, publicKey); ok == false {
+		if ok, err := verifyBytes(contentBytes, sign, publicKey); ok == false {
 			return err
 		}
 	}
@@ -388,14 +388,14 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 	return this.doRequest(method, param, result)
 }
 
-func (this *Client) VerifySign(data url.Values) (ok bool, err error) {
-	var certSN = data.Get(kCertSNNodeName)
+func (this *Client) VerifySign(values url.Values) (ok bool, err error) {
+	var certSN = values.Get(kCertSNNodeName)
 	publicKey, err := this.getAliPayPublicKey(certSN)
 	if err != nil {
 		return false, err
 	}
 
-	return verifySign(data, publicKey)
+	return verifyValues(values, publicKey)
 }
 
 func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err error) {
@@ -521,7 +521,7 @@ func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto
 	return sign, nil
 }
 
-func verifySign(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
+func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
 	sign := values.Get(kSignNodeName)
 
 	var keys = make([]string, 0, 0)
@@ -547,10 +547,10 @@ func verifySign(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error
 		}
 	}
 
-	return verifyData(buffer.Bytes(), sign, publicKey)
+	return verifyBytes(buffer.Bytes(), sign, publicKey)
 }
 
-func verifyData(data []byte, sign string, key *rsa.PublicKey) (ok bool, err error) {
+func verifyBytes(data []byte, sign string, key *rsa.PublicKey) (ok bool, err error) {
 	signBytes, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return false, err
