@@ -512,11 +512,11 @@ func signWithPKCS1v15(param url.Values, privateKey *rsa.PrivateKey, hash crypto.
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	sig, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
+	sign, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
-	s = base64.StdEncoding.EncodeToString(sig)
+	s = base64.StdEncoding.EncodeToString(sign)
 	return s, nil
 }
 
