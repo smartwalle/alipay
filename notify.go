@@ -12,40 +12,40 @@ var (
 	kSuccess = []byte("success")
 )
 
-func NewRequest(method, url string, params url.Values) (*http.Request, error) {
-	var m = strings.ToUpper(method)
+func NewRequest(method, url string, values url.Values) (*http.Request, error) {
+	method = strings.ToUpper(method)
 	var body io.Reader
-	if m == "GET" || m == "HEAD" {
-		if len(params) > 0 {
+	if method == http.MethodGet || method == http.MethodHead {
+		if len(values) > 0 {
 			if strings.Contains(url, "?") {
-				url = url + "&" + params.Encode()
+				url = url + "&" + values.Encode()
 			} else {
-				url = url + "?" + params.Encode()
+				url = url + "?" + values.Encode()
 			}
 		}
 	} else {
-		body = strings.NewReader(params.Encode())
+		body = strings.NewReader(values.Encode())
 	}
-	return http.NewRequest(m, url, body)
+	return http.NewRequest(method, url, body)
 }
 
 func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
-	var param = url.Values{}
-	param.Add("service", "notify_verify")
-	param.Add("partner", partnerId)
-	param.Add("notify_id", notifyId)
-	req, err := NewRequest("GET", this.notifyVerifyDomain, param)
+	var values = url.Values{}
+	values.Add("service", "notify_verify")
+	values.Add("partner", partnerId)
+	values.Add("notify_id", notifyId)
+	req, err := NewRequest(http.MethodGet, this.notifyVerifyDomain, values)
 	if err != nil {
 		return false
 	}
 
-	rep, err := this.Client.Do(req)
+	rsp, err := this.Client.Do(req)
 	if err != nil {
 		return false
 	}
-	defer rep.Body.Close()
+	defer rsp.Body.Close()
 
-	data, err := io.ReadAll(rep.Body)
+	data, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return false
 	}

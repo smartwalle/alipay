@@ -321,15 +321,15 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 	req.Header.Set("Content-Type", kContentType)
 
-	resp, err := this.Client.Do(req)
-	if resp != nil {
-		defer resp.Body.Close()
+	rsp, err := this.Client.Do(req)
+	if rsp != nil {
+		defer rsp.Body.Close()
 	}
 	if err != nil {
 		return err
 	}
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return err
 	}
@@ -359,12 +359,12 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 
 	// 没有签名数据直接返回
 	if sign == "" && param.APIName() != kCertDownloadAPI {
-		var errRsp *ErrorRsp
-		if err = json.Unmarshal(contentBytes, &errRsp); err != nil {
+		var rErr *ErrorRsp
+		if err = json.Unmarshal(contentBytes, &rErr); err != nil {
 			return err
 		}
-		if errRsp.Code != CodeSuccess {
-			return errRsp
+		if rErr.Code != CodeSuccess {
+			return rErr
 		}
 	}
 
