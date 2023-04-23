@@ -88,7 +88,7 @@ func WithProductionGateway(gateway string) OptionFunc {
 			gateway = kProductionGateway
 		}
 		if c.isProduction {
-			c.apiGateway = kProductionGateway
+			c.apiGateway = gateway
 		}
 	}
 }
