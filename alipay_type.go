@@ -3,9 +3,9 @@ package alipay
 import "fmt"
 
 const (
-	kSandboxURL        = "https://openapi.alipaydev.com/gateway.do"
-	kProductionURL     = "https://openapi.alipay.com/gateway.do"
-	kProductionMAPIURL = "https://mapi.alipay.com/gateway.do"
+	kSandboxGateway        = "https://openapi.alipaydev.com/gateway.do"
+	kProductionGateway     = "https://openapi.alipay.com/gateway.do"
+	kProductionMAPIGateway = "https://mapi.alipay.com/gateway.do"
 
 	kFormat       = "JSON"
 	kCharset      = "utf-8"

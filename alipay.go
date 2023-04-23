@@ -38,7 +38,7 @@ type Client struct {
 	mu                 sync.Mutex
 	isProduction       bool
 	appId              string
-	apiDomain          string
+	apiGateway         string
 	notifyVerifyDomain string
 	Client             *http.Client
 	location           *time.Location
@@ -71,6 +71,28 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 	}
 }
 
+func WithSandboxGateway(gateway string) OptionFunc {
+	return func(c *Client) {
+		if gateway == "" {
+			gateway = kSandboxGateway
+		}
+		if !c.isProduction {
+			c.apiGateway = gateway
+		}
+	}
+}
+
+func WithProductionGateway(gateway string) OptionFunc {
+	return func(c *Client) {
+		if gateway == "" {
+			gateway = kProductionGateway
+		}
+		if c.isProduction {
+			c.apiGateway = kProductionGateway
+		}
+	}
+}
+
 // New 初始化支付宝客户端
 //
 // appId - 支付宝应用 id
@@ -91,11 +113,11 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (clien
 	client.appId = appId
 
 	if client.isProduction {
-		client.apiDomain = kProductionURL
-		client.notifyVerifyDomain = kProductionMAPIURL
+		client.apiGateway = kProductionGateway
+		client.notifyVerifyDomain = kProductionMAPIGateway
 	} else {
-		client.apiDomain = kSandboxURL
-		client.notifyVerifyDomain = kSandboxURL
+		client.apiGateway = kSandboxGateway
+		client.notifyVerifyDomain = kSandboxGateway
 	}
 	client.Client = http.DefaultClient
 	client.location = time.Local
@@ -104,7 +126,9 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (clien
 	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
 
 	for _, opt := range opts {
-		opt(client)
+		if opt != nil {
+			opt(client)
+		}
 	}
 
 	return client, nil
@@ -291,7 +315,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		buf = strings.NewReader(p.Encode())
 	}
 
-	req, err := http.NewRequest(method, this.apiDomain, buf)
+	req, err := http.NewRequest(method, this.apiGateway, buf)
 	if err != nil {
 		return err
 	}

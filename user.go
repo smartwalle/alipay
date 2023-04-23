@@ -11,7 +11,7 @@ func (this *Client) AgreementPageSign(param AgreementPageSign) (result *url.URL,
 		return nil, err
 	}
 
-	result, err = url.Parse(this.apiDomain + "?" + p.Encode())
+	result, err = url.Parse(this.apiGateway + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}

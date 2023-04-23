@@ -11,7 +11,7 @@ func (this *Client) TradePagePay(param TradePagePay) (result *url.URL, err error
 		return nil, err
 	}
 
-	result, err = url.Parse(this.apiDomain + "?" + p.Encode())
+	result, err = url.Parse(this.apiGateway + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}
