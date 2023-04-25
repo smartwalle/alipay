@@ -7,6 +7,7 @@ AliPay SDK for Golang
 ## 安装
 
 ##### 启用 Go module
+
 ```go
 go get github.com/smartwalle/alipay/v3
 ```
@@ -31,7 +32,7 @@ import github.com/smartwalle/alipay
 
 ## 其它支付
 
-微信支付 [https://github.com/smartwalle/wxpay](https://github.com/smartwalle/wxpay)
+苹果支付 [https://github.com/smartwalle/apple](https://github.com/smartwalle/apple)
 
 PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/paypal)
 
@@ -58,7 +59,7 @@ var client, err = alipay.New(appID, privateKey, true)
 
 ```go
 client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
-client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
+client.LoadAliPayRootCertFromFile("alipayRootCert.crt")             // 加载支付宝根证书
 client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
@@ -79,6 +80,7 @@ client.LoadAliPayPublicKey("aliPublicKey")
 详细内容访问 [https://opendocs.alipay.com/common/02mse3](https://opendocs.alipay.com/common/02mse3) 进行了解。
 
 如果需要开启该功能，只需调用一下 SetEncryptKey() 方法。
+
 ```go
 client.SetEncryptKey("key")
 ```
@@ -260,6 +262,7 @@ client.SetEncryptKey("key")
 请参考 [如何生成 RSA 密钥](https://docs.open.alipay.com/291/105971)。
 
 #### 创建 Wap 支付
+
 ```go
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client, err = alipay.New(appId, privateKey, false)
@@ -270,8 +273,8 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 
 // 将 key 的验证调整到初始化阶段
 if err != nil {
-	fmt.Println(err)
-	return
+fmt.Println(err)
+return
 }
 
 var p = alipay.TradeWapPay{}
@@ -284,7 +287,7 @@ p.ProductCode = "QUICK_WAP_WAY"
 
 var url, err = client.TradeWapPay(p)
 if err != nil {
-	fmt.Println(err)
+fmt.Println(err)
 }
 
 var payURL = url.String()
@@ -310,8 +313,8 @@ p.ReturnURL = "http://xxx/return"
 ```go
 http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
 request.ParseForm()
-    ok, err := client.VerifySign(request.Form)
-    fmt.Println(ok, err)
+ok, err := client.VerifySign(request.Form)
+fmt.Println(ok, err)
 }
 ```
 
@@ -323,11 +326,11 @@ request.ParseForm()
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-    var noti, _ = client.GetTradeNotification(request)
-    if noti != nil {
-        fmt.Println("交易状态为:", noti.TradeStatus)
-    }
-    alipay.ACKNotification(writer) // 确认收到通知消息
+var noti, _ = client.GetTradeNotification(request)
+if noti != nil {
+fmt.Println("交易状态为:", noti.TradeStatus)
+}
+alipay.ACKNotification(writer) // 确认收到通知消息
 })
 ```
 
