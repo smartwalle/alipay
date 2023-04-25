@@ -306,16 +306,17 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 }
 
 func (this *Client) doRequest(method string, param Param, result interface{}) (err error) {
-	var buf io.Reader
+	var body io.Reader
 	if param != nil {
-		p, err := this.URLValues(param)
+		var values url.Values
+		values, err = this.URLValues(param)
 		if err != nil {
 			return err
 		}
-		buf = strings.NewReader(p.Encode())
+		body = strings.NewReader(values.Encode())
 	}
 
-	req, err := http.NewRequest(method, this.apiGateway, buf)
+	req, err := http.NewRequest(method, this.apiGateway, body)
 	if err != nil {
 		return err
 	}
@@ -334,12 +335,12 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return err
 	}
 
-	var body = string(bodyBytes)
+	var data = string(bodyBytes)
 
 	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
 
-	var rootIndex = strings.LastIndex(body, rootNodeName)
-	var errorIndex = strings.LastIndex(body, kErrorResponse)
+	var rootIndex = strings.LastIndex(data, rootNodeName)
+	var errorIndex = strings.LastIndex(data, kErrorResponse)
 
 	var content string
 	var certSN string
@@ -348,10 +349,10 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var jsonBytes []byte
 
 	if rootIndex > 0 {
-		content, certSN, sign = parseJSONSource(body, rootNodeName, rootIndex)
+		content, certSN, sign = parseJSONSource(data, rootNodeName, rootIndex)
 		contentBytes = []byte(content)
 	} else if errorIndex > 0 {
-		content, certSN, sign = parseJSONSource(body, kErrorResponse, errorIndex)
+		content, certSN, sign = parseJSONSource(data, kErrorResponse, errorIndex)
 		contentBytes = []byte(content)
 	} else {
 		return ErrBadResponse
@@ -369,7 +370,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 
 	// 解密并重组 JSON 数据
-	jsonBytes, err = this.decrypt(body, content)
+	jsonBytes, err = this.decrypt(data, content)
 	if err != nil {
 		return err
 	}
@@ -393,7 +394,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	return err
 }
 
-func (this *Client) decrypt(body, content string) ([]byte, error) {
+func (this *Client) decrypt(data, content string) ([]byte, error) {
 	if len(content) > 1 && content[0] == '"' {
 		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
 		if err != nil {
@@ -403,9 +404,9 @@ func (this *Client) decrypt(body, content string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		body = strings.Replace(body, content, string(plaintext), 1)
+		data = strings.Replace(data, content, string(plaintext), 1)
 	}
-	return []byte(body), nil
+	return []byte(data), nil
 }
 
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
@@ -484,10 +485,10 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 	return cert, nil
 }
 
-func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, certSN, sign string) {
+func parseJSONSource(data string, nodeName string, nodeIndex int) (content, certSN, sign string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
-	var signIndex = strings.LastIndex(rawData, "\""+kSignNodeName+"\"")
-	var certIndex = strings.LastIndex(rawData, "\""+kCertSNNodeName+"\"")
+	var signIndex = strings.LastIndex(data, "\""+kSignNodeName+"\"")
+	var certIndex = strings.LastIndex(data, "\""+kCertSNNodeName+"\"")
 	var dataEndIndex int
 
 	if signIndex > 0 && certIndex > 0 {
@@ -497,25 +498,25 @@ func parseJSONSource(rawData string, nodeName string, nodeIndex int) (content, c
 	} else if signIndex > 0 {
 		dataEndIndex = signIndex - 1
 	} else {
-		dataEndIndex = len(rawData) - 1
+		dataEndIndex = len(data) - 1
 	}
 
 	var indexLen = dataEndIndex - dataStartIndex
 	if indexLen < 0 {
 		return "", "", ""
 	}
-	content = rawData[dataStartIndex:dataEndIndex]
+	content = data[dataStartIndex:dataEndIndex]
 
 	if certIndex > 0 {
 		var certStartIndex = certIndex + len(kCertSNNodeName) + 4
-		certSN = rawData[certStartIndex:]
+		certSN = data[certStartIndex:]
 		var certEndIndex = strings.Index(certSN, "\"")
 		certSN = certSN[:certEndIndex]
 	}
 
 	if signIndex > 0 {
 		var signStartIndex = signIndex + len(kSignNodeName) + 4
-		sign = rawData[signStartIndex:]
+		sign = data[signStartIndex:]
 		var signEndIndex = strings.LastIndex(sign, "\"")
 		sign = sign[:signEndIndex]
 	}
