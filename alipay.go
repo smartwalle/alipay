@@ -323,12 +323,10 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	req.Header.Set("Content-Type", kContentType)
 
 	rsp, err := this.Client.Do(req)
-	if rsp != nil {
-		defer rsp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer rsp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
