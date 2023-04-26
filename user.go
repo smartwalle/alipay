@@ -18,7 +18,7 @@ func (this *Client) AgreementPageSign(param AgreementPageSign) (result *url.URL,
 	return result, err
 }
 
-// AgreementQuery 支付宝个人代扣协议查询接口 https://docs.open.alipay.com/api_2/alipay.user.agreement.query
+// AgreementQuery 支付宝个人代扣协议查询接口 https://opendocs.alipay.com/open/02fkao?scene=8837b4183390497f84bb53783b488ecc
 func (this *Client) AgreementQuery(param AgreementQuery) (result *AgreementQueryRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
 	return result, err
