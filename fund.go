@@ -68,3 +68,12 @@ func (this *Client) FundAccountQuery(param FundAccountQuery) (result *FundAccoun
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
+
+// FundTransAppPay 现金红包无线支付接口 https://opendocs.alipay.com/open/03rbyf
+func (this *Client) FundTransAppPay(param FundTransAppPay) (result string, err error) {
+	p, err := this.URLValues(param)
+	if err != nil {
+		return "", err
+	}
+	return p.Encode(), err
+}

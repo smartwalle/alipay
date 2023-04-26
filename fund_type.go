@@ -527,3 +527,28 @@ func (this *FundAccountQueryRsp) IsSuccess() bool {
 	}
 	return false
 }
+
+// FundTransAppPay https://opendocs.alipay.com/open/03rbyf https://opendocs.alipay.com/open/03rbyf
+type FundTransAppPay struct {
+	AppAuthToken     string `json:"-"`                  // 可选
+	OutBizNo         string `json:"out_biz_no"`         // 必选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
+	TransAmount      string `json:"trans_amount"`       // 必选 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,9999999999999.99]
+	OrderId          string `json:"order_id"`           // 可选 支付宝订单号
+	ProductCode      string `json:"product_code"`       // 必选 销售产品码，商家和支付宝签约的产品码。 STD_RED_PACKET：现金红包
+	BizScene         string `json:"biz_scene"`          // 必选 描述特定的业务场景，可传值如下： PERSONAL_PAY: 发红包
+	Remark           string `json:"remark"`             // 可选 支付备注
+	OrderTitle       string `json:"order_title"`        // 可选 支付订单的标题，用于在收银台和消费记录展示
+	TimeExpire       string `json:"time_expire"`        // 可选 绝对超时时间，格式为yyyy-MM-dd HH:mm
+	RefundTimeExpire string `json:"refund_time_expire"` // 可选 退款超时时间，格式yyyy-MM-dd HH:mm。到指定时间后，系统会自动触发退款，并原路退回到付款账户。如果指定了退款时间，必须早于销售方案里设置的最晚退款时间。
+	BusinessParams   string `json:"business_params"`    // 可选 JSON格式，传递业务扩展参数. 业务扩展字段，JSON格式。支持如下属性： sub_biz_scene 子场景，必填，传REDPACKET payer_binded_alipay_uid 创建红包的商户会员绑定的支付宝userId，必填
+}
+
+func (this FundTransAppPay) APIName() string {
+	return "alipay.fund.trans.app.pay"
+}
+
+func (this FundTransAppPay) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
