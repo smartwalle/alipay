@@ -35,13 +35,13 @@ const (
 )
 
 type Client struct {
-	mu                 sync.Mutex
-	isProduction       bool
-	appId              string
-	apiGateway         string
-	notifyVerifyDomain string
-	Client             *http.Client
-	location           *time.Location
+	mu               sync.Mutex
+	isProduction     bool
+	appId            string
+	host             string
+	notifyVerifyHost string
+	Client           *http.Client
+	location         *time.Location
 
 	// 内容加密
 	encryptNeed    bool
@@ -77,7 +77,7 @@ func WithSandboxGateway(gateway string) OptionFunc {
 			gateway = kSandboxGateway
 		}
 		if !c.isProduction {
-			c.apiGateway = gateway
+			c.host = gateway
 		}
 	}
 }
@@ -88,7 +88,7 @@ func WithProductionGateway(gateway string) OptionFunc {
 			gateway = kProductionGateway
 		}
 		if c.isProduction {
-			c.apiGateway = gateway
+			c.host = gateway
 		}
 	}
 }
@@ -113,11 +113,11 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (clien
 	client.appId = appId
 
 	if client.isProduction {
-		client.apiGateway = kProductionGateway
-		client.notifyVerifyDomain = kProductionMAPIGateway
+		client.host = kProductionGateway
+		client.notifyVerifyHost = kProductionMAPIGateway
 	} else {
-		client.apiGateway = kSandboxGateway
-		client.notifyVerifyDomain = kSandboxGateway
+		client.host = kSandboxGateway
+		client.notifyVerifyHost = kSandboxGateway
 	}
 	client.Client = http.DefaultClient
 	client.location = time.Local
@@ -316,7 +316,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		body = strings.NewReader(values.Encode())
 	}
 
-	req, err := http.NewRequest(method, this.apiGateway, body)
+	req, err := http.NewRequest(method, this.host, body)
 	if err != nil {
 		return err
 	}

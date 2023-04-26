@@ -34,7 +34,7 @@ func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	values.Add("service", "notify_verify")
 	values.Add("partner", partnerId)
 	values.Add("notify_id", notifyId)
-	req, err := NewRequest(http.MethodGet, this.notifyVerifyDomain, values)
+	req, err := NewRequest(http.MethodGet, this.notifyVerifyHost, values)
 	if err != nil {
 		return false
 	}

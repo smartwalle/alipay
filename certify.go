@@ -15,7 +15,7 @@ func (this *Client) UserCertifyOpenCertify(param UserCertifyOpenCertify) (result
 		return nil, err
 	}
 
-	result, err = url.Parse(this.apiGateway + "?" + p.Encode())
+	result, err = url.Parse(this.host + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}

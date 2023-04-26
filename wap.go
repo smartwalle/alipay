@@ -9,7 +9,7 @@ func (this *Client) TradeWapPay(param TradeWapPay) (result *url.URL, err error) 
 		return nil, err
 	}
 
-	result, err = url.Parse(this.apiGateway + "?" + p.Encode())
+	result, err = url.Parse(this.host + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (this *Client) TradeWapMergePay(param TradeWapMergePay) (result *url.URL, e
 		return nil, err
 	}
 
-	result, err = url.Parse(this.apiGateway + "?" + p.Encode())
+	result, err = url.Parse(this.host + "?" + p.Encode())
 	if err != nil {
 		return nil, err
 	}
