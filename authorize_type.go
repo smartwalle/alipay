@@ -47,6 +47,7 @@ type SystemOauthTokenRsp struct {
 		ExpiresIn    int64  `json:"expires_in"`
 		RefreshToken string `json:"refresh_token"`
 		ReExpiresIn  int64  `json:"re_expires_in"`
+		AuthStart    string `json:"auth_start"`
 	} `json:"alipay_system_oauth_token_response"`
 	Error *struct {
 		Code    string `json:"code"`
