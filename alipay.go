@@ -340,37 +340,35 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var rootIndex = strings.LastIndex(data, rootNodeName)
 	var errorIndex = strings.LastIndex(data, kErrorResponse)
 
-	var content string
 	var certSN string
 	var sign string
-	var contentBytes []byte
-	var jsonBytes []byte
+	var content string
 
 	if rootIndex > 0 {
 		content, certSN, sign = parseJSONSource(data, rootNodeName, rootIndex)
-		contentBytes = []byte(content)
 	} else if errorIndex > 0 {
 		content, certSN, sign = parseJSONSource(data, kErrorResponse, errorIndex)
-		contentBytes = []byte(content)
 	} else {
 		return ErrBadResponse
 	}
 
-	// 没有签名数据直接返回
+	// 解密并重组数据
+	var nData []byte
+	var nContent []byte
+	nData, nContent, err = this.decrypt(data, content)
+	if err != nil {
+		return err
+	}
+
+	// 没有签名数据，返回的内容一般为错误信息
 	if sign == "" && param.APIName() != kCertDownloadAPI {
 		var rErr *ErrorRsp
-		if err = json.Unmarshal(contentBytes, &rErr); err != nil {
+		if err = json.Unmarshal(nContent, &rErr); err != nil {
 			return err
 		}
 		if rErr.Code != CodeSuccess {
 			return rErr
 		}
-	}
-
-	// 解密并重组 JSON 数据
-	jsonBytes, err = this.decrypt(data, content)
-	if err != nil {
-		return err
 	}
 
 	// 验签
@@ -379,12 +377,12 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		if err != nil {
 			return err
 		}
-		if ok, err := verifyBytes(contentBytes, sign, publicKey); ok == false {
+		if ok, err := verifyBytes([]byte(content), sign, publicKey); !ok {
 			return err
 		}
 	}
 
-	err = json.Unmarshal(jsonBytes, result)
+	err = json.Unmarshal(nData, result)
 	if err != nil {
 		return err
 	}
@@ -392,19 +390,21 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	return err
 }
 
-func (this *Client) decrypt(data, content string) ([]byte, error) {
+// decrypt 解密并重组获取到的数据
+func (this *Client) decrypt(data, content string) ([]byte, []byte, error) {
+	var plaintext = []byte(content)
 	if len(content) > 1 && content[0] == '"' {
 		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
+		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		data = strings.Replace(data, content, string(plaintext), 1)
 	}
-	return []byte(data), nil
+	return []byte(data), plaintext, nil
 }
 
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
