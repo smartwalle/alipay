@@ -77,6 +77,12 @@ func (this *Client) OpenAuthTokenApp(param OpenAuthTokenApp) (result *OpenAuthTo
 	return result, err
 }
 
+// OpenAuthTokenAppQuery 查询某个应用授权AppAuthToken的授权信息 https://opendocs.alipay.com/isv/04hgcp?pathHash=7ea21afe
+func (this *Client) OpenAuthTokenAppQuery(param OpenAuthTokenAppQuery) (result *OpenAuthTokenAppQueryRsp, err error) {
+	err = this.doRequest("POST", param, &result)
+	return result, err
+}
+
 // AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口 https://docs.open.alipay.com/218/105327
 func (this *Client) AccountAuth(param AccountAuth) (result string, err error) {
 	var p = url.Values{}

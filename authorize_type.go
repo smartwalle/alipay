@@ -141,6 +141,37 @@ type OpenAuthToken struct {
 	UserId          string `json:"user_id"`           // 支付宝用户标识
 }
 
+// OpenAuthTokenAppQuery 查询某个应用授权AppAuthToken的授权信息 https://opendocs.alipay.com/isv/04hgcp?pathHash=7ea21afe
+type OpenAuthTokenAppQuery struct {
+	AppAuthToken string `json:"app_auth_token"` // 必选 应用授权令牌
+}
+
+func (this OpenAuthTokenAppQuery) APIName() string {
+	return "alipay.open.auth.token.app.query"
+}
+
+func (this OpenAuthTokenAppQuery) Params() map[string]string {
+	return nil
+}
+
+type OpenAuthTokenAppQueryRsp struct {
+	Content struct {
+		Code        Code     `json:"code"`
+		Msg         string   `json:"msg"`
+		SubCode     Code     `json:"sub_code"`
+		SubMsg      string   `json:"sub_msg"`
+		UserId      string   `json:"user_id"`
+		AuthAppId   string   `json:"auth_app_id"`
+		ExpiresIn   int64    `json:"expires_in"`
+		AuthMethods []string `json:"auth_methods"`
+		AuthStart   string   `json:"auth_start"`
+		AuthEnd     string   `json:"auth_end"`
+		Status      string   `json:"status"`
+		IsByAppAuth bool     `json:"is_by_app_auth"`
+	} `json:"alipay_open_auth_token_app_query_response"`
+	Sign string `json:"sign"`
+}
+
 // AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口请求参数 https://docs.open.alipay.com/218/105327/
 type AccountAuth struct {
 	Pid      string `json:"pid"`
