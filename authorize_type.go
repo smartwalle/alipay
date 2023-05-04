@@ -164,3 +164,21 @@ func (this AccountAuth) Params() map[string]string {
 	m["auth_type"] = this.AuthType
 	return m
 }
+
+// OpenAuthAppAuthInviteCreate ISV向商户发起应用授权邀约 https://opendocs.alipay.com/isv/06evao?pathHash=f46ecafa
+type OpenAuthAppAuthInviteCreate struct {
+	AppAuthToken string `json:"-"`            // 可选
+	AuthAppId    string `json:"auth_app_id"`  // 必选 指定授权的商户appid
+	RedirectURL  string `json:"redirect_url"` // 可选 授权回调地址，用于返回应用授权码
+	State        string `json:"state"`        // 可选 自定义参数，授权后回调时透传回服务商。对应的值必须为 base64 编码。
+}
+
+func (this OpenAuthAppAuthInviteCreate) APIName() string {
+	return "alipay.open.auth.appauth.invite.create"
+}
+
+func (this OpenAuthAppAuthInviteCreate) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}

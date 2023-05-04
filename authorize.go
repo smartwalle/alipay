@@ -98,3 +98,18 @@ func (this *Client) AccountAuth(param AccountAuth) (result string, err error) {
 
 	return p.Encode(), err
 }
+
+// OpenAuthAppAuthInviteCreate ISV向商户发起应用授权邀约 https://opendocs.alipay.com/isv/06evao?pathHash=f46ecafa
+// TODO OpenAuthAppAuthInviteCreate 接口未经测试
+func (this *Client) OpenAuthAppAuthInviteCreate(param OpenAuthAppAuthInviteCreate) (result *url.URL, err error) {
+	p, err := this.URLValues(param)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err = url.Parse(this.host + "?" + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}

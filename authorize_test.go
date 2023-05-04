@@ -43,7 +43,7 @@ func TestClient_UserInfoShare(t *testing.T) {
 
 func TestClient_AppToAppAuth(t *testing.T) {
 	t.Log("========== AppToAppAuth ==========")
-	var result, err = client.AppToAppAuth("http://127.0.0.1")
+	var result, err = client.AppToAppAuth("http://127.0.0.1", "")
 	t.Log(result, err)
 }
 
@@ -76,6 +76,16 @@ func TestClient_AccountAuth(t *testing.T) {
 		t.Fatal(err)
 	}
 	if result == "" {
+		t.Fatal(err)
+	}
+	t.Log(result)
+}
+
+func TestClient_OpenAuthAppAuthInviteCreate(t *testing.T) {
+	t.Log("========== OpenAuthAppAuthInviteCreate ==========")
+	var p = alipay.OpenAuthAppAuthInviteCreate{}
+	result, err := client.OpenAuthAppAuthInviteCreate(p)
+	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(result)
