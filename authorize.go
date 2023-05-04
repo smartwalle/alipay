@@ -60,7 +60,9 @@ func (this *Client) AppToAppAuth(redirectURI, state string) (result *url.URL, er
 	var p = url.Values{}
 	p.Set("app_id", this.appId)
 	p.Set("redirect_uri", redirectURI)
-	p.Set("state", state)
+	if state != "" {
+		p.Set("state", state)
+	}
 
 	result, err = url.Parse(domain + "?" + p.Encode())
 	if err != nil {
