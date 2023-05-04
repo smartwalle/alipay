@@ -51,7 +51,7 @@ func (this *Client) UserInfoShare(param UserInfoShare) (result *UserInfoShareRsp
 }
 
 // AppToAppAuth 第三方应用授权接口 https://docs.open.alipay.com/20160728150111277227/intro
-func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error) {
+func (this *Client) AppToAppAuth(redirectURI, state string) (result *url.URL, err error) {
 	var domain = kSandboxAppToAppAuth
 	if this.isProduction {
 		domain = kProductionAppToAppAuth
@@ -60,6 +60,7 @@ func (this *Client) AppToAppAuth(redirectURI string) (result *url.URL, err error
 	var p = url.Values{}
 	p.Set("app_id", this.appId)
 	p.Set("redirect_uri", redirectURI)
+	p.Set("state", state)
 
 	result, err = url.Parse(domain + "?" + p.Encode())
 	if err != nil {
