@@ -38,6 +38,6 @@ type TradeNotification struct {
 	FundBillList        string      `json:"fund_bill_list"`        // 支付金额信息
 	PassbackParams      string      `json:"passback_params"`       // 回传参数
 	VoucherDetailList   string      `json:"voucher_detail_list"`   // 优惠券信息
-	AgreementNo         string      `json:"agreement_no"`          //支付宝签约号
+	AgreementNo         string      `json:"agreement_no"`          // 支付宝签约号
 	ExternalAgreementNo string      `json:"external_agreement_no"` // 商户自定义签约号
 }
