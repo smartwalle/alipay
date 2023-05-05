@@ -297,11 +297,11 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 		}
 	}
 
-	sign, err := signWithPKCS1v15(values, this.appPrivateKey, crypto.SHA256)
+	signature, err := signWithPKCS1v15(values, this.appPrivateKey, crypto.SHA256)
 	if err != nil {
 		return nil, err
 	}
-	values.Add("sign", sign)
+	values.Add("sign", signature)
 	return values, nil
 }
 
@@ -341,13 +341,13 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var errorIndex = strings.LastIndex(data, kErrorResponse)
 
 	var certSN string
-	var sign string
+	var signature string
 	var content string
 
 	if rootIndex > 0 {
-		content, certSN, sign = parseJSONSource(data, rootNodeName, rootIndex)
+		content, certSN, signature = parseJSONSource(data, rootNodeName, rootIndex)
 	} else if errorIndex > 0 {
-		content, certSN, sign = parseJSONSource(data, kErrorResponse, errorIndex)
+		content, certSN, signature = parseJSONSource(data, kErrorResponse, errorIndex)
 	} else {
 		return ErrBadResponse
 	}
@@ -355,13 +355,12 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	// 解密并重组数据
 	var nData []byte
 	var nContent []byte
-	nData, nContent, err = this.decrypt(data, content)
-	if err != nil {
+	if nData, nContent, err = this.decrypt(data, content); err != nil {
 		return err
 	}
 
 	// 没有签名数据，返回的内容一般为错误信息
-	if sign == "" && param.APIName() != kCertDownloadAPI {
+	if signature == "" && param.APIName() != kCertDownloadAPI {
 		var rErr *ErrorRsp
 		if err = json.Unmarshal(nContent, &rErr); err != nil {
 			return err
@@ -377,17 +376,16 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		if err != nil {
 			return err
 		}
-		if ok, err := verifyBytes([]byte(content), sign, publicKey); !ok {
+		if ok, err := verifyBytes([]byte(content), signature, publicKey); !ok {
 			return err
 		}
 	}
 
-	err = json.Unmarshal(nData, result)
-	if err != nil {
+	if err = json.Unmarshal(nData, result); err != nil {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 // decrypt 解密并重组获取到的数据
@@ -483,7 +481,7 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 	return cert, nil
 }
 
-func parseJSONSource(data string, nodeName string, nodeIndex int) (content, certSN, sign string) {
+func parseJSONSource(data string, nodeName string, nodeIndex int) (content, certSN, signature string) {
 	var dataStartIndex = nodeIndex + len(nodeName) + 2
 	var signIndex = strings.LastIndex(data, "\""+kSignNodeName+"\"")
 	var certIndex = strings.LastIndex(data, "\""+kCertSNNodeName+"\"")
@@ -514,15 +512,15 @@ func parseJSONSource(data string, nodeName string, nodeIndex int) (content, cert
 
 	if signIndex > 0 {
 		var signStartIndex = signIndex + len(kSignNodeName) + 4
-		sign = data[signStartIndex:]
-		var signEndIndex = strings.LastIndex(sign, "\"")
-		sign = sign[:signEndIndex]
+		signature = data[signStartIndex:]
+		var signEndIndex = strings.LastIndex(signature, "\"")
+		signature = signature[:signEndIndex]
 	}
 
-	return content, certSN, sign
+	return content, certSN, signature
 }
 
-func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (sign string, err error) {
+func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (signature string, err error) {
 	if values == nil {
 		values = make(url.Values, 0)
 	}
@@ -536,16 +534,16 @@ func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto
 	}
 	sort.Strings(pList)
 	var src = strings.Join(pList, "&")
-	signBytes, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
+	sBytes, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
 	if err != nil {
 		return "", err
 	}
-	sign = base64.StdEncoding.EncodeToString(signBytes)
-	return sign, nil
+	signature = base64.StdEncoding.EncodeToString(sBytes)
+	return signature, nil
 }
 
 func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
-	sign := values.Get(kSignNodeName)
+	signature := values.Get(kSignNodeName)
 
 	var keys = make([]string, 0, 0)
 	for key := range values {
@@ -570,16 +568,16 @@ func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err err
 		}
 	}
 
-	return verifyBytes(buffer.Bytes(), sign, publicKey)
+	return verifyBytes(buffer.Bytes(), signature, publicKey)
 }
 
-func verifyBytes(data []byte, sign string, key *rsa.PublicKey) (ok bool, err error) {
-	signBytes, err := base64.StdEncoding.DecodeString(sign)
+func verifyBytes(data []byte, signature string, key *rsa.PublicKey) (ok bool, err error) {
+	sBytes, err := base64.StdEncoding.DecodeString(signature)
 	if err != nil {
 		return false, err
 	}
 
-	if err = ncrypto.RSAVerifyWithKey(data, signBytes, key, crypto.SHA256); err != nil {
+	if err = ncrypto.RSAVerifyWithKey(data, sBytes, key, crypto.SHA256); err != nil {
 		return false, err
 	}
 	return true, nil

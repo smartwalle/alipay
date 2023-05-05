@@ -98,11 +98,11 @@ func (this *Client) AccountAuth(param AccountAuth) (result string, err error) {
 
 	p.Add("sign_type", kSignTypeRSA2)
 
-	sign, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
+	signature, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
 	if err != nil {
 		return "", err
 	}
-	p.Add("sign", sign)
+	p.Add("sign", signature)
 
 	return p.Encode(), err
 }
