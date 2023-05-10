@@ -351,15 +351,16 @@ type TradeFastPayRefundQueryRsp struct {
 		TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
 		OutTradeNo           string              `json:"out_trade_no"`                      // 创建交易传入的商户订单号
 		OutRequestNo         string              `json:"out_request_no"`                    // 本笔退款对应的退款请求号
-		RefundReason         string              `json:"refund_reason"`                     // 发起退款时，传入的退款原因
 		TotalAmount          string              `json:"total_amount"`                      // 发该笔退款所对应的交易的订单金额
 		RefundAmount         string              `json:"refund_amount"`                     // 本次退款请求，对应的退款金额
 		RefundStatus         string              `json:"refund_status"`                     // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败；
 		RefundRoyaltys       []*RefundRoyalty    `json:"refund_royaltys"`                   // 退分账明细信息
 		GMTRefundPay         string              `json:"gmt_refund_pay"`                    // 退款时间。
-		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 本次退款使用的资金渠道；
+		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list"`           // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
 		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额；
 		DepositBackInfo      []*DepositBackInfo  `json:"deposit_back_info"`                 // 银行卡冲退信息
+		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
+		RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
 	} `json:"alipay_trade_fastpay_refund_query_response"`
 	Sign string `json:"sign"`
 }
