@@ -103,7 +103,8 @@ type TradeQuery struct {
 	AppAuthToken string   `json:"-"`                       // 可选
 	OutTradeNo   string   `json:"out_trade_no,omitempty"`  // 订单支付时传入的商户订单号, 与 TradeNo 二选一
 	TradeNo      string   `json:"trade_no,omitempty"`      // 支付宝交易号
-	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户通过上送该字段来定制查询返回信息 TRADE_SETTLE_INFO
+	OrgPid       string   `json:"org_pid,omitempty"`       // 可选 银行间联模式下有用，其它场景请不要使用； 双联通过该参数指定需要查询的交易所属收单机构的pid;
+	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户传入该参数可定制本接口同步响应额外返回的信息字段，数组格式。支持枚举如下：trade_settle_info：返回的交易结算信息，包含分账、补差等信息； fund_bill_list：交易支付使用的资金渠道；voucher_detail_list：交易支付时使用的所有优惠券信息；discount_goods_detail：交易支付所使用的单品券优惠的商品优惠信息；mdiscount_amount：商家优惠金额；
 }
 
 func (this TradeQuery) APIName() string {
@@ -145,26 +146,60 @@ type TradeQueryRsp struct {
 		FundBillList          []*FundBill      `json:"fund_bill_list,omitempty"`      // 交易支付使用的资金渠道
 		StoreName             string           `json:"store_name"`                    // 请求交易支付中的商户店铺的名称
 		BuyerUserId           string           `json:"buyer_user_id"`                 // 买家在支付宝的用户id
+		BuyerUserName         string           `json:"buyer_user_name"`               // 买家名称；
+		IndustrySepcDetailGov string           `json:"industry_sepc_detail_gov"`      // 行业特殊信息-统筹相关
+		IndustrySepcDetailAcc string           `json:"industry_sepc_detail_acc"`      // 行业特殊信息-个账相关
 		ChargeAmount          string           `json:"charge_amount"`                 // 该笔交易针对收款方的收费金额；
 		ChargeFlags           string           `json:"charge_flags"`                  // 费率活动标识，当交易享受活动优惠费率时，返回该活动的标识；
 		SettlementId          string           `json:"settlement_id"`                 // 支付清算编号，用于清算对账使用；
+		TradeSettleInfo       *TradeSettleInfo `json:"trade_settle_info,omitempty"`   // 返回的交易结算信息，包含分账、补差等信息
 		AuthTradePayMode      string           `json:"auth_trade_pay_mode"`           // 预授权支付模式，该参数仅在信用预授权支付场景下返回。信用预授权支付：CREDIT_PREAUTH_PAY
 		BuyerUserType         string           `json:"buyer_user_type"`               // 买家用户类型。CORPORATE:企业用户；PRIVATE:个人用户。
 		MdiscountAmount       string           `json:"mdiscount_amount"`              // 商家优惠金额
 		DiscountAmount        string           `json:"discount_amount"`               // 平台优惠金额
-		BuyerUserName         string           `json:"buyer_user_name"`               // 买家名称；
 		Subject               string           `json:"subject"`                       // 订单标题；
 		Body                  string           `json:"body"`                          // 订单描述;
 		AlipaySubMerchantId   string           `json:"alipay_sub_merchant_id"`        // 间连商户在支付宝端的商户编号；
 		ExtInfos              string           `json:"ext_infos"`                     // 交易额外信息，特殊场景下与支付宝约定返回。
 		PassbackParams        string           `json:"passback_params"`               // 公用回传参数。返回支付时传入的passback_params参数信息
+		HBFQPayInfo           *HBFQPayInfo     `json:"hb_fq_pay_info"`                // 若用户使用花呗分期支付，且商家开通返回此通知参数，则会返回花呗分期信息。json格式其它说明详见花呗分期信息说明。 注意：商家需与支付宝约定后才返回本参数。
+		CreditPayMode         string           `json:"credit_pay_mode"`               // 信用支付模式。表示订单是采用信用支付方式（支付时买家没有出资，需要后续履约）。"creditAdvanceV2"表示芝麻先用后付模式，用户后续需要履约扣款。 此字段只有信用支付场景才有值，商户需要根据字段值单独处理。此字段以后可能扩展其他值，建议商户使用白名单方式识别，对于未识别的值做失败处理，并联系支付宝技术支持人员。
+		CreditBizOrderId      string           `json:"credit_biz_order_id"`           // 信用业务单号。信用支付场景才有值，先用后付产品里是芝麻订单号。
+		HYBAmount             string           `json:"hyb_amount"`                    // 惠营宝回票金额
+		BKAgentRespInfo       *BKAgentRespInfo `json:"bk_agent_resp_info"`            // 间联交易下，返回给机构的信 息
+		ChargeInfoList        []*ChargeInfo    `json:"charge_info_list"`              // 计费信息列表
 		DiscountGoodsDetail   string           `json:"discount_goods_detail"`         // 本次交易支付所使用的单品券优惠的商品优惠信息
-		IndustrySepcDetailGov string           `json:"industry_sepc_detail_gov"`      // 行业特殊信息-统筹相关
-		IndustrySepcDetailAcc string           `json:"industry_sepc_detail_acc"`      // 行业特殊信息-个账相关
 		VoucherDetailList     []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
-		TradeSettleInfo       *TradeSettleInfo `json:"trade_settle_info,omitempty"`   // 返回的交易结算信息，包含分账、补差等信息
 	} `json:"alipay_trade_query_response"`
 	Sign string `json:"sign"`
+}
+
+type HBFQPayInfo struct {
+	UserInstallNum string `json:"user_install_num"` // 用户使用花呗分期支付的分期数
+}
+
+type BKAgentRespInfo struct {
+	BindtrxId        string `json:"bindtrx_id"`
+	BindclrissrId    string `json:"bindclrissr_id"`
+	BindpyeracctbkId string `json:"bindpyeracctbk_id"`
+	BkpyeruserCode   string `json:"bkpyeruser_code"`
+	EstterLocation   string `json:"estter_location"`
+}
+
+type ChargeInfo struct {
+	ChargeFee               string          `json:"charge_fee"`
+	OriginalChargeFee       string          `json:"original_charge_fee"`
+	SwitchFeeRate           string          `json:"switch_fee_rate"`
+	IsRatingOnTradeReceiver string          `json:"is_rating_on_trade_receiver"`
+	IsRatingOnSwitch        string          `json:"is_rating_on_switch"`
+	ChargeType              string          `json:"charge_type"`
+	SubFeeDetailList        []*SubFeeDetail `json:"sub_fee_detail_list"`
+}
+
+type SubFeeDetail struct {
+	ChargeFee         string `json:"charge_fee"`
+	OriginalChargeFee string `json:"original_charge_fee"`
+	SwitchFeeRate     string `json:"switch_fee_rate"`
 }
 
 type FundBill struct {
@@ -288,7 +323,7 @@ type TradeRefundRsp struct {
 		FundChange           string              `json:"fund_change"`                       // 本次退款是否发生了资金变化
 		RefundFee            string              `json:"refund_fee"`                        // 退款总金额
 		StoreName            string              `json:"store_name"`                        // 交易在支付时候的门店名称
-		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
+		RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
 		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list。
 		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
 		RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
@@ -303,7 +338,7 @@ func (this *TradeRefundRsp) IsSuccess() bool {
 	return false
 }
 
-type RefundDetailItem struct {
+type TradeFundBill struct {
 	FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 支付渠道列表
 	Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
@@ -356,7 +391,7 @@ type TradeFastPayRefundQueryRsp struct {
 		RefundStatus         string              `json:"refund_status"`                     // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败；
 		RefundRoyaltys       []*RefundRoyalty    `json:"refund_royaltys"`                   // 退分账明细信息
 		GMTRefundPay         string              `json:"gmt_refund_pay"`                    // 退款时间。
-		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list"`           // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
+		RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list"`           // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
 		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额；
 		DepositBackInfo      []*DepositBackInfo  `json:"deposit_back_info"`                 // 银行卡冲退信息
 		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
