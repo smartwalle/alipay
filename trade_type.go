@@ -239,16 +239,17 @@ type TradeCloseRsp struct {
 
 // TradeRefund 统一收单交易退款接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type TradeRefund struct {
-	AppAuthToken   string `json:"-"`                      // 可选
-	OutTradeNo     string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
-	TradeNo        string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
-	OutRequestNo   string `json:"out_request_no"`         // 必须 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
-	RefundAmount   string `json:"refund_amount"`          // 必须 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
-	RefundCurrency string `json:"refund_currency"`        // 可选 订单退款币种信息
-	RefundReason   string `json:"refund_reason"`          // 可选 退款的原因说明
-	OperatorId     string `json:"operator_id"`            // 可选 商户的操作员编号
-	StoreId        string `json:"store_id"`               // 可选 商户的门店编号
-	TerminalId     string `json:"terminal_id"`            // 可选 商户的终端编号
+	AppAuthToken            string                    `json:"-"`                                   // 可选
+	OutTradeNo              string                    `json:"out_trade_no,omitempty"`              // 与 TradeNo 二选一
+	TradeNo                 string                    `json:"trade_no,omitempty"`                  // 与 OutTradeNo 二选一
+	RefundAmount            string                    `json:"refund_amount"`                       // 必须 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+	RefundReason            string                    `json:"refund_reason"`                       // 可选 退款的原因说明
+	OutRequestNo            string                    `json:"out_request_no"`                      // 必须 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+	RefundRoyaltyParameters []*RefundRoyaltyParameter `json:"refund_royalty_parameters,omitempty"` // 可选 退分账明细信息。 注： 1.当面付且非直付通模式无需传入退分账明细，系统自动按退款金额与订单金额的比率，从收款方和分账收入方退款，不支持指定退款金额与退款方。2.直付通模式，电脑网站支付，手机 APP 支付，手机网站支付产品，须在退款请求中明确是否退分账，从哪个分账收入方退，退多少分账金额；如不明确，默认从收款方退款，收款方余额不足退款失败。不支持系统按比率退款。
+	QueryOptions            []string                  `json:"query_options,omitempty"`             // 可选 查询选项。 商户通过上送该参数来定制同步需要额外返回的信息字段，数组格式。支持：refund_detail_item_list：退款使用的资金渠道；deposit_back_info：触发银行卡冲退信息通知；
+	// OperatorId   string `json:"operator_id"`            // 可选 商户的操作员编号
+	// StoreId    string `json:"store_id"`    // 可选 商户的门店编号
+	// TerminalId string `json:"terminal_id"` // 可选 商户的终端编号
 }
 
 func (this TradeRefund) APIName() string {
@@ -261,28 +262,36 @@ func (this TradeRefund) Params() map[string]string {
 	return m
 }
 
+type RefundRoyaltyParameter struct {
+	RoyaltyType  string `json:"royalty_type,omitempty"`   // 可选 分账类型. 普通分账为：transfer;补差为：replenish;为空默认为分账transfer;
+	TransOut     string `json:"trans_out,omitempty"`      // 可选 支出方账户。如果支出方账户类型为userId，本参数为支出方的支付宝账号对应的支付宝唯一用户号，以2088开头的纯16位数字；如果支出方类型为loginName，本参数为支出方的支付宝登录号。 泛金融类商户分账时，该字段不要上送。
+	TransOutType string `json:"trans_out_type,omitempty"` // 可选 支出方账户类型。userId表示是支付宝账号对应的支付宝唯一用户号;loginName表示是支付宝登录号； 泛金融类商户分账时，该字段不要上送。
+	TransInType  string `json:"trans_in_type,omitempty"`  // 可选 收入方账户类型。userId表示是支付宝账号对应的支付宝唯一用户号;cardAliasNo表示是卡编号;loginName表示是支付宝登录号；
+	TransIn      string `json:"trans_in"`                 // 必选 收入方账户。如果收入方账户类型为userId，本参数为收入方的支付宝账号对应的支付宝唯一用户号，以2088开头的纯16位数字；如果收入方类型为cardAliasNo，本参数为收入方在支付宝绑定的卡编号；如果收入方类型为loginName，本参数为收入方的支付宝登录号；
+	Amount       string `json:"amount,omitempty"`         // 可选 分账的金额，单位为元
+	Desc         string `json:"desc,omitempty"`           // 可选 分账描述
+	RoyaltyScene string `json:"royalty_scene,omitempty"`  // 可选 可选值：达人佣金、平台服务费、技术服务费、其他
+	TransInName  string `json:"trans_in_name,omitempty"`  // 可选 分账收款方姓名，上送则进行姓名与支付宝账号的一致性校验，校验不一致则分账失败。不上送则不进行姓名校验
+}
+
 // TradeRefundRsp 统一收单交易退款接口响应参数
 type TradeRefundRsp struct {
 	Content struct {
-		Code                         Code                `json:"code"`
-		Msg                          string              `json:"msg"`
-		SubCode                      string              `json:"sub_code"`
-		SubMsg                       string              `json:"sub_msg"`
-		TradeNo                      string              `json:"trade_no"`                          // 支付宝交易号
-		OutTradeNo                   string              `json:"out_trade_no"`                      // 商户订单号
-		BuyerLogonId                 string              `json:"buyer_logon_id"`                    // 用户的登录id
-		BuyerUserId                  string              `json:"buyer_user_id"`                     // 买家在支付宝的用户id
-		FundChange                   string              `json:"fund_change"`                       // 本次退款是否发生了资金变化
-		RefundFee                    string              `json:"refund_fee"`                        // 退款总金额
-		RefundCurrency               string              `json:"refund_currency"`                   // 退款币种信息
-		GmtRefundPay                 string              `json:"gmt_refund_pay"`                    // 退款支付时间
-		StoreName                    string              `json:"store_name"`                        // 交易在支付时候的门店名称
-		RefundDetailItemList         []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
-		RefundSettlementId           string              `json:"refund_settlement_id"`              // 退款清算编号，用于清算对账使用；只在银行间联交易场景下返回该信息；
-		PresentRefundBuyerAmount     string              `json:"present_refund_buyer_amount"`       // 本次退款金额中买家退款金额
-		PresentRefundDiscountAmount  string              `json:"present_refund_discount_amount"`    // 本次退款金额中平台优惠退款金额
-		PresentRefundMdiscountAmount string              `json:"present_refund_mdiscount_amount"`   // 本次退款金额中商家优惠退款金额
-		SendBackFee                  string              `json:"send_back_fee"`
+		Code                 Code                `json:"code"`
+		Msg                  string              `json:"msg"`
+		SubCode              string              `json:"sub_code"`
+		SubMsg               string              `json:"sub_msg"`
+		TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
+		OutTradeNo           string              `json:"out_trade_no"`                      // 商户订单号
+		BuyerLogonId         string              `json:"buyer_logon_id"`                    // 用户的登录id
+		BuyerUserId          string              `json:"buyer_user_id"`                     // 买家在支付宝的用户id
+		FundChange           string              `json:"fund_change"`                       // 本次退款是否发生了资金变化
+		RefundFee            string              `json:"refund_fee"`                        // 退款总金额
+		StoreName            string              `json:"store_name"`                        // 交易在支付时候的门店名称
+		RefundDetailItemList []*RefundDetailItem `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
+		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list。
+		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
+		RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
 	} `json:"alipay_trade_refund_response"`
 	Sign string `json:"sign"`
 }
@@ -299,6 +308,18 @@ type RefundDetailItem struct {
 	Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
 	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
 	FundType    string `json:"fund_type"`    // 渠道所使用的资金类型
+}
+
+type RefundChargeInfo struct {
+	RefundChargeFee        string                `json:"refund_charge_fee"`                    // 实退费用
+	SwitchFeeRate          string                `json:"switch_fee_rate"`                      // 签约费率
+	ChargeType             string                `json:"charge_type"`                          // 收单手续费trade，花呗分期手续hbfq，其他手续费charge
+	RefundSubFeeDetailList []*RefundSubFeeDetail `json:"refund_sub_fee_detail_list,omitempty"` // 组合支付退费明细
+}
+
+type RefundSubFeeDetail struct {
+	RefundChargeFee string `json:"refund_charge_fee"` // 实退费用
+	SwitchFeeRate   string `json:"switch_fee_rate"`   // 签约费率
 }
 
 // TradeFastPayRefundQuery 统一收单交易退款查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
