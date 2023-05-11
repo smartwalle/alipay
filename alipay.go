@@ -346,9 +346,9 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var signature string
 
 	if rootIndex > 0 {
-		content, certSN, signature = parseJSONSource(data, rootNodeName, rootIndex)
+		content, certSN, signature = split(data, rootIndex+len(rootNodeName)+2)
 	} else if errorIndex > 0 {
-		content, certSN, signature = parseJSONSource(data, kErrorResponse, errorIndex)
+		content, certSN, signature = split(data, errorIndex+len(kErrorResponse)+2)
 	} else {
 		return ErrBadResponse
 	}
@@ -483,8 +483,7 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 	return cert, nil
 }
 
-func parseJSONSource(data string, nodeName string, nodeIndex int) (content, certSN, signature string) {
-	var dataStartIndex = nodeIndex + len(nodeName) + 2
+func split(data string, startIndex int) (content, certSN, signature string) {
 	var signIndex = strings.LastIndex(data, "\""+kSignNodeName+"\"")
 	var certIndex = strings.LastIndex(data, "\""+kCertSNNodeName+"\"")
 	var dataEndIndex int
@@ -499,11 +498,11 @@ func parseJSONSource(data string, nodeName string, nodeIndex int) (content, cert
 		dataEndIndex = len(data) - 1
 	}
 
-	var indexLen = dataEndIndex - dataStartIndex
+	var indexLen = dataEndIndex - startIndex
 	if indexLen < 0 {
 		return "", "", ""
 	}
-	content = data[dataStartIndex:dataEndIndex]
+	content = data[startIndex:dataEndIndex]
 
 	if certIndex > 0 {
 		var certStartIndex = certIndex + len(kCertSNNodeName) + 4
