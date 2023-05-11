@@ -49,14 +49,14 @@ type Param interface {
 	Params() map[string]string
 }
 
-type ErrorRsp struct {
+type Error struct {
 	Code    Code   `json:"code"`
 	Msg     string `json:"msg"`
 	SubCode string `json:"sub_code"`
 	SubMsg  string `json:"sub_msg"`
 }
 
-func (this *ErrorRsp) Error() string {
+func (this *Error) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
 

@@ -340,9 +340,10 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var rootIndex = strings.LastIndex(data, rootNodeName)
 	var errorIndex = strings.LastIndex(data, kErrorResponse)
 
+	// 从返回的数据中提取出业务数据(xxx_response)、证书编号(alipay_cert_sn)和签名(sign)
+	var content string
 	var certSN string
 	var signature string
-	var content string
 
 	if rootIndex > 0 {
 		content, certSN, signature = parseJSONSource(data, rootNodeName, rootIndex)
@@ -352,7 +353,8 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return ErrBadResponse
 	}
 
-	// 解密并重组数据
+	// 对业务数据进行解密并重组数据
+	// 如果有启用接口内容加密，则需要对返回的业务数据(xxx_response)进行解密
 	var nData []byte
 	var nContent []byte
 	if nData, nContent, err = this.decrypt(data, content); err != nil {
@@ -361,7 +363,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 
 	// 没有签名数据，返回的内容一般为错误信息
 	if signature == "" && param.APIName() != kCertDownloadAPI {
-		var rErr *ErrorRsp
+		var rErr *Error
 		if err = json.Unmarshal(nContent, &rErr); err != nil {
 			return err
 		}
@@ -370,7 +372,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		}
 	}
 
-	// 验签
+	// 验证签名
 	if param.APIName() != kCertDownloadAPI {
 		publicKey, err := this.getAliPayPublicKey(certSN)
 		if err != nil {
