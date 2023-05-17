@@ -1,5 +1,7 @@
 package alipay
 
+import "encoding/json"
+
 type Trade struct {
 	NotifyURL    string `json:"-"`
 	ReturnURL    string `json:"-"`
@@ -11,12 +13,12 @@ type Trade struct {
 	TotalAmount string `json:"total_amount"` // 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
 	ProductCode string `json:"product_code"` // 销售产品码，与支付宝签约的产品码名称。 参考官方文档, App 支付时默认值为 QUICK_MSECURITY_PAY
 
-	Body               string         `json:"body,omitempty"`                 // 订单描述
-	GoodsDetail        []*GoodsDetail `json:"goods_detail,omitempty"`         // 可选 订单包含的商品列表信息，Json格式，详见商品明细说明
-	BusinessParams     string         `json:"business_params,omitempty"`      // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
-	DisablePayChannels string         `json:"disable_pay_channels,omitempty"` // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
-	EnablePayChannels  string         `json:"enable_pay_channels,omitempty"`  // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
-	SpecifiedChannel   string         `json:"specified_channel,omitempty"`    // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
+	Body               string          `json:"body,omitempty"`                 // 订单描述
+	GoodsDetail        []*GoodsDetail  `json:"goods_detail,omitempty"`         // 可选 订单包含的商品列表信息，Json格式，详见商品明细说明
+	BusinessParams     json.RawMessage `json:"business_params,omitempty"`      // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
+	DisablePayChannels string          `json:"disable_pay_channels,omitempty"` // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
+	EnablePayChannels  string          `json:"enable_pay_channels,omitempty"`  // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
+	SpecifiedChannel   string          `json:"specified_channel,omitempty"`    // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
 	//ExtUserInfo        string `json:"ext_user_info,omitempty"`        // 外部指定买家
 	ExtendParams        *ExtendParams `json:"extend_params,omitempty"`         // 可选 业务扩展参数，详见下面的“业务扩展参数说明”
 	AgreementSignParams *SignParams   `json:"agreement_sign_params,omitempty"` // 签约参数。如果希望在sdk中支付并签约，需要在这里传入签约信息。 周期扣款场景 product_code 为 CYCLE_PAY_AUTH 时必填。
