@@ -641,22 +641,9 @@ func (this TradePreCreate) Params() map[string]string {
 
 // TradePreCreateRsp 统一收单线下交易预创建接口响应参数
 type TradePreCreateRsp struct {
-	Content struct {
-		Code       Code   `json:"code"`
-		Msg        string `json:"msg"`
-		SubCode    string `json:"sub_code"`
-		SubMsg     string `json:"sub_msg"`
-		OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
-		QRCode     string `json:"qr_code"`      // 当前预下单请求生成的二维码码串，可以用二维码生成工具根据该码串值生成对应的二维码
-	} `json:"alipay_trade_precreate_response"`
-	Sign string `json:"sign"`
-}
-
-func (this *TradePreCreateRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	Error
+	OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
+	QRCode     string `json:"qr_code"`      // 当前预下单请求生成的二维码码串，可以用二维码生成工具根据该码串值生成对应的二维码
 }
 
 // TradeCancel 统一收单交易撤销接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.cancel/

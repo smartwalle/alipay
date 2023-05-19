@@ -333,13 +333,15 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return err
 	}
 
-	return this.decode(string(bodyBytes), param.APIName(), result)
+	var apiName = param.APIName()
+	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
+	var needVerifySign = apiName != kCertDownloadAPI
+
+	return this.decode(string(bodyBytes), bizFieldName, needVerifySign, result)
 }
 
-func (this *Client) decode(data, api string, result interface{}) (err error) {
-	var rootNodeName = strings.Replace(api, ".", "_", -1) + kResponseSuffix
-
-	var rootIndex = strings.LastIndex(data, rootNodeName)
+func (this *Client) decode(data, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+	var bizIndex = strings.LastIndex(data, bizFieldName)
 	var errorIndex = strings.LastIndex(data, kErrorResponse)
 
 	// 从返回的数据中提取出业务数据(xxx_response)、证书编号(alipay_cert_sn)和签名(sign)
@@ -347,24 +349,22 @@ func (this *Client) decode(data, api string, result interface{}) (err error) {
 	var certSN string
 	var signature string
 
-	if rootIndex > 0 {
-		content, certSN, signature = split(data, rootIndex+len(rootNodeName)+2)
+	if bizIndex > 0 {
+		content, certSN, signature = split(data, bizIndex+len(bizFieldName)+2)
 	} else if errorIndex > 0 {
 		content, certSN, signature = split(data, errorIndex+len(kErrorResponse)+2)
 	} else {
 		return ErrBadResponse
 	}
 
-	// 对业务数据进行解密并重组数据
-	// 如果有启用接口内容加密，则需要对返回的业务数据(xxx_response)进行解密
-	var nData []byte
+	// 对业务数据进行解密
 	var nContent []byte
-	if nData, nContent, err = this.decrypt(data, content); err != nil {
+	if nContent, err = this.decrypt(content); err != nil {
 		return err
 	}
 
 	// 没有签名数据，返回的内容一般为错误信息
-	if signature == "" && api != kCertDownloadAPI {
+	if signature == "" && needVerifySign {
 		var rErr *Error
 		if err = json.Unmarshal(nContent, &rErr); err != nil {
 			return err
@@ -375,7 +375,7 @@ func (this *Client) decode(data, api string, result interface{}) (err error) {
 	}
 
 	// 验证签名
-	if api != kCertDownloadAPI {
+	if needVerifySign {
 		publicKey, err := this.getAliPayPublicKey(certSN)
 		if err != nil {
 			return err
@@ -385,62 +385,61 @@ func (this *Client) decode(data, api string, result interface{}) (err error) {
 		}
 	}
 
-	if err = json.Unmarshal(nData, result); err != nil {
+	if err = json.Unmarshal(nContent, result); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// decrypt 解密并重组获取到的数据
-func (this *Client) decrypt(data, content string) ([]byte, []byte, error) {
+// decrypt 解密数据
+func (this *Client) decrypt(content string) ([]byte, error) {
 	var plaintext = []byte(content)
 	if len(content) > 1 && content[0] == '"' {
 		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		data = strings.Replace(data, content, string(plaintext), 1)
 	}
-	return []byte(data), plaintext, nil
+	return plaintext, nil
 }
 
-func (this *Client) Decode(data, signature string, result interface{}) (err error) {
-	// 验证签名
-	publicKey, err := this.getAliPayPublicKey("")
-	if err != nil {
-		return err
-	}
-	if ok, err := verifyBytes([]byte("\""+data+"\""), signature, publicKey); !ok {
-		return err
-	}
-
-	// 解密数据
-	ciphertext, err := base64.StdEncoding.DecodeString(data)
-	if err != nil {
-		return err
-	}
-	plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
-	if err != nil {
-		return err
-	}
-
-	if err = json.Unmarshal(plaintext, result); err != nil {
-		return err
-	}
-	return nil
-}
+//func (this *Client) Decode(data, signature string, result interface{}) (err error) {
+//	// 验证签名
+//	publicKey, err := this.getAliPayPublicKey("")
+//	if err != nil {
+//		return err
+//	}
+//	if ok, err := verifyBytes([]byte("\""+data+"\""), signature, publicKey); !ok {
+//		return err
+//	}
+//
+//	// 解密数据
+//	ciphertext, err := base64.StdEncoding.DecodeString(data)
+//	if err != nil {
+//		return err
+//	}
+//	plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
+//	if err != nil {
+//		return err
+//	}
+//
+//	if err = json.Unmarshal(plaintext, result); err != nil {
+//		return err
+//	}
+//	return nil
+//}
 
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
 	return this.doRequest(method, param, result)
 }
 
 func (this *Client) VerifySign(values url.Values) (ok bool, err error) {
-	var certSN = values.Get(kCertSNNodeName)
+	var certSN = values.Get(kCertSNFieldName)
 	publicKey, err := this.getAliPayPublicKey(certSN)
 	if err != nil {
 		return false, err
@@ -512,8 +511,8 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 }
 
 func split(data string, startIndex int) (content, certSN, signature string) {
-	var signIndex = strings.LastIndex(data, "\""+kSignNodeName+"\"")
-	var certIndex = strings.LastIndex(data, "\""+kCertSNNodeName+"\"")
+	var signIndex = strings.LastIndex(data, "\""+kSignFieldName+"\"")
+	var certIndex = strings.LastIndex(data, "\""+kCertSNFieldName+"\"")
 	var dataEndIndex int
 
 	if signIndex > 0 && certIndex > 0 {
@@ -533,14 +532,14 @@ func split(data string, startIndex int) (content, certSN, signature string) {
 	content = data[startIndex:dataEndIndex]
 
 	if certIndex > 0 {
-		var certStartIndex = certIndex + len(kCertSNNodeName) + 4
+		var certStartIndex = certIndex + len(kCertSNFieldName) + 4
 		certSN = data[certStartIndex:]
 		var certEndIndex = strings.Index(certSN, "\"")
 		certSN = certSN[:certEndIndex]
 	}
 
 	if signIndex > 0 {
-		var signStartIndex = signIndex + len(kSignNodeName) + 4
+		var signStartIndex = signIndex + len(kSignFieldName) + 4
 		signature = data[signStartIndex:]
 		var signEndIndex = strings.LastIndex(signature, "\"")
 		signature = signature[:signEndIndex]
@@ -572,11 +571,11 @@ func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto
 }
 
 func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
-	signature := values.Get(kSignNodeName)
+	signature := values.Get(kSignFieldName)
 
 	var keys = make([]string, 0, 0)
 	for key := range values {
-		if key == kSignNodeName || key == kSignTypeNodeName || key == kCertSNNodeName {
+		if key == kSignFieldName || key == kSignTypeFieldName || key == kCertSNFieldName {
 			continue
 		}
 		keys = append(keys, key)

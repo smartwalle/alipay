@@ -16,12 +16,12 @@ const (
 )
 
 const (
-	kResponseSuffix   = "_response"
-	kErrorResponse    = "error_response"
-	kSignNodeName     = "sign"
-	kSignTypeNodeName = "sign_type"
-	kCertSNNodeName   = "alipay_cert_sn"
-	kCertificateEnd   = "-----END CERTIFICATE-----"
+	kResponseSuffix    = "_response"
+	kErrorResponse     = "error_response"
+	kSignFieldName     = "sign"
+	kSignTypeFieldName = "sign_type"
+	kCertSNFieldName   = "alipay_cert_sn"
+	kCertificateEnd    = "-----END CERTIFICATE-----"
 )
 
 // Code 支付宝接口响应 code https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
@@ -58,6 +58,13 @@ type Error struct {
 
 func (this *Error) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
+}
+
+func (this *Error) IsSuccess() bool {
+	if this.Code == CodeSuccess {
+		return true
+	}
+	return false
 }
 
 const (

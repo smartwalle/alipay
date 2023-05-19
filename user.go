@@ -1,7 +1,6 @@
 package alipay
 
 import (
-	"encoding/json"
 	"net/url"
 )
 
@@ -41,16 +40,7 @@ func (this *Client) AgreementExecutionPlanModify(param AgreementExecutionPlanMod
 //
 // 本方法用于解码小程序端 my.getPhoneNumber 获取的数据
 func (this *Client) DecodePhoneNumber(data string) (result *MobileNumber, err error) {
-	var aux = struct {
-		Response string `json:"response"`
-		Sign     string `json:"sign"`
-	}{}
-
-	if err = json.Unmarshal([]byte(data), &aux); err != nil {
-		return nil, err
-	}
-
-	if err = this.Decode(aux.Response, aux.Sign, &result); err != nil {
+	if err = this.decode(data, "response", true, &result); err != nil {
 		return nil, err
 	}
 	return result, nil
