@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"encoding/json"
 	"net/url"
 )
 
@@ -34,4 +35,23 @@ func (this *Client) AgreementUnsign(param AgreementUnsign) (result *AgreementUns
 func (this *Client) AgreementExecutionPlanModify(param AgreementExecutionPlanModify) (result *AgreementExecutionPlanModifyRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
 	return result, err
+}
+
+// DecodePhoneNumber 小程序获取会员手机号  https://opendocs.alipay.com/mini/api/getphonenumber
+//
+// 本方法用于解码小程序端 my.getPhoneNumber 获取的数据
+func (this *Client) DecodePhoneNumber(data string) (result *MobileNumber, err error) {
+	var aux = struct {
+		Response string `json:"response"`
+		Sign     string `json:"sign"`
+	}{}
+
+	if err = json.Unmarshal([]byte(data), &aux); err != nil {
+		return nil, err
+	}
+
+	if err = this.Decode(aux.Response, aux.Sign, &result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }

@@ -235,6 +235,10 @@ client.SetEncryptKey("key")
 
   alipay.fund.account.query - **FundAccountQuery()**
 
+* **小程序获取会员手机号数据解析**
+
+  my.getPhoneNumber - **DecodePhoneNumber()**
+
 #### 通知
 
 * **通知内容转换及签名验证**

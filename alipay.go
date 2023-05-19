@@ -10,7 +10,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"math"
 	"net/http"
@@ -154,7 +153,7 @@ func (this *Client) SetEncryptKey(key string) error {
 	this.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	this.encryptType = "AES"
 	this.encryptKey = data
-	this.encryptPadding = ncrypto.NewPKCS5Padding()
+	this.encryptPadding = ncrypto.NewPKCS7Padding()
 	return nil
 }
 
@@ -338,9 +337,6 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 }
 
 func (this *Client) decode(data, api string, result interface{}) (err error) {
-
-	fmt.Println(data)
-
 	var rootNodeName = strings.Replace(api, ".", "_", -1) + kResponseSuffix
 
 	var rootIndex = strings.LastIndex(data, rootNodeName)
@@ -411,6 +407,32 @@ func (this *Client) decrypt(data, content string) ([]byte, []byte, error) {
 		data = strings.Replace(data, content, string(plaintext), 1)
 	}
 	return []byte(data), plaintext, nil
+}
+
+func (this *Client) Decode(data, signature string, result interface{}) (err error) {
+	// 验证签名
+	publicKey, err := this.getAliPayPublicKey("")
+	if err != nil {
+		return err
+	}
+	if ok, err := verifyBytes([]byte("\""+data+"\""), signature, publicKey); !ok {
+		return err
+	}
+
+	// 解密数据
+	ciphertext, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return err
+	}
+	plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(plaintext, result); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {

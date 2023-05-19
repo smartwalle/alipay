@@ -212,7 +212,7 @@ func (this AgreementExecutionPlanModify) Params() map[string]string {
 	return m
 }
 
-// AgreementExecutionPlanModifyRsp 周期性扣款协议执行计划修改相应参数
+// AgreementExecutionPlanModifyRsp 周期性扣款协议执行计划修改响应参数
 type AgreementExecutionPlanModifyRsp struct {
 	Content struct {
 		Code        Code   `json:"code"`
@@ -223,4 +223,11 @@ type AgreementExecutionPlanModifyRsp struct {
 		DeductTime  string `json:"deduct_time"`
 	} `json:"alipay_user_agreement_executionplan_modify_response"`
 	Sign string `json:"sign"`
+}
+
+// MobileNumber 小程序获取会员手机号  https://opendocs.alipay.com/mini/api/getphonenumber
+type MobileNumber struct {
+	Code   Code   `json:"code"`
+	Msg    string `json:"msg"`
+	Mobile string `json:"mobile"`
 }
