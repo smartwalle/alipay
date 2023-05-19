@@ -458,18 +458,18 @@ func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err e
 	key = this.aliPublicKeyList[certSN]
 
 	if key == nil {
-		if this.isProduction {
-			cert, err := this.downloadAliPayCert(certSN)
-			if err != nil {
-				return nil, err
-			}
+		if !this.isProduction {
+			return nil, ErrAliPublicKeyNotFound
+		}
 
-			var ok bool
-			key, ok = cert.PublicKey.(*rsa.PublicKey)
-			if ok == false {
-				return nil, ErrAliPublicKeyNotFound
-			}
-		} else {
+		cert, err := this.downloadAliPayCert(certSN)
+		if err != nil {
+			return nil, err
+		}
+
+		var ok bool
+		key, ok = cert.PublicKey.(*rsa.PublicKey)
+		if ok == false {
 			return nil, ErrAliPublicKeyNotFound
 		}
 	}
