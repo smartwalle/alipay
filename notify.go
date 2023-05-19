@@ -103,8 +103,7 @@ func (this *Client) GetTradeNotification(req *http.Request) (notification *Trade
 	//	return nil, errors.New("不是有效的 Notify")
 	//}
 
-	ok, err := this.VerifySign(req.Form)
-	if ok == false {
+	if err = this.VerifySign(req.Form); err != nil {
 		return nil, err
 	}
 	return notification, err

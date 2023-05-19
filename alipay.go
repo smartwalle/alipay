@@ -363,24 +363,23 @@ func (this *Client) decode(data, bizFieldName string, needVerifySign bool, resul
 		return err
 	}
 
-	// 没有签名数据，返回的内容一般为错误信息
-	if signature == "" && needVerifySign {
-		var rErr *Error
-		if err = json.Unmarshal(nContent, &rErr); err != nil {
-			return err
-		}
-		if rErr.Code != CodeSuccess {
-			return rErr
-		}
-	}
-
 	// 验证签名
 	if needVerifySign {
-		publicKey, err := this.getAliPayPublicKey(certSN)
-		if err != nil {
+		if signature == "" {
+			// 没有签名数据，返回的内容一般为错误信息
+			var rErr *Error
+			if err = json.Unmarshal(nContent, &rErr); err != nil {
+				return err
+			}
+			return rErr
+		}
+
+		// 验证签名
+		var publicKey *rsa.PublicKey
+		if publicKey, err = this.getAliPayPublicKey(certSN); err != nil {
 			return err
 		}
-		if ok, err := verifyBytes([]byte(content), signature, publicKey); !ok {
+		if err = verifyBytes([]byte(content), signature, publicKey); err != nil {
 			return err
 		}
 	}
@@ -438,11 +437,11 @@ func (this *Client) DoRequest(method string, param Param, result interface{}) (e
 	return this.doRequest(method, param, result)
 }
 
-func (this *Client) VerifySign(values url.Values) (ok bool, err error) {
+func (this *Client) VerifySign(values url.Values) (err error) {
 	var certSN = values.Get(kCertSNFieldName)
 	publicKey, err := this.getAliPayPublicKey(certSN)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	return verifyValues(values, publicKey)
@@ -570,7 +569,7 @@ func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto
 	return signature, nil
 }
 
-func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err error) {
+func verifyValues(values url.Values, publicKey *rsa.PublicKey) (err error) {
 	signature := values.Get(kSignFieldName)
 
 	var keys = make([]string, 0, 0)
@@ -599,16 +598,16 @@ func verifyValues(values url.Values, publicKey *rsa.PublicKey) (ok bool, err err
 	return verifyBytes(buffer.Bytes(), signature, publicKey)
 }
 
-func verifyBytes(data []byte, signature string, key *rsa.PublicKey) (ok bool, err error) {
+func verifyBytes(data []byte, signature string, key *rsa.PublicKey) error {
 	sBytes, err := base64.StdEncoding.DecodeString(signature)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if err = ncrypto.RSAVerifyWithKey(data, sBytes, key, crypto.SHA256); err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }
 
 func getCertSN(cert *x509.Certificate) string {
