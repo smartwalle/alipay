@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"net/http"
@@ -333,9 +334,14 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		return err
 	}
 
-	var data = string(bodyBytes)
+	return this.decode(string(bodyBytes), param.APIName(), result)
+}
 
-	var rootNodeName = strings.Replace(param.APIName(), ".", "_", -1) + kResponseSuffix
+func (this *Client) decode(data, api string, result interface{}) (err error) {
+
+	fmt.Println(data)
+
+	var rootNodeName = strings.Replace(api, ".", "_", -1) + kResponseSuffix
 
 	var rootIndex = strings.LastIndex(data, rootNodeName)
 	var errorIndex = strings.LastIndex(data, kErrorResponse)
@@ -362,7 +368,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 
 	// 没有签名数据，返回的内容一般为错误信息
-	if signature == "" && param.APIName() != kCertDownloadAPI {
+	if signature == "" && api != kCertDownloadAPI {
 		var rErr *Error
 		if err = json.Unmarshal(nContent, &rErr); err != nil {
 			return err
@@ -373,7 +379,7 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	}
 
 	// 验证签名
-	if param.APIName() != kCertDownloadAPI {
+	if api != kCertDownloadAPI {
 		publicKey, err := this.getAliPayPublicKey(certSN)
 		if err != nil {
 			return err
