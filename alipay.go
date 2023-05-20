@@ -359,17 +359,15 @@ func (this *Client) ndecode(data []byte, bizFieldName string, needVerifySign boo
 		signBytes = signBytes[1 : len(signBytes)-1]
 	}
 
-	if len(bizBytes) == 0 && len(errBytes) == 0 {
-		return ErrBadResponse
-	}
-
-	// 错误信息
-	if len(errBytes) > 0 {
-		var rErr *Error
-		if err = json.Unmarshal(errBytes, &rErr); err != nil {
-			return err
+	if len(bizBytes) == 0 {
+		if len(errBytes) > 0 {
+			var rErr *Error
+			if err = json.Unmarshal(errBytes, &rErr); err != nil {
+				return err
+			}
+			return rErr
 		}
-		return rErr
+		return ErrBadResponse
 	}
 
 	// 对业务数据进行解密
