@@ -57,10 +57,11 @@ func TestClient_TradePreCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !rsp.IsSuccess() {
+
+	if rsp.Failed() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.QRCode)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradePay(t *testing.T) {
@@ -92,10 +93,11 @@ func TestClient_TradeQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Code, rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Code, rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradeRefund(t *testing.T) {

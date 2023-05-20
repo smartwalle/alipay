@@ -121,59 +121,53 @@ func (this TradeQuery) Params() map[string]string {
 
 // TradeQueryRsp 统一收单线下交易查询接口响应参数
 type TradeQueryRsp struct {
-	Content struct {
-		Code                  Code             `json:"code"`
-		Msg                   string           `json:"msg"`
-		SubCode               string           `json:"sub_code"`
-		SubMsg                string           `json:"sub_msg"`
-		TradeNo               string           `json:"trade_no"`                      // 支付宝交易号
-		OutTradeNo            string           `json:"out_trade_no"`                  // 商家订单号
-		BuyerLogonId          string           `json:"buyer_logon_id"`                // 买家支付宝账号
-		TradeStatus           TradeStatus      `json:"trade_status"`                  // 交易状态
-		TotalAmount           string           `json:"total_amount"`                  // 交易的订单金额
-		TransCurrency         string           `json:"trans_currency"`                // 标价币种
-		SettleCurrency        string           `json:"settle_currency"`               // 订单结算币种
-		SettleAmount          string           `json:"settle_amount"`                 // 结算币种订单金额
-		PayCurrency           string           `json:"pay_currency"`                  // 订单支付币种
-		PayAmount             string           `json:"pay_amount"`                    // 支付币种订单金额
-		SettleTransRate       string           `json:"settle_trans_rate"`             // 结算币种兑换标价币种汇率
-		TransPayRate          string           `json:"trans_pay_rate"`                // 标价币种兑换支付币种汇率
-		BuyerPayAmount        string           `json:"buyer_pay_amount"`              // 买家实付金额，单位为元，两位小数。
-		PointAmount           string           `json:"point_amount"`                  // 积分支付的金额，单位为元，两位小数。
-		InvoiceAmount         string           `json:"invoice_amount"`                // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
-		SendPayDate           string           `json:"send_pay_date"`                 // 本次交易打款给卖家的时间
-		ReceiptAmount         string           `json:"receipt_amount"`                // 实收金额，单位为元，两位小数
-		StoreId               string           `json:"store_id"`                      // 商户门店编号
-		TerminalId            string           `json:"terminal_id"`                   // 商户机具终端编号
-		FundBillList          []*FundBill      `json:"fund_bill_list,omitempty"`      // 交易支付使用的资金渠道
-		StoreName             string           `json:"store_name"`                    // 请求交易支付中的商户店铺的名称
-		BuyerUserId           string           `json:"buyer_user_id"`                 // 买家在支付宝的用户id
-		BuyerUserName         string           `json:"buyer_user_name"`               // 买家名称；
-		IndustrySepcDetailGov string           `json:"industry_sepc_detail_gov"`      // 行业特殊信息-统筹相关
-		IndustrySepcDetailAcc string           `json:"industry_sepc_detail_acc"`      // 行业特殊信息-个账相关
-		ChargeAmount          string           `json:"charge_amount"`                 // 该笔交易针对收款方的收费金额；
-		ChargeFlags           string           `json:"charge_flags"`                  // 费率活动标识，当交易享受活动优惠费率时，返回该活动的标识；
-		SettlementId          string           `json:"settlement_id"`                 // 支付清算编号，用于清算对账使用；
-		TradeSettleInfo       *TradeSettleInfo `json:"trade_settle_info,omitempty"`   // 返回的交易结算信息，包含分账、补差等信息
-		AuthTradePayMode      string           `json:"auth_trade_pay_mode"`           // 预授权支付模式，该参数仅在信用预授权支付场景下返回。信用预授权支付：CREDIT_PREAUTH_PAY
-		BuyerUserType         string           `json:"buyer_user_type"`               // 买家用户类型。CORPORATE:企业用户；PRIVATE:个人用户。
-		MdiscountAmount       string           `json:"mdiscount_amount"`              // 商家优惠金额
-		DiscountAmount        string           `json:"discount_amount"`               // 平台优惠金额
-		Subject               string           `json:"subject"`                       // 订单标题；
-		Body                  string           `json:"body"`                          // 订单描述;
-		AlipaySubMerchantId   string           `json:"alipay_sub_merchant_id"`        // 间连商户在支付宝端的商户编号；
-		ExtInfos              string           `json:"ext_infos"`                     // 交易额外信息，特殊场景下与支付宝约定返回。
-		PassbackParams        string           `json:"passback_params"`               // 公用回传参数。返回支付时传入的passback_params参数信息
-		HBFQPayInfo           *HBFQPayInfo     `json:"hb_fq_pay_info"`                // 若用户使用花呗分期支付，且商家开通返回此通知参数，则会返回花呗分期信息。json格式其它说明详见花呗分期信息说明。 注意：商家需与支付宝约定后才返回本参数。
-		CreditPayMode         string           `json:"credit_pay_mode"`               // 信用支付模式。表示订单是采用信用支付方式（支付时买家没有出资，需要后续履约）。"creditAdvanceV2"表示芝麻先用后付模式，用户后续需要履约扣款。 此字段只有信用支付场景才有值，商户需要根据字段值单独处理。此字段以后可能扩展其他值，建议商户使用白名单方式识别，对于未识别的值做失败处理，并联系支付宝技术支持人员。
-		CreditBizOrderId      string           `json:"credit_biz_order_id"`           // 信用业务单号。信用支付场景才有值，先用后付产品里是芝麻订单号。
-		HYBAmount             string           `json:"hyb_amount"`                    // 惠营宝回票金额
-		BKAgentRespInfo       *BKAgentRespInfo `json:"bk_agent_resp_info"`            // 间联交易下，返回给机构的信 息
-		ChargeInfoList        []*ChargeInfo    `json:"charge_info_list"`              // 计费信息列表
-		DiscountGoodsDetail   string           `json:"discount_goods_detail"`         // 本次交易支付所使用的单品券优惠的商品优惠信息
-		VoucherDetailList     []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
-	} `json:"alipay_trade_query_response"`
-	Sign string `json:"sign"`
+	Error
+	TradeNo               string           `json:"trade_no"`                      // 支付宝交易号
+	OutTradeNo            string           `json:"out_trade_no"`                  // 商家订单号
+	BuyerLogonId          string           `json:"buyer_logon_id"`                // 买家支付宝账号
+	TradeStatus           TradeStatus      `json:"trade_status"`                  // 交易状态
+	TotalAmount           string           `json:"total_amount"`                  // 交易的订单金额
+	TransCurrency         string           `json:"trans_currency"`                // 标价币种
+	SettleCurrency        string           `json:"settle_currency"`               // 订单结算币种
+	SettleAmount          string           `json:"settle_amount"`                 // 结算币种订单金额
+	PayCurrency           string           `json:"pay_currency"`                  // 订单支付币种
+	PayAmount             string           `json:"pay_amount"`                    // 支付币种订单金额
+	SettleTransRate       string           `json:"settle_trans_rate"`             // 结算币种兑换标价币种汇率
+	TransPayRate          string           `json:"trans_pay_rate"`                // 标价币种兑换支付币种汇率
+	BuyerPayAmount        string           `json:"buyer_pay_amount"`              // 买家实付金额，单位为元，两位小数。
+	PointAmount           string           `json:"point_amount"`                  // 积分支付的金额，单位为元，两位小数。
+	InvoiceAmount         string           `json:"invoice_amount"`                // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
+	SendPayDate           string           `json:"send_pay_date"`                 // 本次交易打款给卖家的时间
+	ReceiptAmount         string           `json:"receipt_amount"`                // 实收金额，单位为元，两位小数
+	StoreId               string           `json:"store_id"`                      // 商户门店编号
+	TerminalId            string           `json:"terminal_id"`                   // 商户机具终端编号
+	FundBillList          []*FundBill      `json:"fund_bill_list,omitempty"`      // 交易支付使用的资金渠道
+	StoreName             string           `json:"store_name"`                    // 请求交易支付中的商户店铺的名称
+	BuyerUserId           string           `json:"buyer_user_id"`                 // 买家在支付宝的用户id
+	BuyerUserName         string           `json:"buyer_user_name"`               // 买家名称；
+	IndustrySepcDetailGov string           `json:"industry_sepc_detail_gov"`      // 行业特殊信息-统筹相关
+	IndustrySepcDetailAcc string           `json:"industry_sepc_detail_acc"`      // 行业特殊信息-个账相关
+	ChargeAmount          string           `json:"charge_amount"`                 // 该笔交易针对收款方的收费金额；
+	ChargeFlags           string           `json:"charge_flags"`                  // 费率活动标识，当交易享受活动优惠费率时，返回该活动的标识；
+	SettlementId          string           `json:"settlement_id"`                 // 支付清算编号，用于清算对账使用；
+	TradeSettleInfo       *TradeSettleInfo `json:"trade_settle_info,omitempty"`   // 返回的交易结算信息，包含分账、补差等信息
+	AuthTradePayMode      string           `json:"auth_trade_pay_mode"`           // 预授权支付模式，该参数仅在信用预授权支付场景下返回。信用预授权支付：CREDIT_PREAUTH_PAY
+	BuyerUserType         string           `json:"buyer_user_type"`               // 买家用户类型。CORPORATE:企业用户；PRIVATE:个人用户。
+	MdiscountAmount       string           `json:"mdiscount_amount"`              // 商家优惠金额
+	DiscountAmount        string           `json:"discount_amount"`               // 平台优惠金额
+	Subject               string           `json:"subject"`                       // 订单标题；
+	Body                  string           `json:"body"`                          // 订单描述;
+	AlipaySubMerchantId   string           `json:"alipay_sub_merchant_id"`        // 间连商户在支付宝端的商户编号；
+	ExtInfos              string           `json:"ext_infos"`                     // 交易额外信息，特殊场景下与支付宝约定返回。
+	PassbackParams        string           `json:"passback_params"`               // 公用回传参数。返回支付时传入的passback_params参数信息
+	HBFQPayInfo           *HBFQPayInfo     `json:"hb_fq_pay_info"`                // 若用户使用花呗分期支付，且商家开通返回此通知参数，则会返回花呗分期信息。json格式其它说明详见花呗分期信息说明。 注意：商家需与支付宝约定后才返回本参数。
+	CreditPayMode         string           `json:"credit_pay_mode"`               // 信用支付模式。表示订单是采用信用支付方式（支付时买家没有出资，需要后续履约）。"creditAdvanceV2"表示芝麻先用后付模式，用户后续需要履约扣款。 此字段只有信用支付场景才有值，商户需要根据字段值单独处理。此字段以后可能扩展其他值，建议商户使用白名单方式识别，对于未识别的值做失败处理，并联系支付宝技术支持人员。
+	CreditBizOrderId      string           `json:"credit_biz_order_id"`           // 信用业务单号。信用支付场景才有值，先用后付产品里是芝麻订单号。
+	HYBAmount             string           `json:"hyb_amount"`                    // 惠营宝回票金额
+	BKAgentRespInfo       *BKAgentRespInfo `json:"bk_agent_resp_info"`            // 间联交易下，返回给机构的信 息
+	ChargeInfoList        []*ChargeInfo    `json:"charge_info_list"`              // 计费信息列表
+	DiscountGoodsDetail   string           `json:"discount_goods_detail"`         // 本次交易支付所使用的单品券优惠的商品优惠信息
+	VoucherDetailList     []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
 }
 
 type HBFQPayInfo struct {
@@ -232,13 +226,6 @@ type TradeSettleDetail struct {
 	TransOut          string `json:"trans_out"`
 	TransIn           string `json:"trans_in"`
 	Amount            string `json:"amount"`
-}
-
-func (this *TradeQueryRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
 }
 
 // TradeClose 统一收单交易关闭接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.close/

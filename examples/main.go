@@ -89,8 +89,8 @@ func callback(c *gin.Context) {
 		c.String(http.StatusBadRequest, "验证订单 %s 信息发生错误: %s", outTradeNo, err.Error())
 		return
 	}
-	if rsp.IsSuccess() == false {
-		c.String(http.StatusBadRequest, "验证订单 %s 信息发生错误: %s-%s", outTradeNo, rsp.Content.Msg, rsp.Content.SubMsg)
+	if rsp.Failed() {
+		c.String(http.StatusBadRequest, "验证订单 %s 信息发生错误: %s-%s", outTradeNo, rsp.Msg, rsp.SubMsg)
 		return
 	}
 
@@ -116,8 +116,8 @@ func notify(c *gin.Context) {
 		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", outTradeNo, err.Error())
 		return
 	}
-	if rsp.IsSuccess() == false {
-		log.Printf("异步通知验证订单 %s 信息发生错误: %s-%s \n", outTradeNo, rsp.Content.Msg, rsp.Content.SubMsg)
+	if rsp.Failed() {
+		log.Printf("异步通知验证订单 %s 信息发生错误: %s-%s \n", outTradeNo, rsp.Msg, rsp.SubMsg)
 		return
 	}
 
