@@ -337,7 +337,87 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
 	var needVerifySign = apiName != kCertDownloadAPI
 
+	//return this.ndecode(bodyBytes, bizFieldName, needVerifySign, result)
 	return this.decode(string(bodyBytes), bizFieldName, needVerifySign, result)
+}
+
+func (this *Client) ndecode(data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+	var raw = make(map[string]json.RawMessage)
+	if err = json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	var signBytes = raw[kSignFieldName]
+	var certBytes = raw[kCertSNFieldName]
+	var bizBytes = raw[bizFieldName]
+	var errBytes = raw[kErrorResponse]
+
+	if len(certBytes) > 1 {
+		certBytes = certBytes[1 : len(certBytes)-1]
+	}
+	if len(signBytes) > 1 {
+		signBytes = signBytes[1 : len(signBytes)-1]
+	}
+
+	if len(bizBytes) == 0 && len(errBytes) == 0 {
+		return ErrBadResponse
+	}
+
+	// 错误信息
+	if len(errBytes) > 0 {
+		var rErr *Error
+		if err = json.Unmarshal(errBytes, &rErr); err != nil {
+			return err
+		}
+		return rErr
+	}
+
+	// 对业务数据进行解密
+	var plaintext []byte
+	if plaintext, err = this.ndecrypt(bizBytes); err != nil {
+		return err
+	}
+
+	// 验证签名
+	if needVerifySign {
+		if len(signBytes) == 0 {
+			// 没有签名数据，返回的内容一般为错误信息
+			var rErr *Error
+			if err = json.Unmarshal(plaintext, &rErr); err != nil {
+				return err
+			}
+			return rErr
+		}
+
+		// 验证签名
+		var publicKey *rsa.PublicKey
+		if publicKey, err = this.getAliPayPublicKey(string(certBytes)); err != nil {
+			return err
+		}
+		if err = verifyBytes(bizBytes, string(signBytes), publicKey); err != nil {
+			return err
+		}
+	}
+
+	if err = json.Unmarshal(plaintext, result); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (this *Client) ndecrypt(data []byte) ([]byte, error) {
+	var plaintext = data
+	if len(data) > 1 && data[0] == '"' {
+		var ciphertext, err = base64decode(data[1 : len(data)-1])
+		if err != nil {
+			return nil, err
+		}
+		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return plaintext, nil
 }
 
 func (this *Client) decode(data, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
@@ -545,6 +625,12 @@ func split(data string, startIndex int) (content, certSN, signature string) {
 	}
 
 	return content, certSN, signature
+}
+
+func base64decode(data []byte) ([]byte, error) {
+	var dBuf = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
+	n, err := base64.StdEncoding.Decode(dBuf, data)
+	return dBuf[:n], err
 }
 
 func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (signature string, err error) {

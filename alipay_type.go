@@ -61,10 +61,7 @@ func (this *Error) Error() string {
 }
 
 func (this *Error) IsSuccess() bool {
-	if this.Code == CodeSuccess {
-		return true
-	}
-	return false
+	return this.Code.IsSuccess()
 }
 
 const (
