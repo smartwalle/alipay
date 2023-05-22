@@ -291,9 +291,7 @@ func (this FundAuthOrderAppFreeze) APIName() string {
 
 func (this FundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	if this.AppAuthToken != "" {
-		m["app_auth_token"] = this.AppAuthToken
-	}
+	m["app_auth_token"] = this.AppAuthToken
 	m["notify_url"] = this.NotifyURL
 	return m
 }
