@@ -324,13 +324,17 @@ http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Reque
 
 #### 异步验证支付结果
 
-有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递会相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
+有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
 
 我们需要在提供的 Notify URL 服务中获取相关的参数并进行验证:
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-    var noti, _ = client.DecodeNotification(request)
+    var noti, err = client.DecodeNotification(request)
+    if err != nil {
+        // 错误处理
+        return 
+    }
     if noti != nil {
         fmt.Println("交易状态为:", noti.TradeStatus)
     }
