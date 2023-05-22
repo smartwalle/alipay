@@ -27,7 +27,7 @@ const (
 	kCertificateEnd    = "-----END CERTIFICATE-----"
 )
 
-// Code 支付宝接口响应 code https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
+// Code 支付宝接口响应错误码 https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
 type Code string
 
 func (c Code) Successful() bool {
@@ -38,14 +38,17 @@ func (c Code) Failed() bool {
 	return c != CodeSuccess
 }
 
+// 公共错误码 https://opendocs.alipay.com/common/02km9f#API%20%E5%85%AC%E5%85%B1%E9%94%99%E8%AF%AF%E7%A0%81
 const (
-	CodeSuccess          Code = "10000" // 接口调用成功
-	CodeUnknowError      Code = "20000" // 服务不可用
-	CodeInvalidAuthToken Code = "20001" // 授权权限不足
-	CodeMissingParam     Code = "40001" // 缺少必选参数
-	CodeInvalidParam     Code = "40002" // 非法的参数
-	CodeBusinessFailed   Code = "40004" // 业务处理失败
-	CodePermissionDenied Code = "40006" // 权限不足
+	CodeSuccess                Code = "10000" // 接口调用成功
+	CodeUnknowError            Code = "20000" // 服务不可用
+	CodeInvalidAuthToken       Code = "20001" // 授权权限不足
+	CodeMissingParam           Code = "40001" // 缺少必选参数
+	CodeInvalidParam           Code = "40002" // 非法的参数
+	CodeInsufficientConditions Code = "40003" // 条件异常
+	CodeBusinessFailed         Code = "40004" // 业务处理失败
+	CodeCallLimited            Code = "40005" // 调用频次超限
+	CodePermissionDenied       Code = "40006" // 权限不足
 )
 
 type Param interface {

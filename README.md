@@ -6,7 +6,7 @@ AliPay SDK for Golang
 
 ## 安装
 
-##### 启用 Go module
+#### 启用 Go module
 
 ```go
 go get github.com/smartwalle/alipay/v3
@@ -16,7 +16,7 @@ go get github.com/smartwalle/alipay/v3
 import github.com/smartwalle/alipay/v3
 ```
 
-##### 未启用 Go module
+#### 未启用 Go module
 
 ```go
 go get github.com/smartwalle/alipay
@@ -53,7 +53,7 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 var client, err = alipay.New(appID, privateKey, true)
 ```
 
-##### 公钥证书
+#### 公钥证书模式
 
 如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
@@ -63,7 +63,7 @@ client.LoadAliPayRootCertFromFile("alipayRootCert.crt")             // 加载支
 client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
-##### 普通公钥
+#### 普通公钥模式
 
 需要注意此处用到的公钥是**支付宝公钥**，不是我们用工具生成的应用公钥。
 
@@ -75,7 +75,7 @@ client.LoadAliPayPublicKey("aliPublicKey")
 
 特别注意：**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
 
-##### 接口内容加密
+#### 接口内容加密
 
 详细内容访问 [https://opendocs.alipay.com/common/02mse3](https://opendocs.alipay.com/common/02mse3) 进行了解。
 
@@ -85,7 +85,7 @@ client.LoadAliPayPublicKey("aliPublicKey")
 client.SetEncryptKey("key")
 ```
 
-如果不开启，则不需要调用该方法。
+如果不需要开启该功能，则不用调用该方法。
 
 ## 已实现接口
 
