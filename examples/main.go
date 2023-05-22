@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-var aliClient *alipay.Client
+var client *alipay.Client
 
 const (
 	kAppId      = "2016073100129537"
@@ -22,26 +22,26 @@ const (
 func main() {
 	var err error
 
-	if aliClient, err = alipay.New(kAppId, kPrivateKey, false); err != nil {
+	if client, err = alipay.New(kAppId, kPrivateKey, false); err != nil {
 		log.Println("初始化支付宝失败", err)
 		return
 	}
 
 	// 加载证书
-	if err = aliClient.LoadAppPublicCertFromFile("appPublicCert.crt"); err != nil {
+	if err = client.LoadAppPublicCertFromFile("appPublicCert.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
-	if err = aliClient.LoadAliPayRootCertFromFile("alipayRootCert.crt"); err != nil {
+	if err = client.LoadAliPayRootCertFromFile("alipayRootCert.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
-	if err = aliClient.LoadAliPayPublicCertFromFile("alipayPublicCert.crt"); err != nil {
+	if err = client.LoadAliPayPublicCertFromFile("alipayPublicCert.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
 
-	if err = aliClient.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="); err != nil {
+	if err = client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="); err != nil {
 		log.Println("加载内容加密密钥发生错误", err)
 		return
 	}
@@ -64,7 +64,7 @@ func pay(c *gin.Context) {
 	p.TotalAmount = "10.00"
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
 
-	url, _ := aliClient.TradePagePay(p)
+	url, _ := client.TradePagePay(p)
 
 	c.Redirect(http.StatusTemporaryRedirect, url.String())
 }
@@ -72,7 +72,7 @@ func pay(c *gin.Context) {
 func callback(c *gin.Context) {
 	c.Request.ParseForm()
 
-	err := aliClient.VerifySign(c.Request.Form)
+	err := client.VerifySign(c.Request.Form)
 	if err != nil {
 		log.Println("回调验证签名发生错误", err)
 		c.String(http.StatusBadRequest, "回调验证签名发生错误")
@@ -84,7 +84,8 @@ func callback(c *gin.Context) {
 	var outTradeNo = c.Request.Form.Get("out_trade_no")
 	var p = alipay.TradeQuery{}
 	p.OutTradeNo = outTradeNo
-	rsp, err := aliClient.TradeQuery(p)
+
+	rsp, err := client.TradeQuery(p)
 	if err != nil {
 		c.String(http.StatusBadRequest, "验证订单 %s 信息发生错误: %s", outTradeNo, err.Error())
 		return
@@ -98,7 +99,7 @@ func callback(c *gin.Context) {
 }
 
 func notify(c *gin.Context) {
-	var noti, err = aliClient.DecodeNotification(c.Request)
+	var noti, err = client.DecodeNotification(c.Request)
 	if err != nil {
 		log.Println("解析异步通知发生错误", err)
 		return
@@ -110,7 +111,7 @@ func notify(c *gin.Context) {
 	p.AddField("out_trade_no", noti.OutTradeNo)
 
 	var rsp *alipay.TradeQueryRsp
-	if err = aliClient.Request(p, &rsp); err != nil {
+	if err = client.Request(p, &rsp); err != nil {
 		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", noti.OutTradeNo, err.Error())
 		return
 	}
@@ -121,5 +122,5 @@ func notify(c *gin.Context) {
 
 	log.Printf("订单 %s 支付成功 \n", noti.OutTradeNo)
 
-	aliClient.ACKNotification(c.Writer)
+	client.ACKNotification(c.Writer)
 }

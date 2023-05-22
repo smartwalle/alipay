@@ -371,6 +371,10 @@ if err != nil {
 }
 ```
 
+## 示例
+
+[网页支付](https://github.com/smartwalle/alipay/blob/master/examples/main.go)
+
 ## License
 
 This project is licensed under the MIT License.
