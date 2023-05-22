@@ -63,11 +63,11 @@ type Payload struct {
 }
 
 func NewPayload(method string) *Payload {
-	var nParam = &Payload{}
-	nParam.method = method
-	nParam.param = make(map[string]string)
-	nParam.biz = make(map[string]interface{})
-	return nParam
+	var nPayload = &Payload{}
+	nPayload.method = method
+	nPayload.param = make(map[string]string)
+	nPayload.biz = make(map[string]interface{})
+	return nPayload
 }
 
 func (this *Payload) APIName() string {
