@@ -352,7 +352,7 @@ http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Reque
 
 默认采用的是 RSA2 签名，不再提供 RSA 的支持
 
-#### 自定义请求
+## 自定义请求
 
 对于本库还未实现接口，可使用 alipay.Payload 结构体作为参数调用 alipay.Client 结构体的 Request() 方法。
 
