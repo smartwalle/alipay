@@ -89,8 +89,6 @@ client.SetEncryptKey("key")
 
 ## 已实现接口
 
-#### 手机网站支付API
-
 ```
 中线(-)后面的名称是该接口在 Client 结构体中对应的方法名。
 ```
@@ -131,7 +129,7 @@ client.SetEncryptKey("key")
 
   alipay.trade.refund - **TradeRefund()**
 
-* **App支付接口**
+* **App 支付接口**
 
   alipay.trade.app.pay - **TradeAppPay()**
 
@@ -238,12 +236,6 @@ client.SetEncryptKey("key")
 * **小程序获取会员手机号数据解析**
 
   my.getPhoneNumber - **DecodePhoneNumber()**
-
-#### 通知
-
-* **通知内容转换及签名验证**
-
-  将支付宝的通知内容转换为 Golang 的结构体，并且验证其合法性。
 
 ## 集成流程
 
