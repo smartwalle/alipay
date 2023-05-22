@@ -39,8 +39,6 @@ func (this BillAccountLogQuery) APIName() string {
 func (this BillAccountLogQuery) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
-	m["start_time"] = this.StartTime
-	m["end_time"] = this.EndTime
 	return m
 }
 
