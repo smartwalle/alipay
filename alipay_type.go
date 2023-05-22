@@ -1,6 +1,9 @@
 package alipay
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 const (
 	kSandboxGateway        = "https://openapi.alipaydev.com/gateway.do"
@@ -49,8 +52,50 @@ type Param interface {
 	// APIName 用于提供访问的 method
 	APIName() string
 
-	// Params 返回参数列表
+	// Params 返回公共请求参数
 	Params() map[string]string
+}
+
+type Payload struct {
+	method string
+	param  map[string]string
+	biz    map[string]interface{}
+}
+
+func NewPayload(method string) *Payload {
+	var nParam = &Payload{}
+	nParam.method = method
+	nParam.param = make(map[string]string)
+	nParam.biz = make(map[string]interface{})
+	return nParam
+}
+
+func (this *Payload) APIName() string {
+	return this.method
+}
+
+func (this *Payload) Params() map[string]string {
+	return this.param
+}
+
+// AddParam 添加公共请求参数
+//
+// 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
+func (this *Payload) AddParam(key, value string) *Payload {
+	this.param[key] = value
+	return this
+}
+
+// AddField 添加请求参数(业务相关)
+//
+// 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
+func (this *Payload) AddField(key string, value interface{}) *Payload {
+	this.biz[key] = value
+	return this
+}
+
+func (this *Payload) MarshalJSON() ([]byte, error) {
+	return json.Marshal(this.biz)
 }
 
 type Error struct {

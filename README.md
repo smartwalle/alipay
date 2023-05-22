@@ -277,8 +277,8 @@ client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支
 
 // 将 key 的验证调整到初始化阶段
 if err != nil {
-fmt.Println(err)
-return
+    fmt.Println(err)
+    return
 }
 
 var p = alipay.TradeWapPay{}
@@ -291,7 +291,7 @@ p.ProductCode = "QUICK_WAP_WAY"
 
 var url, err = client.TradeWapPay(p)
 if err != nil {
-fmt.Println(err)
+    fmt.Println(err)
 }
 
 var payURL = url.String()
@@ -316,9 +316,9 @@ p.ReturnURL = "http://xxx/return"
 
 ```go
 http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
-request.ParseForm()
-ok, err := client.VerifySign(request.Form)
-fmt.Println(ok, err)
+    request.ParseForm()
+    ok, err := client.VerifySign(request.Form)
+    fmt.Println(ok, err)
 }
 ```
 
@@ -330,11 +330,11 @@ fmt.Println(ok, err)
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-var noti, _ = client.DecodeNotification(request)
-if noti != nil {
-fmt.Println("交易状态为:", noti.TradeStatus)
-}
-alipay.ACKNotification(writer) // 确认收到通知消息
+    var noti, _ = client.DecodeNotification(request)
+    if noti != nil {
+        fmt.Println("交易状态为:", noti.TradeStatus)
+    }
+    alipay.ACKNotification(writer) // 确认收到通知消息
 })
 ```
 
@@ -351,6 +351,25 @@ alipay.ACKNotification(writer) // 确认收到通知消息
 #### 支持 RSA 签名及验证
 
 默认采用的是 RSA2 签名，不再提供 RSA 的支持
+
+#### 自定义请求
+
+对于本库还未实现接口，可使用 alipay.Payload 结构体作为参数调用 alipay.Client 结构体的 Request() 方法。
+
+```go
+var p = alipay.NewPayload("这里是接口名称，如：alipay.trade.query")
+// 添加公共请求参数，如：app_auth_token
+p.AddParam("key", "value") 
+// 添加请求参数(业务相关)
+p.AddField("key", "value")
+
+var result map[string]interface{} 
+// result 也可以为结构体，可参照 alipay.TradeQueryRsp
+var err = client.Request(p, &result)
+if err != nil {
+    ...
+}
+```
 
 ## License
 

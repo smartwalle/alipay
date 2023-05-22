@@ -85,7 +85,7 @@ func TestClient_TradePay(t *testing.T) {
 }
 
 func TestClient_TradeQuery(t *testing.T) {
-	t.Log("TradeQuery")
+	t.Log("========== TradeQuery ==========")
 	var p = alipay.TradeQuery{}
 	p.OutTradeNo = "trade_no_20170623021124"
 	p.QueryOptions = []string{"TRADE_SETTLE_INFO"}
@@ -98,6 +98,41 @@ func TestClient_TradeQuery(t *testing.T) {
 	if rsp.Failed() {
 		t.Fatal(rsp.Code, rsp.Msg, rsp.SubMsg)
 	}
+	t.Logf("%v", rsp)
+}
+
+func TestClient_TradeQuery2(t *testing.T) {
+	t.Log("========== TradeQuery ==========")
+	var p = alipay.NewPayload("alipay.trade.query")
+	p.AddField("out_trade_no", "trade_no_20170623021124")
+	p.AddField("query_options", []string{"TRADE_SETTLE_INFO"})
+
+	var rsp *alipay.TradeQueryRsp
+	var err = client.Request(p, &rsp)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Code, rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
+}
+
+func TestClient_TradeQuery3(t *testing.T) {
+	t.Log("========== TradeQuery ==========")
+	var p = alipay.NewPayload("alipay.trade.query")
+	p.AddField("out_trade_no", "trade_no_20170623021124")
+	p.AddField("query_options", []string{"TRADE_SETTLE_INFO"})
+
+	var rsp map[string]interface{}
+	var err = client.Request(p, &rsp)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	t.Logf("%v", rsp)
 }
 

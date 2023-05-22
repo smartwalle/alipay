@@ -106,10 +106,11 @@ func notify(c *gin.Context) {
 
 	log.Println("解析异步通知成功:", noti.NotifyId)
 
-	var p = alipay.TradeQuery{}
-	p.OutTradeNo = noti.OutTradeNo
-	rsp, err := aliClient.TradeQuery(p)
-	if err != nil {
+	var p = alipay.NewPayload("alipay.trade.query")
+	p.AddField("out_trade_no", noti.OutTradeNo)
+
+	var rsp *alipay.TradeQueryRsp
+	if err = aliClient.Request(p, &rsp); err != nil {
 		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", noti.OutTradeNo, err.Error())
 		return
 	}

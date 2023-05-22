@@ -304,13 +304,11 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	values.Add("biz_content", content)
 
 	var params = param.Params()
-	if params != nil {
-		for k, v := range params {
-			if k == kAppAuthToken && v == "" {
-				continue
-			}
-			values.Add(k, v)
+	for k, v := range params {
+		if k == kAppAuthToken && v == "" {
+			continue
 		}
+		values.Add(k, v)
 	}
 
 	signature, err := this.sign(values)
@@ -430,10 +428,6 @@ func (this *Client) decrypt(data []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
-	return this.doRequest(method, param, result)
-}
-
 func (this *Client) VerifySign(values url.Values) (err error) {
 	var verifier Verifier
 	if verifier, err = this.getVerifier(values.Get(kCertSNFieldName)); err != nil {
@@ -525,6 +519,10 @@ func (this *Client) verify(certSN string, data, signature []byte) (err error) {
 		return err
 	}
 	return nil
+}
+
+func (this *Client) Request(payload *Payload, result interface{}) (err error) {
+	return this.doRequest("POST", payload, result)
 }
 
 func base64decode(data []byte) ([]byte, error) {
