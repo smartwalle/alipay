@@ -330,7 +330,7 @@ fmt.Println(ok, err)
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-var noti, _ = client.GetTradeNotification(request)
+var noti, _ = client.DecodeNotification(request)
 if noti != nil {
 fmt.Println("交易状态为:", noti.TradeStatus)
 }

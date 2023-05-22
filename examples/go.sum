@@ -57,6 +57,8 @@ github.com/rogpeppe/go-internal v1.8.0 h1:FCbCCtXNOY3UtUuHUYaghJg4y7Fd14rXifAYUA
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
 github.com/smartwalle/ncrypto v1.0.0 h1:nQFxIS3fRgr8V0xRkhnfNQOrcJGPNF6d5XzFwVm79KU=
 github.com/smartwalle/ncrypto v1.0.0/go.mod h1:NmCbG0nLnSDnMImEDrjptFKs0PiLThnFkjQSMtGYgs4=
+github.com/smartwalle/nsign v0.0.1 h1:fpEwoThIjr1JRPqz5hEwbH5ADX/so6G/zcwvj0ywYyM=
+github.com/smartwalle/nsign v0.0.1/go.mod h1:eY6I4CJlyNdVMP+t6z1H6Jpd4m5/V+8xi44ufSTxXgc=
 github.com/smartwalle/xid v1.0.6 h1:aZ52pzrFSpzg+AIbSsiBxadjAZRctvDSkp5AokOHuFw=
 github.com/smartwalle/xid v1.0.6/go.mod h1:zUe+B9M8IClU9Jj0HoZATmaX14TkP2L7L3ogF+UlhWk=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

@@ -7,6 +7,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/smartwalle/alipay/v3 v3.2.0
 	github.com/smartwalle/xid v1.0.6
+	github.com/smartwalle/nsign v0.0.1
 )
 
 replace github.com/smartwalle/alipay/v3 => ../

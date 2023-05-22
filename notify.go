@@ -5,36 +5,18 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 var (
 	kSuccess = []byte("success")
 )
 
-func NewRequest(method, url string, values url.Values) (*http.Request, error) {
-	method = strings.ToUpper(method)
-	var body io.Reader
-	if method == http.MethodGet || method == http.MethodHead {
-		if len(values) > 0 {
-			if strings.Contains(url, "?") {
-				url = url + "&" + values.Encode()
-			} else {
-				url = url + "?" + values.Encode()
-			}
-		}
-	} else {
-		body = strings.NewReader(values.Encode())
-	}
-	return http.NewRequest(method, url, body)
-}
-
 func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	var values = url.Values{}
 	values.Add("service", "notify_verify")
 	values.Add("partner", partnerId)
 	values.Add("notify_id", notifyId)
-	req, err := NewRequest(http.MethodGet, this.notifyVerifyHost, values)
+	req, err := http.NewRequest(http.MethodGet, this.notifyVerifyHost+"?"+values.Encode(), nil)
 	if err != nil {
 		return false
 	}
@@ -55,7 +37,13 @@ func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 	return false
 }
 
-func (this *Client) GetTradeNotification(req *http.Request) (notification *TradeNotification, err error) {
+// GetTradeNotification
+// Deprecated: use DecodeNotification instead.
+func (this *Client) GetTradeNotification(req *http.Request) (notification *Notification, err error) {
+	return this.DecodeNotification(req)
+}
+
+func (this *Client) DecodeNotification(req *http.Request) (notification *Notification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
@@ -63,7 +51,7 @@ func (this *Client) GetTradeNotification(req *http.Request) (notification *Trade
 		return nil, err
 	}
 
-	notification = &TradeNotification{}
+	notification = &Notification{}
 	notification.AppId = req.FormValue("app_id")
 	notification.AuthAppId = req.FormValue("auth_app_id")
 	notification.NotifyId = req.FormValue("notify_id")
@@ -98,10 +86,6 @@ func (this *Client) GetTradeNotification(req *http.Request) (notification *Trade
 	notification.VoucherDetailList = req.FormValue("voucher_detail_list")
 	notification.AgreementNo = req.FormValue("agreement_no")
 	notification.ExternalAgreementNo = req.FormValue("external_agreement_no")
-
-	//if len(noti.NotifyId) == 0 {
-	//	return nil, errors.New("不是有效的 Notify")
-	//}
 
 	if err = this.VerifySign(req.Form); err != nil {
 		return nil, err

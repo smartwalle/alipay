@@ -1,7 +1,6 @@
 package alipay
 
 import (
-	"crypto"
 	"net/url"
 	"strings"
 )
@@ -75,26 +74,26 @@ func (this *Client) OpenAuthTokenAppQuery(param OpenAuthTokenAppQuery) (result *
 
 // AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口 https://docs.open.alipay.com/218/105327
 func (this *Client) AccountAuth(param AccountAuth) (result string, err error) {
-	var p = url.Values{}
-	p.Add("app_id", this.appId)
-	p.Add("method", param.APIName())
+	var values = url.Values{}
+	values.Add("app_id", this.appId)
+	values.Add("method", param.APIName())
 
 	var ps = param.Params()
 	if ps != nil {
 		for key, value := range ps {
-			p.Add(key, value)
+			values.Add(key, value)
 		}
 	}
 
-	p.Add("sign_type", kSignTypeRSA2)
+	values.Add("sign_type", kSignTypeRSA2)
 
-	signature, err := signWithPKCS1v15(p, this.appPrivateKey, crypto.SHA256)
+	signature, err := this.sign(values)
 	if err != nil {
 		return "", err
 	}
-	p.Add("sign", signature)
+	values.Add("sign", signature)
 
-	return p.Encode(), err
+	return values.Encode(), err
 }
 
 // OpenAuthAppAuthInviteCreate ISV向商户发起应用授权邀约 https://opendocs.alipay.com/isv/06evao?pathHash=f46ecafa

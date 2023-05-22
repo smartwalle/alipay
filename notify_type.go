@@ -4,8 +4,12 @@ const (
 	NotifyTypeTradeStatusSync = "trade_status_sync"
 )
 
-// TradeNotification 通知响应参数 https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.8AmJwg&treeId=203&articleId=105286&docType=1
-type TradeNotification struct {
+// TradeNotification
+// Deprecated: use Notification instead.
+type TradeNotification Notification
+
+// Notification 通知响应参数 https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.8AmJwg&treeId=203&articleId=105286&docType=1
+type Notification struct {
 	AuthAppId           string      `json:"auth_app_id"`           // App Id
 	NotifyTime          string      `json:"notify_time"`           // 通知时间
 	NotifyType          string      `json:"notify_type"`           // 通知类型

@@ -98,30 +98,27 @@ func callback(c *gin.Context) {
 }
 
 func notify(c *gin.Context) {
-	c.Request.ParseForm()
-
-	err := aliClient.VerifySign(c.Request.Form)
+	var noti, err = aliClient.DecodeNotification(c.Request)
 	if err != nil {
-		log.Println("异步通知验证签名发生错误", err)
+		log.Println("解析异步通知发生错误", err)
 		return
 	}
 
-	log.Println("异步通知验证签名通过")
+	log.Println("解析异步通知成功:", noti.NotifyId)
 
-	var outTradeNo = c.Request.Form.Get("out_trade_no")
 	var p = alipay.TradeQuery{}
-	p.OutTradeNo = outTradeNo
+	p.OutTradeNo = noti.OutTradeNo
 	rsp, err := aliClient.TradeQuery(p)
 	if err != nil {
-		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", outTradeNo, err.Error())
+		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", noti.OutTradeNo, err.Error())
 		return
 	}
 	if rsp.Failed() {
-		log.Printf("异步通知验证订单 %s 信息发生错误: %s-%s \n", outTradeNo, rsp.Msg, rsp.SubMsg)
+		log.Printf("异步通知验证订单 %s 信息发生错误: %s-%s \n", noti.OutTradeNo, rsp.Msg, rsp.SubMsg)
 		return
 	}
 
-	log.Printf("订单 %s 支付成功 \n", outTradeNo)
+	log.Printf("订单 %s 支付成功 \n", noti.OutTradeNo)
 
 	aliClient.ACKNotification(c.Writer)
 }

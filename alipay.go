@@ -1,7 +1,6 @@
 package alipay
 
 import (
-	"bytes"
 	"crypto"
 	"crypto/md5"
 	"crypto/rsa"
@@ -10,12 +9,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/smartwalle/nsign"
 	"io"
-	"math"
 	"net/http"
 	"net/url"
 	"os"
-	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -50,11 +48,25 @@ type Client struct {
 	encryptKey     []byte
 	encryptPadding ncrypto.Padding
 
-	appPrivateKey    *rsa.PrivateKey // 应用私钥
-	appPublicCertSN  string
-	aliRootCertSN    string
-	aliPublicCertSN  string
-	aliPublicKeyList map[string]*rsa.PublicKey
+	appPublicCertSN string
+	aliRootCertSN   string
+	aliPublicCertSN string
+
+	// 签名和验签
+	signer    Signer
+	verifiers map[string]Verifier
+}
+
+type Signer interface {
+	SignValues(values url.Values, opts ...nsign.SignOption) ([]byte, error)
+
+	SignBytes(data []byte, opts ...nsign.SignOption) ([]byte, error)
+}
+
+type Verifier interface {
+	VerifyValues(values url.Values, signature []byte, opts ...nsign.SignOption) error
+
+	VerifyBytes(data []byte, signature []byte, opts ...nsign.SignOption) error
 }
 
 type OptionFunc func(c *Client)
@@ -122,8 +134,8 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (clien
 	client.Client = http.DefaultClient
 	client.location = time.Local
 
-	client.appPrivateKey = priKey
-	client.aliPublicKeyList = make(map[string]*rsa.PublicKey)
+	client.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)))
+	client.verifiers = make(map[string]Verifier)
 
 	for _, opt := range opts {
 		if opt != nil {
@@ -157,6 +169,13 @@ func (this *Client) SetEncryptKey(key string) error {
 	return nil
 }
 
+func (this *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
+	this.aliPublicCertSN = sn
+	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)))
+	this.verifiers[this.aliPublicCertSN] = verifier
+	return verifier
+}
+
 // LoadAliPayPublicKey 加载支付宝公钥
 func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	var pub *rsa.PublicKey
@@ -168,9 +187,9 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	if err != nil {
 		return err
 	}
+
 	this.mu.Lock()
-	this.aliPublicCertSN = kAliPayPublicKeySN
-	this.aliPublicKeyList[this.aliPublicCertSN] = pub
+	this.loadVerifier(kAliPayPublicKeySN, pub)
 	this.mu.Unlock()
 	return nil
 }
@@ -201,17 +220,14 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 	if err != nil {
 		return err
 	}
-
-	key, ok := cert.PublicKey.(*rsa.PublicKey)
+	pub, ok := cert.PublicKey.(*rsa.PublicKey)
 	if ok == false {
 		return nil
 	}
 
 	this.mu.Lock()
-	this.aliPublicCertSN = getCertSN(cert)
-	this.aliPublicKeyList[this.aliPublicCertSN] = key
+	this.loadVerifier(getCertSN(cert), pub)
 	this.mu.Unlock()
-
 	return nil
 }
 
@@ -289,18 +305,19 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 
 	var params = param.Params()
 	if params != nil {
-		for key, value := range params {
-			if key == kAppAuthToken && value == "" {
+		for k, v := range params {
+			if k == kAppAuthToken && v == "" {
 				continue
 			}
-			values.Add(key, value)
+			values.Add(k, v)
 		}
 	}
 
-	signature, err := signWithPKCS1v15(values, this.appPrivateKey, crypto.SHA256)
+	signature, err := this.sign(values)
 	if err != nil {
 		return nil, err
 	}
+
 	values.Add("sign", signature)
 	return values, nil
 }
@@ -369,7 +386,7 @@ func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool
 		return ErrBadResponse
 	}
 
-	// 对业务数据进行解密
+	// 数据解密
 	var plaintext []byte
 	if plaintext, err = this.decrypt(bizBytes); err != nil {
 		return err
@@ -387,11 +404,7 @@ func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool
 		}
 
 		// 验证签名
-		var publicKey *rsa.PublicKey
-		if publicKey, err = this.getAliPayPublicKey(string(certBytes)); err != nil {
-			return err
-		}
-		if err = verifyBytes(bizBytes, string(signBytes), publicKey); err != nil {
+		if err = this.verify(string(certBytes), bizBytes, signBytes); err != nil {
 			return err
 		}
 	}
@@ -417,114 +430,25 @@ func (this *Client) decrypt(data []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-//func (this *Client) decode(data, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
-//	var bizIndex = strings.LastIndex(data, bizFieldName)
-//	var errorIndex = strings.LastIndex(data, kErrorResponse)
-//
-//	// 从返回的数据中提取出业务数据(xxx_response)、证书编号(alipay_cert_sn)和签名(sign)
-//	var content string
-//	var certSN string
-//	var signature string
-//
-//	if bizIndex > 0 {
-//		content, certSN, signature = split(data, bizIndex+len(bizFieldName)+2)
-//	} else if errorIndex > 0 {
-//		content, certSN, signature = split(data, errorIndex+len(kErrorResponse)+2)
-//	} else {
-//		return ErrBadResponse
-//	}
-//
-//	// 对业务数据进行解密
-//	var nContent []byte
-//	if nContent, err = this.decrypt(content); err != nil {
-//		return err
-//	}
-//
-//	// 验证签名
-//	if needVerifySign {
-//		if signature == "" {
-//			// 没有签名数据，返回的内容一般为错误信息
-//			var rErr *Error
-//			if err = json.Unmarshal(nContent, &rErr); err != nil {
-//				return err
-//			}
-//			return rErr
-//		}
-//
-//		// 验证签名
-//		var publicKey *rsa.PublicKey
-//		if publicKey, err = this.getAliPayPublicKey(certSN); err != nil {
-//			return err
-//		}
-//		if err = verifyBytes([]byte(content), signature, publicKey); err != nil {
-//			return err
-//		}
-//	}
-//
-//	if err = json.Unmarshal(nContent, result); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
-
-// decrypt 解密数据
-//func (this *Client) decrypt(content string) ([]byte, error) {
-//	var plaintext = []byte(content)
-//	if len(content) > 1 && content[0] == '"' {
-//		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
-//		if err != nil {
-//			return nil, err
-//		}
-//		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
-//		if err != nil {
-//			return nil, err
-//		}
-//	}
-//	return plaintext, nil
-//}
-
-//func (this *Client) Decode(data, signature string, result interface{}) (err error) {
-//	// 验证签名
-//	publicKey, err := this.getAliPayPublicKey("")
-//	if err != nil {
-//		return err
-//	}
-//	if ok, err := verifyBytes([]byte("\""+data+"\""), signature, publicKey); !ok {
-//		return err
-//	}
-//
-//	// 解密数据
-//	ciphertext, err := base64.StdEncoding.DecodeString(data)
-//	if err != nil {
-//		return err
-//	}
-//	plaintext, err := ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
-//	if err != nil {
-//		return err
-//	}
-//
-//	if err = json.Unmarshal(plaintext, result); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 func (this *Client) DoRequest(method string, param Param, result interface{}) (err error) {
 	return this.doRequest(method, param, result)
 }
 
 func (this *Client) VerifySign(values url.Values) (err error) {
-	var certSN = values.Get(kCertSNFieldName)
-	publicKey, err := this.getAliPayPublicKey(certSN)
-	if err != nil {
+	var verifier Verifier
+	if verifier, err = this.getVerifier(values.Get(kCertSNFieldName)); err != nil {
 		return err
 	}
 
-	return verifyValues(values, publicKey)
+	var signBytes []byte
+	if signBytes, err = base64.StdEncoding.DecodeString(values.Get(kSignFieldName)); err != nil {
+		return err
+	}
+
+	return verifier.VerifyValues(values, signBytes, nsign.WithIgnore(kSignFieldName, kSignTypeFieldName, kCertSNFieldName))
 }
 
-func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err error) {
+func (this *Client) getVerifier(certSN string) (verifier Verifier, err error) {
 	this.mu.Lock()
 	defer this.mu.Unlock()
 
@@ -532,9 +456,9 @@ func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err e
 		certSN = this.aliPublicCertSN
 	}
 
-	key = this.aliPublicKeyList[certSN]
+	verifier = this.verifiers[certSN]
 
-	if key == nil {
+	if verifier == nil {
 		if !this.isProduction {
 			return nil, ErrAliPublicKeyNotFound
 		}
@@ -544,13 +468,13 @@ func (this *Client) getAliPayPublicKey(certSN string) (key *rsa.PublicKey, err e
 			return nil, err
 		}
 
-		var ok bool
-		key, ok = cert.PublicKey.(*rsa.PublicKey)
-		if ok == false {
+		pub, ok := cert.PublicKey.(*rsa.PublicKey)
+		if !ok {
 			return nil, ErrAliPublicKeyNotFound
 		}
+		verifier = this.loadVerifier(getCertSN(cert), pub)
 	}
-	return key, nil
+	return verifier, nil
 }
 
 func (this *Client) CertDownload(param CertDownload) (result *CertDownloadRsp, err error) {
@@ -575,76 +499,11 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 		return nil, err
 	}
 
-	key, ok := cert.PublicKey.(*rsa.PublicKey)
-	if ok == false {
-		return nil, nil
-	}
-
-	this.aliPublicCertSN = getCertSN(cert)
-	this.aliPublicKeyList[this.aliPublicCertSN] = key
-
 	return cert, nil
 }
 
-func split(data string, startIndex int) (content, certSN, signature string) {
-	var signIndex = strings.LastIndex(data, "\""+kSignFieldName+"\"")
-	var certIndex = strings.LastIndex(data, "\""+kCertSNFieldName+"\"")
-	var dataEndIndex int
-
-	if signIndex > 0 && certIndex > 0 {
-		dataEndIndex = int(math.Min(float64(signIndex), float64(certIndex))) - 1
-	} else if certIndex > 0 {
-		dataEndIndex = certIndex - 1
-	} else if signIndex > 0 {
-		dataEndIndex = signIndex - 1
-	} else {
-		dataEndIndex = len(data) - 1
-	}
-
-	var indexLen = dataEndIndex - startIndex
-	if indexLen < 0 {
-		return "", "", ""
-	}
-	content = data[startIndex:dataEndIndex]
-
-	if certIndex > 0 {
-		var certStartIndex = certIndex + len(kCertSNFieldName) + 4
-		certSN = data[certStartIndex:]
-		var certEndIndex = strings.Index(certSN, "\"")
-		certSN = certSN[:certEndIndex]
-	}
-
-	if signIndex > 0 {
-		var signStartIndex = signIndex + len(kSignFieldName) + 4
-		signature = data[signStartIndex:]
-		var signEndIndex = strings.LastIndex(signature, "\"")
-		signature = signature[:signEndIndex]
-	}
-
-	return content, certSN, signature
-}
-
-func base64decode(data []byte) ([]byte, error) {
-	var dBuf = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
-	n, err := base64.StdEncoding.Decode(dBuf, data)
-	return dBuf[:n], err
-}
-
-func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto.Hash) (signature string, err error) {
-	if values == nil {
-		values = make(url.Values, 0)
-	}
-
-	var pList = make([]string, 0, 0)
-	for key := range values {
-		var value = strings.TrimSpace(values.Get(key))
-		if len(value) > 0 {
-			pList = append(pList, key+"="+value)
-		}
-	}
-	sort.Strings(pList)
-	var src = strings.Join(pList, "&")
-	sBytes, err := ncrypto.RSASignWithKey([]byte(src), privateKey, hash)
+func (this *Client) sign(values url.Values) (signature string, err error) {
+	sBytes, err := this.signer.SignValues(values)
 	if err != nil {
 		return "", err
 	}
@@ -652,45 +511,26 @@ func signWithPKCS1v15(values url.Values, privateKey *rsa.PrivateKey, hash crypto
 	return signature, nil
 }
 
-func verifyValues(values url.Values, publicKey *rsa.PublicKey) (err error) {
-	signature := values.Get(kSignFieldName)
-
-	var keys = make([]string, 0, 0)
-	for key := range values {
-		if key == kSignFieldName || key == kSignTypeFieldName || key == kCertSNFieldName {
-			continue
-		}
-		keys = append(keys, key)
-	}
-
-	sort.Strings(keys)
-
-	var buffer bytes.Buffer
-	for _, key := range keys {
-		vs := values[key]
-		for _, v := range vs {
-			if buffer.Len() > 0 {
-				buffer.WriteByte('&')
-			}
-			buffer.WriteString(key)
-			buffer.WriteByte('=')
-			buffer.WriteString(v)
-		}
-	}
-
-	return verifyBytes(buffer.Bytes(), signature, publicKey)
-}
-
-func verifyBytes(data []byte, signature string, key *rsa.PublicKey) error {
-	sBytes, err := base64.StdEncoding.DecodeString(signature)
-	if err != nil {
+func (this *Client) verify(certSN string, data, signature []byte) (err error) {
+	var verifier Verifier
+	if verifier, err = this.getVerifier(certSN); err != nil {
 		return err
 	}
 
-	if err = ncrypto.RSAVerifyWithKey(data, sBytes, key, crypto.SHA256); err != nil {
+	if signature, err = base64decode(signature); err != nil {
+		return err
+	}
+
+	if err = verifier.VerifyBytes(data, signature); err != nil {
 		return err
 	}
 	return nil
+}
+
+func base64decode(data []byte) ([]byte, error) {
+	var dBuf = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
+	n, err := base64.StdEncoding.Decode(dBuf, data)
+	return dBuf[:n], err
 }
 
 func getCertSN(cert *x509.Certificate) string {
