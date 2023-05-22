@@ -3,7 +3,7 @@ package alipay_test
 import (
 	"testing"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 func TestClient_FundTransToAccountTransfer(t *testing.T) {
@@ -17,10 +17,11 @@ func TestClient_FundTransToAccountTransfer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
@@ -34,10 +35,11 @@ func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_FundAuthOrderAppFreeze(t *testing.T) {
@@ -75,7 +77,11 @@ func TestClient_FundTransUniTransfer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(rsp)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_FundTransCommonQuery(t *testing.T) {
@@ -89,7 +95,11 @@ func TestClient_FundTransCommonQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(rsp)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_FundAccountQuery(t *testing.T) {
@@ -101,5 +111,9 @@ func TestClient_FundAccountQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(rsp)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }

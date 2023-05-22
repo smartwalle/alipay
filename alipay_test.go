@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 var (
@@ -51,5 +51,9 @@ func TestClient_CertDownload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(rsp.Content.AliPayCertContent)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }

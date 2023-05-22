@@ -250,15 +250,9 @@ func (this TradeClose) Params() map[string]string {
 
 // TradeCloseRsp 统一收单交易关闭接口响应参数
 type TradeCloseRsp struct {
-	Content struct {
-		Code       Code   `json:"code"`
-		Msg        string `json:"msg"`
-		SubCode    string `json:"sub_code"`
-		SubMsg     string `json:"sub_msg"`
-		OutTradeNo string `json:"out_trade_no"`
-		TradeNo    string `json:"trade_no"`
-	} `json:"alipay_trade_close_response"`
-	Sign string `json:"sign"`
+	Error
+	OutTradeNo string `json:"out_trade_no"`
+	TradeNo    string `json:"trade_no"`
 }
 
 // TradeRefund 统一收单交易退款接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.refund/
@@ -300,31 +294,18 @@ type RefundRoyaltyParameter struct {
 
 // TradeRefundRsp 统一收单交易退款接口响应参数
 type TradeRefundRsp struct {
-	Content struct {
-		Code                 Code                `json:"code"`
-		Msg                  string              `json:"msg"`
-		SubCode              string              `json:"sub_code"`
-		SubMsg               string              `json:"sub_msg"`
-		TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
-		OutTradeNo           string              `json:"out_trade_no"`                      // 商户订单号
-		BuyerLogonId         string              `json:"buyer_logon_id"`                    // 用户的登录id
-		BuyerUserId          string              `json:"buyer_user_id"`                     // 买家在支付宝的用户id
-		FundChange           string              `json:"fund_change"`                       // 本次退款是否发生了资金变化
-		RefundFee            string              `json:"refund_fee"`                        // 退款总金额
-		StoreName            string              `json:"store_name"`                        // 交易在支付时候的门店名称
-		RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
-		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list。
-		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
-		RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
-	} `json:"alipay_trade_refund_response"`
-	Sign string `json:"sign"`
-}
-
-func (this *TradeRefundRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	Error
+	TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
+	OutTradeNo           string              `json:"out_trade_no"`                      // 商户订单号
+	BuyerLogonId         string              `json:"buyer_logon_id"`                    // 用户的登录id
+	BuyerUserId          string              `json:"buyer_user_id"`                     // 买家在支付宝的用户id
+	FundChange           string              `json:"fund_change"`                       // 本次退款是否发生了资金变化
+	RefundFee            string              `json:"refund_fee"`                        // 退款总金额
+	StoreName            string              `json:"store_name"`                        // 交易在支付时候的门店名称
+	RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list,omitempty"` // 退款使用的资金渠道
+	SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list。
+	RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
+	RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
 }
 
 type TradeFundBill struct {
@@ -367,33 +348,20 @@ func (this TradeFastPayRefundQuery) Params() map[string]string {
 
 // TradeFastPayRefundQueryRsp 统一收单交易退款查询接口响应参数
 type TradeFastPayRefundQueryRsp struct {
-	Content struct {
-		Code                 Code                `json:"code"`
-		Msg                  string              `json:"msg"`
-		SubCode              string              `json:"sub_code"`
-		SubMsg               string              `json:"sub_msg"`
-		TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
-		OutTradeNo           string              `json:"out_trade_no"`                      // 创建交易传入的商户订单号
-		OutRequestNo         string              `json:"out_request_no"`                    // 本笔退款对应的退款请求号
-		TotalAmount          string              `json:"total_amount"`                      // 发该笔退款所对应的交易的订单金额
-		RefundAmount         string              `json:"refund_amount"`                     // 本次退款请求，对应的退款金额
-		RefundStatus         string              `json:"refund_status"`                     // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败；
-		RefundRoyaltys       []*RefundRoyalty    `json:"refund_royaltys"`                   // 退分账明细信息
-		GMTRefundPay         string              `json:"gmt_refund_pay"`                    // 退款时间。
-		RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list"`           // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
-		SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额；
-		DepositBackInfo      []*DepositBackInfo  `json:"deposit_back_info"`                 // 银行卡冲退信息
-		RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
-		RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
-	} `json:"alipay_trade_fastpay_refund_query_response"`
-	Sign string `json:"sign"`
-}
-
-func (this *TradeFastPayRefundQueryRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	Error
+	TradeNo              string              `json:"trade_no"`                          // 支付宝交易号
+	OutTradeNo           string              `json:"out_trade_no"`                      // 创建交易传入的商户订单号
+	OutRequestNo         string              `json:"out_request_no"`                    // 本笔退款对应的退款请求号
+	TotalAmount          string              `json:"total_amount"`                      // 发该笔退款所对应的交易的订单金额
+	RefundAmount         string              `json:"refund_amount"`                     // 本次退款请求，对应的退款金额
+	RefundStatus         string              `json:"refund_status"`                     // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败；
+	RefundRoyaltys       []*RefundRoyalty    `json:"refund_royaltys"`                   // 退分账明细信息
+	GMTRefundPay         string              `json:"gmt_refund_pay"`                    // 退款时间。
+	RefundDetailItemList []*TradeFundBill    `json:"refund_detail_item_list"`           // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
+	SendBackFee          string              `json:"send_back_fee"`                     // 本次商户实际退回金额；
+	DepositBackInfo      []*DepositBackInfo  `json:"deposit_back_info"`                 // 银行卡冲退信息
+	RefundHYBAmount      string              `json:"refund_hyb_amount"`                 // 本次请求退惠营宝金额
+	RefundChargeInfoList []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"` // 退费信息
 }
 
 type RefundRoyalty struct {
@@ -443,14 +411,8 @@ type RoyaltyParameter struct {
 
 // TradeOrderSettleRsp 统一收单交易结算接口响应参数
 type TradeOrderSettleRsp struct {
-	Content struct {
-		Code    Code   `json:"code"`
-		Msg     string `json:"msg"`
-		SubCode string `json:"sub_code"`
-		SubMsg  string `json:"sub_msg"`
-		TradeNo string `json:"trade_no"`
-	} `json:"alipay_trade_order_settle_response"`
-	Sign string `json:"sign"`
+	Error
+	TradeNo string `json:"trade_no"`
 }
 
 // TradeCreate 统一收单交易创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.create/
@@ -476,15 +438,9 @@ func (this TradeCreate) Params() map[string]string {
 
 // TradeCreateRsp 统一收单交易创建接口响应参数
 type TradeCreateRsp struct {
-	Content struct {
-		Code       Code   `json:"code"`
-		Msg        string `json:"msg"`
-		SubCode    string `json:"sub_code"`
-		SubMsg     string `json:"sub_msg"`
-		TradeNo    string `json:"trade_no"` // 支付宝交易号
-		OutTradeNo string `json:"out_trade_no"`
-	} `json:"alipay_trade_create_response"`
-	Sign string `json:"sign"`
+	Error
+	TradeNo    string `json:"trade_no"` // 支付宝交易号
+	OutTradeNo string `json:"out_trade_no"`
 }
 
 type RoyaltyInfo struct {
@@ -559,35 +515,22 @@ func (this TradePay) Params() map[string]string {
 
 // TradePayRsp 统一收单交易支付接口响应参数
 type TradePayRsp struct {
-	Content struct {
-		Code                Code             `json:"code"`
-		Msg                 string           `json:"msg"`
-		SubCode             string           `json:"sub_code"`
-		SubMsg              string           `json:"sub_msg"`
-		BuyerLogonId        string           `json:"buyer_logon_id"`           // 买家支付宝账号
-		BuyerPayAmount      string           `json:"buyer_pay_amount"`         // 买家实付金额，单位为元，两位小数。
-		BuyerUserId         string           `json:"buyer_user_id"`            // 买家在支付宝的用户id
-		CardBalance         string           `json:"card_balance"`             // 支付宝卡余额
-		DiscountGoodsDetail string           `json:"discount_goods_detail"`    // 本次交易支付所使用的单品券优惠的商品优惠信息
-		FundBillList        []*FundBill      `json:"fund_bill_list,omitempty"` // 交易支付使用的资金渠道
-		GmtPayment          string           `json:"gmt_payment"`
-		InvoiceAmount       string           `json:"invoice_amount"`                // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
-		OutTradeNo          string           `json:"out_trade_no"`                  // 创建交易传入的商户订单号
-		TradeNo             string           `json:"trade_no"`                      // 支付宝交易号
-		PointAmount         string           `json:"point_amount"`                  // 积分支付的金额，单位为元，两位小数。
-		ReceiptAmount       string           `json:"receipt_amount"`                // 实收金额，单位为元，两位小数
-		StoreName           string           `json:"store_name"`                    // 发生支付交易的商户门店名称
-		TotalAmount         string           `json:"total_amount"`                  // 发该笔退款所对应的交易的订单金额
-		VoucherDetailList   []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
-	} `json:"alipay_trade_pay_response"`
-	Sign string `json:"sign"`
-}
-
-func (this *TradePayRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	Error
+	BuyerLogonId        string           `json:"buyer_logon_id"`           // 买家支付宝账号
+	BuyerPayAmount      string           `json:"buyer_pay_amount"`         // 买家实付金额，单位为元，两位小数。
+	BuyerUserId         string           `json:"buyer_user_id"`            // 买家在支付宝的用户id
+	CardBalance         string           `json:"card_balance"`             // 支付宝卡余额
+	DiscountGoodsDetail string           `json:"discount_goods_detail"`    // 本次交易支付所使用的单品券优惠的商品优惠信息
+	FundBillList        []*FundBill      `json:"fund_bill_list,omitempty"` // 交易支付使用的资金渠道
+	GmtPayment          string           `json:"gmt_payment"`
+	InvoiceAmount       string           `json:"invoice_amount"`                // 交易中用户支付的可开具发票的金额，单位为元，两位小数。
+	OutTradeNo          string           `json:"out_trade_no"`                  // 创建交易传入的商户订单号
+	TradeNo             string           `json:"trade_no"`                      // 支付宝交易号
+	PointAmount         string           `json:"point_amount"`                  // 积分支付的金额，单位为元，两位小数。
+	ReceiptAmount       string           `json:"receipt_amount"`                // 实收金额，单位为元，两位小数
+	StoreName           string           `json:"store_name"`                    // 发生支付交易的商户门店名称
+	TotalAmount         string           `json:"total_amount"`                  // 发该笔退款所对应的交易的订单金额
+	VoucherDetailList   []*VoucherDetail `json:"voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息
 }
 
 // TradeAppPay App支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
@@ -655,24 +598,11 @@ func (this TradeCancel) Params() map[string]string {
 
 // TradeCancelRsp 统一收单交易撤销接口响应参数
 type TradeCancelRsp struct {
-	Content struct {
-		Code       Code   `json:"code"`
-		Msg        string `json:"msg"`
-		SubCode    string `json:"sub_code"`
-		SubMsg     string `json:"sub_msg"`
-		TradeNo    string `json:"trade_no"`     // 支付宝交易号
-		OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
-		RetryFlag  string `json:"retry_flag"`   // 是否需要重试
-		Action     string `json:"action"`       // 本次撤销触发的交易动作 close：关闭交易，无退款 refund：产生了退款
-	} `json:"alipay_trade_cancel_response"`
-	Sign string `json:"sign"`
-}
-
-func (this *TradeCancelRsp) IsSuccess() bool {
-	if this.Content.Code == CodeSuccess {
-		return true
-	}
-	return false
+	Error
+	TradeNo    string `json:"trade_no"`     // 支付宝交易号
+	OutTradeNo string `json:"out_trade_no"` // 创建交易传入的商户订单号
+	RetryFlag  string `json:"retry_flag"`   // 是否需要重试
+	Action     string `json:"action"`       // 本次撤销触发的交易动作 close：关闭交易，无退款 refund：产生了退款
 }
 
 // TradeOrderInfoSync 支付宝订单信息同步接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
@@ -696,16 +626,10 @@ func (this TradeOrderInfoSync) Params() map[string]string {
 
 // TradeOrderInfoSyncRsp 支付宝订单信息同步接口响应参数
 type TradeOrderInfoSyncRsp struct {
-	Content struct {
-		Code        Code   `json:"code"`
-		Msg         string `json:"msg"`
-		SubCode     string `json:"sub_code"`
-		SubMsg      string `json:"sub_msg"`
-		TradeNo     string `json:"trade_no"`
-		OutTradeNo  string `json:"out_trade_no"`
-		BuyerUserId string `json:"buyer_user_id"`
-	} `json:"alipay_trade_orderinfo_sync_response"`
-	Sign string `json:"sign"`
+	Error
+	TradeNo     string `json:"trade_no"`
+	OutTradeNo  string `json:"out_trade_no"`
+	BuyerUserId string `json:"buyer_user_id"`
 }
 
 // TradeMergePreCreate 统一收单合并支付预创建接口请求参数 https://opendocs.alipay.com/open/028xr9
@@ -777,16 +701,10 @@ type SettleDetailInfo struct {
 
 // TradeMergePreCreateRsp 统一收单合并支付预创建接口响应参数
 type TradeMergePreCreateRsp struct {
-	Content struct {
-		Code               Code              `json:"code"`
-		Msg                string            `json:"msg"`
-		SubCode            string            `json:"sub_code"`
-		SubMsg             string            `json:"sub_msg"`
-		OutMergeNo         string            `json:"out_merge_no"`
-		PreOrderNo         string            `json:"pre_order_no"`
-		OrderDetailResults []*PreOrderResult `json:"order_detail_results"`
-	} `json:"alipay_trade_merge_precreate_response"`
-	Sign string `json:"sign"`
+	Error
+	OutMergeNo         string            `json:"out_merge_no"`
+	PreOrderNo         string            `json:"pre_order_no"`
+	OrderDetailResults []*PreOrderResult `json:"order_detail_results"`
 }
 
 type PreOrderResult struct {

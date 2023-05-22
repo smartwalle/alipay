@@ -37,25 +37,13 @@ func (this SystemOauthToken) Params() map[string]string {
 
 // SystemOauthTokenRsp 换取授权访问令牌接口请求参数
 type SystemOauthTokenRsp struct {
-	Content struct {
-		Code         Code   `json:"code"`
-		Msg          string `json:"msg"`
-		SubCode      string `json:"sub_code"`
-		SubMsg       string `json:"sub_msg"`
-		UserId       string `json:"user_id"`
-		AccessToken  string `json:"access_token"`
-		ExpiresIn    int64  `json:"expires_in"`
-		RefreshToken string `json:"refresh_token"`
-		ReExpiresIn  int64  `json:"re_expires_in"`
-		AuthStart    string `json:"auth_start"`
-	} `json:"alipay_system_oauth_token_response"`
-	Error *struct {
-		Code    string `json:"code"`
-		Msg     string `json:"msg"`
-		SubCode string `json:"sub_code"`
-		SubMsg  string `json:"sub_msg"`
-	} `json:"error_response"` // 不要访问此结构体
-	Sign string `json:"sign"`
+	Error
+	UserId       string `json:"user_id"`
+	AccessToken  string `json:"access_token"`
+	ExpiresIn    int64  `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+	ReExpiresIn  int64  `json:"re_expires_in"`
+	AuthStart    string `json:"auth_start"`
 }
 
 // UserInfoShare 支付宝会员授权信息查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.info.share
@@ -77,24 +65,18 @@ func (this UserInfoShare) Params() map[string]string {
 
 // UserInfoShareRsp 支付宝会员授权信息查询接口响应参数
 type UserInfoShareRsp struct {
-	Content struct {
-		Code               Code   `json:"code"`
-		Msg                string `json:"msg"`
-		SubCode            string `json:"sub_code"`
-		SubMsg             string `json:"sub_msg"`
-		AuthNo             string `json:"auth_no"`
-		UserId             string `json:"user_id"`
-		Avatar             string `json:"avatar"`
-		Province           string `json:"province"`
-		City               string `json:"city"`
-		NickName           string `json:"nick_name"`
-		IsStudentCertified string `json:"is_student_certified"`
-		UserType           string `json:"user_type"`
-		UserStatus         string `json:"user_status"`
-		IsCertified        string `json:"is_certified"`
-		Gender             string `json:"gender"`
-	} `json:"alipay_user_info_share_response"`
-	Sign string `json:"sign"`
+	Error
+	AuthNo             string `json:"auth_no"`
+	UserId             string `json:"user_id"`
+	Avatar             string `json:"avatar"`
+	Province           string `json:"province"`
+	City               string `json:"city"`
+	NickName           string `json:"nick_name"`
+	IsStudentCertified string `json:"is_student_certified"`
+	UserType           string `json:"user_type"`
+	UserStatus         string `json:"user_status"`
+	IsCertified        string `json:"is_certified"`
+	Gender             string `json:"gender"`
 }
 
 // OpenAuthTokenApp 换取应用授权令牌请求参数 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
@@ -122,14 +104,8 @@ func (this OpenAuthTokenApp) Params() map[string]string {
 
 // OpenAuthTokenAppRsp 换取应用授权令牌响应参数 新版返回值 参见 https://opendocs.alipay.com/open/20160728150111277227/intro
 type OpenAuthTokenAppRsp struct {
-	Content struct {
-		Code    Code             `json:"code"`
-		Msg     string           `json:"msg"`
-		SubCode Code             `json:"sub_code"`
-		SubMsg  string           `json:"sub_msg"`
-		Tokens  []*OpenAuthToken `json:"tokens"`
-	} `json:"alipay_open_auth_token_app_response"`
-	Sign string `json:"sign"`
+	Error
+	Tokens []*OpenAuthToken `json:"tokens"`
 }
 
 type OpenAuthToken struct {
@@ -155,21 +131,15 @@ func (this OpenAuthTokenAppQuery) Params() map[string]string {
 }
 
 type OpenAuthTokenAppQueryRsp struct {
-	Content struct {
-		Code        Code     `json:"code"`
-		Msg         string   `json:"msg"`
-		SubCode     Code     `json:"sub_code"`
-		SubMsg      string   `json:"sub_msg"`
-		UserId      string   `json:"user_id"`
-		AuthAppId   string   `json:"auth_app_id"`
-		ExpiresIn   int64    `json:"expires_in"`
-		AuthMethods []string `json:"auth_methods"`
-		AuthStart   string   `json:"auth_start"`
-		AuthEnd     string   `json:"auth_end"`
-		Status      string   `json:"status"`
-		IsByAppAuth bool     `json:"is_by_app_auth"`
-	} `json:"alipay_open_auth_token_app_query_response"`
-	Sign string `json:"sign"`
+	Error
+	UserId      string   `json:"user_id"`
+	AuthAppId   string   `json:"auth_app_id"`
+	ExpiresIn   int64    `json:"expires_in"`
+	AuthMethods []string `json:"auth_methods"`
+	AuthStart   string   `json:"auth_start"`
+	AuthEnd     string   `json:"auth_end"`
+	Status      string   `json:"status"`
+	IsByAppAuth bool     `json:"is_by_app_auth"`
 }
 
 // AccountAuth 支付宝登录时, 帮客户端做参数签名, 返回授权请求信息字串接口请求参数 https://docs.open.alipay.com/218/105327/

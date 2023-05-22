@@ -3,7 +3,7 @@ package alipay_test
 import (
 	"testing"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 func TestClient_UserCertifyOpenInitialize(t *testing.T) {
@@ -20,10 +20,11 @@ func TestClient_UserCertifyOpenInitialize(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.CertifyId)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_UserCertifyOpenCertify(t *testing.T) {
@@ -45,40 +46,43 @@ func TestClient_UserCertifyOpenQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_UserCertdocCertverifyPreconsult(t *testing.T) {
 	t.Log("========== UserCertdocCertverifyPreconsult ==========")
-	var p = alipay.UserCertdocCertverifyPreconsult{}
+	var p = alipay.UserCertDocCertVerifyPreConsult{}
 	p.UserName = "xxxx"
 	p.CertType = "IDENTITY_CARD"
 	p.CertNo = "xxxx"
 	p.Mobile = "xxxx"
 	p.LogonId = "xxxx"
-	rsp, err := client.UserCertdocCertverifyPreconsult(p)
+	rsp, err := client.UserCertDocCertVerifyPreConsult(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_UserCertdocCertverifyConsult(t *testing.T) {
 	t.Log("========== UserCertdocCertverifyConsult ==========")
-	var p = alipay.UserCertdocCertverifyConsult{}
+	var p = alipay.UserCertDocCertVerifyConsult{}
 	p.VerifyId = "xxxx"
-	rsp, err := client.UserCertdocCertverifyConsult(p)
+	rsp, err := client.UserCertDocCertVerifyConsult(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }

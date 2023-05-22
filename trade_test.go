@@ -3,7 +3,7 @@ package alipay_test
 import (
 	"testing"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 func TestClient_TradeAppPay(t *testing.T) {
@@ -17,7 +17,7 @@ func TestClient_TradeAppPay(t *testing.T) {
 	p.ProductCode = "p_1010101"
 	param, err := client.TradeAppPay(p)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	t.Log(param)
 }
@@ -77,10 +77,11 @@ func TestClient_TradePay(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Code, rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.Msg)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradeQuery(t *testing.T) {
@@ -110,7 +111,11 @@ func TestClient_TradeRefund(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%v", rsp.Content)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradeFastPayRefundQuery(t *testing.T) {
@@ -124,7 +129,11 @@ func TestClient_TradeFastPayRefundQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%v", rsp.Content)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradeRefundAsync(t *testing.T) {
@@ -140,7 +149,11 @@ func TestClient_TradeRefundAsync(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%v", rsp.Content)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_TradeMergePreCreate(t *testing.T) {
@@ -151,5 +164,9 @@ func TestClient_TradeMergePreCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%v", rsp.Content)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
 }

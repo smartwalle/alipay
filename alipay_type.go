@@ -93,12 +93,6 @@ func (this CertDownload) Params() map[string]string {
 }
 
 type CertDownloadRsp struct {
-	Content struct {
-		Code              Code   `json:"code"`
-		Msg               string `json:"msg"`
-		SubCode           string `json:"sub_code"`
-		SubMsg            string `json:"sub_msg"`
-		AliPayCertContent string `json:"alipay_cert_content"`
-	} `json:"alipay_open_app_alipaycert_download_response"`
-	Sign string `json:"sign"`
+	Error
+	AliPayCertContent string `json:"alipay_cert_content"`
 }

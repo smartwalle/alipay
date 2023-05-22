@@ -13,7 +13,7 @@ func (this *Client) BillBalanceQuery(param BillBalanceQuery) (result *BillBalanc
 }
 
 // BillAccountLogQuery 查询账户账务明细接口请求参数 https://opendocs.alipay.com/apis/api_15/alipay.data.bill.accountlog.query
-func (this *Client) BillAccountLogQuery(param BillAccountLogQuery) (result *BillAccountLogQueryResp, err error) {
+func (this *Client) BillAccountLogQuery(param BillAccountLogQuery) (result *BillAccountLogQueryRsp, err error) {
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }

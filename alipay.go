@@ -565,7 +565,7 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 	if err != nil {
 		return nil, err
 	}
-	certBytes, err := base64.StdEncoding.DecodeString(rsp.Content.AliPayCertContent)
+	certBytes, err := base64.StdEncoding.DecodeString(rsp.AliPayCertContent)
 	if err != nil {
 		return nil, err
 	}

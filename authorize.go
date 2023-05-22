@@ -31,16 +31,6 @@ func (this *Client) PublicAppAuthorize(scopes []string, redirectURI, state strin
 // SystemOauthToken 换取授权访问令牌接口 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
 func (this *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
 	err = this.doRequest("POST", param, &result)
-	if result != nil {
-		if result.Error != nil {
-			result.Content.Code = Code(result.Error.Code)
-			result.Content.Msg = result.Error.Msg
-			result.Content.SubCode = result.Error.SubCode
-			result.Content.SubMsg = result.Error.SubMsg
-		} else {
-			result.Content.Code = CodeSuccess
-		}
-	}
 	return result, err
 }
 

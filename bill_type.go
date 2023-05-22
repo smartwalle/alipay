@@ -64,30 +64,18 @@ type AccountLogItem struct {
 	StoreName           string `json:"store_name"`
 }
 
-type BillAccountLogQueryResp struct {
-	Content struct {
-		Code       Code              `json:"code"`
-		Msg        string            `json:"msg"`
-		SubCode    string            `json:"sub_code"`
-		SubMsg     string            `json:"sub_msg"`
-		PageNo     string            `json:"page_no"`
-		PageSize   string            `json:"page_size"`
-		TotalSize  string            `json:"total_size"`
-		DetailList []*AccountLogItem `json:"detail_list"`
-	} `json:"alipay_data_bill_accountlog_query_response"`
-	Sign string `json:"sign"`
+type BillAccountLogQueryRsp struct {
+	Error
+	PageNo     string            `json:"page_no"`
+	PageSize   string            `json:"page_size"`
+	TotalSize  string            `json:"total_size"`
+	DetailList []*AccountLogItem `json:"detail_list"`
 }
 
 // BillDownloadURLQueryRsp 查询对账单下载地址接口响应参数
 type BillDownloadURLQueryRsp struct {
-	Content struct {
-		Code            Code   `json:"code"`
-		Msg             string `json:"msg"`
-		SubCode         string `json:"sub_code"`
-		SubMsg          string `json:"sub_msg"`
-		BillDownloadUrl string `json:"bill_download_url"`
-	} `json:"alipay_data_dataservice_bill_downloadurl_query_response"`
-	Sign string `json:"sign"`
+	Error
+	BillDownloadURL string `json:"bill_download_url"`
 }
 
 // BillBalanceQuery 支付宝商家账户当前余额查询 https://opendocs.alipay.com/apis/api_15/alipay.data.bill.balance.query
@@ -107,14 +95,8 @@ func (this BillBalanceQuery) Params() map[string]string {
 
 // BillBalanceQueryRsp 支付宝商家账户当前余额查询响应参数
 type BillBalanceQueryRsp struct {
-	Content struct {
-		Code            Code   `json:"code"`
-		Msg             string `json:"msg"`
-		SubCode         string `json:"sub_code"`
-		SubMsg          string `json:"sub_msg"`
-		TotalAmount     string `json:"total_amount"`
-		AvailableAmount string `json:"available_amount"`
-		FreezeAmount    string `json:"freeze_amount"`
-	} `json:"alipay_data_bill_balance_query_response"`
-	Sign string `json:"sign"`
+	Error
+	TotalAmount     string `json:"total_amount"`
+	AvailableAmount string `json:"available_amount"`
+	FreezeAmount    string `json:"freeze_amount"`
 }

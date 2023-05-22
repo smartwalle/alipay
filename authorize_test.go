@@ -3,7 +3,7 @@ package alipay_test
 import (
 	"testing"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 func TestClient_PublicAppAuthorize(t *testing.T) {
@@ -21,10 +21,11 @@ func TestClient_SystemOauthToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.UserId, rsp.Content.AccessToken)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_UserInfoShare(t *testing.T) {
@@ -35,10 +36,11 @@ func TestClient_UserInfoShare(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg, rsp.Content.SubMsg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	t.Log(rsp.Content.UserId)
+	t.Logf("%v", rsp)
 }
 
 func TestClient_AppToAppAuth(t *testing.T) {
@@ -56,13 +58,11 @@ func TestClient_OpenAuthTokenApp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rsp.Content.Code != alipay.CodeSuccess {
-		t.Fatal(rsp.Content.Msg)
+
+	if rsp.Failed() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
-	tokens := rsp.Content.Tokens
-	for _, token := range tokens {
-		t.Log(token.AppAuthToken, token.UserId)
-	}
+	t.Logf("%v", rsp)
 }
 
 func TestClient_AccountAuth(t *testing.T) {
