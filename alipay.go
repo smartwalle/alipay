@@ -337,11 +337,10 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
 	var needVerifySign = apiName != kCertDownloadAPI
 
-	//return this.ndecode(bodyBytes, bizFieldName, needVerifySign, result)
-	return this.decode(string(bodyBytes), bizFieldName, needVerifySign, result)
+	return this.decode(bodyBytes, bizFieldName, needVerifySign, result)
 }
 
-func (this *Client) ndecode(data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
 	var raw = make(map[string]json.RawMessage)
 	if err = json.Unmarshal(data, &raw); err != nil {
 		return err
@@ -372,7 +371,7 @@ func (this *Client) ndecode(data []byte, bizFieldName string, needVerifySign boo
 
 	// 对业务数据进行解密
 	var plaintext []byte
-	if plaintext, err = this.ndecrypt(bizBytes); err != nil {
+	if plaintext, err = this.decrypt(bizBytes); err != nil {
 		return err
 	}
 
@@ -403,7 +402,7 @@ func (this *Client) ndecode(data []byte, bizFieldName string, needVerifySign boo
 	return nil
 }
 
-func (this *Client) ndecrypt(data []byte) ([]byte, error) {
+func (this *Client) decrypt(data []byte) ([]byte, error) {
 	var plaintext = data
 	if len(data) > 1 && data[0] == '"' {
 		var ciphertext, err = base64decode(data[1 : len(data)-1])
@@ -418,72 +417,72 @@ func (this *Client) ndecrypt(data []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-func (this *Client) decode(data, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
-	var bizIndex = strings.LastIndex(data, bizFieldName)
-	var errorIndex = strings.LastIndex(data, kErrorResponse)
-
-	// 从返回的数据中提取出业务数据(xxx_response)、证书编号(alipay_cert_sn)和签名(sign)
-	var content string
-	var certSN string
-	var signature string
-
-	if bizIndex > 0 {
-		content, certSN, signature = split(data, bizIndex+len(bizFieldName)+2)
-	} else if errorIndex > 0 {
-		content, certSN, signature = split(data, errorIndex+len(kErrorResponse)+2)
-	} else {
-		return ErrBadResponse
-	}
-
-	// 对业务数据进行解密
-	var nContent []byte
-	if nContent, err = this.decrypt(content); err != nil {
-		return err
-	}
-
-	// 验证签名
-	if needVerifySign {
-		if signature == "" {
-			// 没有签名数据，返回的内容一般为错误信息
-			var rErr *Error
-			if err = json.Unmarshal(nContent, &rErr); err != nil {
-				return err
-			}
-			return rErr
-		}
-
-		// 验证签名
-		var publicKey *rsa.PublicKey
-		if publicKey, err = this.getAliPayPublicKey(certSN); err != nil {
-			return err
-		}
-		if err = verifyBytes([]byte(content), signature, publicKey); err != nil {
-			return err
-		}
-	}
-
-	if err = json.Unmarshal(nContent, result); err != nil {
-		return err
-	}
-
-	return nil
-}
+//func (this *Client) decode(data, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+//	var bizIndex = strings.LastIndex(data, bizFieldName)
+//	var errorIndex = strings.LastIndex(data, kErrorResponse)
+//
+//	// 从返回的数据中提取出业务数据(xxx_response)、证书编号(alipay_cert_sn)和签名(sign)
+//	var content string
+//	var certSN string
+//	var signature string
+//
+//	if bizIndex > 0 {
+//		content, certSN, signature = split(data, bizIndex+len(bizFieldName)+2)
+//	} else if errorIndex > 0 {
+//		content, certSN, signature = split(data, errorIndex+len(kErrorResponse)+2)
+//	} else {
+//		return ErrBadResponse
+//	}
+//
+//	// 对业务数据进行解密
+//	var nContent []byte
+//	if nContent, err = this.decrypt(content); err != nil {
+//		return err
+//	}
+//
+//	// 验证签名
+//	if needVerifySign {
+//		if signature == "" {
+//			// 没有签名数据，返回的内容一般为错误信息
+//			var rErr *Error
+//			if err = json.Unmarshal(nContent, &rErr); err != nil {
+//				return err
+//			}
+//			return rErr
+//		}
+//
+//		// 验证签名
+//		var publicKey *rsa.PublicKey
+//		if publicKey, err = this.getAliPayPublicKey(certSN); err != nil {
+//			return err
+//		}
+//		if err = verifyBytes([]byte(content), signature, publicKey); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if err = json.Unmarshal(nContent, result); err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
 
 // decrypt 解密数据
-func (this *Client) decrypt(content string) ([]byte, error) {
-	var plaintext = []byte(content)
-	if len(content) > 1 && content[0] == '"' {
-		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
-		if err != nil {
-			return nil, err
-		}
-		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return plaintext, nil
-}
+//func (this *Client) decrypt(content string) ([]byte, error) {
+//	var plaintext = []byte(content)
+//	if len(content) > 1 && content[0] == '"' {
+//		ciphertext, err := base64.StdEncoding.DecodeString(content[1 : len(content)-1])
+//		if err != nil {
+//			return nil, err
+//		}
+//		plaintext, err = ncrypto.AESCBCDecrypt(ciphertext, this.encryptKey, this.encryptIV, this.encryptPadding)
+//		if err != nil {
+//			return nil, err
+//		}
+//	}
+//	return plaintext, nil
+//}
 
 //func (this *Client) Decode(data, signature string, result interface{}) (err error) {
 //	// 验证签名

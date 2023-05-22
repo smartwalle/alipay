@@ -40,7 +40,7 @@ func (this *Client) AgreementExecutionPlanModify(param AgreementExecutionPlanMod
 //
 // 本方法用于解码小程序端 my.getPhoneNumber 获取的数据
 func (this *Client) DecodePhoneNumber(data string) (result *MobileNumber, err error) {
-	if err = this.decode(data, "response", true, &result); err != nil {
+	if err = this.decode([]byte(data), "response", true, &result); err != nil {
 		return nil, err
 	}
 	return result, nil
