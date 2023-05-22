@@ -371,6 +371,8 @@ if err != nil {
 }
 ```
 
+[更多信息](https://github.com/smartwalle/alipay/blob/master/trade_test.go#L104)
+
 ## 示例
 
 [网页支付](https://github.com/smartwalle/alipay/blob/master/examples/main.go)
