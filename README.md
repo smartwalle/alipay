@@ -50,10 +50,19 @@ PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/payp
 **下面用到的 privateKey 需要特别注意一下，如果是通过“支付宝开发平台开发助手”创建的CSR文件，在 CSR 文件所在的目录下会生成相应的私钥文件，我们需要使用该私钥进行签名。**
 
 ```go
-var client, err = alipay.New(appID, privateKey, true)
+var client, err = alipay.New(appID, privateKey, isProduction)
 ```
 
-#### 公钥证书模式
+#### 关于应用私钥 (privateKey)
+
+应用私钥是我们通过工具生成的私钥，调用支付宝接口的时候，我们需要使用该私钥对参数进行签名。
+
+#### 关于 alipay.New() 函数中的最后一个参数 isProduction
+
+支付宝提供了用于开发时测试的 sandbox 环境，对接的时候需要注意相关的 app id 和密钥是 sandbox 环境还是 production 环境的。如果是 sandbox 环境，本参数应该传 false，否则为 true。
+
+
+### 公钥证书模式
 
 如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
@@ -63,7 +72,7 @@ client.LoadAliPayRootCertFromFile("alipayRootCert.crt")             // 加载支
 client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
-#### 普通公钥模式
+### 普通公钥模式
 
 需要注意此处用到的公钥是**支付宝公钥**，不是我们用工具生成的应用公钥。
 
@@ -75,7 +84,7 @@ client.LoadAliPayPublicKey("aliPublicKey")
 
 特别注意：**公钥证书**和**普通公钥**不能同时存在，只能选择其中一种。
 
-#### 接口内容加密
+### 接口内容加密
 
 详细内容访问 [https://opendocs.alipay.com/common/02mse3](https://opendocs.alipay.com/common/02mse3) 进行了解。
 
@@ -86,6 +95,71 @@ client.SetEncryptKey("key")
 ```
 
 如果不需要开启该功能，则不用调用该方法。
+
+### 签名验证
+
+内部已实现对支付宝返回的数据进行签名验证，详细信息请参考[自行实现验签](https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120)。
+
+需要自行对签名验证的场景有 **同步回调(return_url)** 和 **异步通知(notify_url)** 的 HTTP 处理函数。
+
+#### 同步回调(return_url)
+
+发起支付(网页支付)的时候，如果有提供 ReturnURL 参数，那么支付成功之后，支付宝会将浏览器重定向到该 URL，并附带上相关的参数。
+
+```go
+var p = alipay.TradeWapPay{}
+p.ReturnURL = "http://xxx/return"
+```
+
+对支付宝提供的参数进行签名验证：
+
+```go
+http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
+    request.ParseForm()
+    if err := client.VerifySign(request.Form); err != nil {
+        // 如果 err 不为空，则表示验签失败
+        fmt.Println(err)
+        return 
+    }
+    // 业务处理
+}
+```
+
+#### 异步通知(notify_url)
+
+有支付或者其它动作发生后，支付宝服务器会调用我们提供的 NotifyURL，并向其传递相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
+
+```go
+var p = alipay.TradeWapPay{}
+p.NotifyURL = "http://xxx/return"
+```
+
+解析通知并验证签名：
+
+```go
+http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
+    // DecodeNotification 内部已调用 VerifySign 方法验证签名
+    var noti, err = client.DecodeNotification(request)
+    if err != nil {
+        // 错误处理
+        fmt.Println(err)
+        return 
+    }
+    // 业务处理
+    // 如果通知消息没有问题，我们需要确认收到通知消息，不然支付宝后续会继续推送相同的消息
+    alipay.ACKNotification(writer) 
+})
+```
+
+#### 支持 RSA2 签名及验证
+
+采用 RSA2 签名，不再提供 RSA 的支持。
+
+#### 特别注意
+
+提供给支付宝的 NotifyURL 和 ReturnURL 最好不要附带任何参数，支付宝在生成签名信息的时候不会包含 URL 中的参数，而 VerifySign() 方法在验证签名的时候会将收到的所有参数一起验证。
+
+如果确实需要附带参数，可以在调用 VerifySign() 方法前，将附带的参数从 request.Form 中删除。
 
 ## 已实现接口
 
@@ -241,13 +315,13 @@ client.SetEncryptKey("key")
 
 从[支付宝开放平台](https://open.alipay.com/)申请创建相关的应用，使用自己的支付宝账号登录即可。
 
-#### 沙箱环境
+### 沙箱环境
 
 支付宝开放平台为每一个应用提供了沙箱环境，供开发人员开发测试使用。
 
 沙箱环境是独立的，每一个应用都会有一个商家账号和买家账号。
 
-#### 应用信息配置
+### 应用信息配置
 
 参考[官网文档](https://docs.open.alipay.com/200/105894) 进行应用的配置。
 
@@ -257,20 +331,34 @@ client.SetEncryptKey("key")
 
 请参考 [如何生成 RSA 密钥](https://docs.open.alipay.com/291/105971)。
 
-#### 创建 Wap 支付
+### 创建 Wap 支付
 
 ```go
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client, err = alipay.New(appId, privateKey, false)
-
-client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
-client.LoadAliPayRootCertFromFile("alipayRootCert.crt") // 加载支付宝根证书
-client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
-
-// 将 key 的验证调整到初始化阶段
 if err != nil {
     fmt.Println(err)
     return
+}
+
+// 加载应用公钥证书
+if err = client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt"); err != nil {
+    // 错误处理
+}
+
+// 加载支付宝根证书
+if err = client.LoadAliPayRootCertFromFile("alipayRootCert.crt"); err != nil {
+    // 错误处理
+}
+
+// 加载支付宝公钥证书
+if err = client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt"); err != nil {
+    // 错误处理
+}
+
+// 加载内容密钥，可选
+if err = client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="); err != nil {
+    // 错误处理
 }
 
 var p = alipay.TradeWapPay{}
@@ -286,67 +374,10 @@ if err != nil {
     fmt.Println(err)
 }
 
+// 这个 payURL 即是用于打开支付宝支付页面的 URL，可将输出的内容复制，到浏览器中访问该 URL 即可打开支付页面。
 var payURL = url.String()
 fmt.Println(payURL)
-// 这个 payURL 即是用于支付的 URL，可将输出的内容复制，到浏览器中访问该 URL 即可打开支付页面。
 ```
-
-#### 同步返回验签
-
-支持自动对支付宝返回的数据进行签名验证，详细信息请参考[自行实现验签](https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120).
-
-#### Return URL
-
-发起支付的时候，当我们有提供 Return URL 参数，那么支付成功之后，支付宝将会重定向到该 URL，并附带上相关的参数。
-
-```go
-var p = alipay.TradeWapPay{}
-p.ReturnURL = "http://xxx/return"
-```
-
-这时候我们需要对支付宝提供的参数进行签名验证：
-
-```go
-http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
-    request.ParseForm()
-    ok, err := client.VerifySign(request.Form)
-    fmt.Println(ok, err)
-}
-```
-
-#### 异步验证支付结果
-
-有支付或者其它动作发生后，支付宝服务器会调用我们提供的 Notify URL，并向其传递相关的信息。参考[手机网站支付结果异步通知](https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.XM5C4a&treeId=203&articleId=105286&docType=1)。
-
-我们需要在提供的 Notify URL 服务中获取相关的参数并进行验证:
-
-```go
-http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-    var noti, err = client.DecodeNotification(request)
-    if err != nil {
-        // 错误处理
-        return 
-    }
-    if noti != nil {
-        fmt.Println("交易状态为:", noti.TradeStatus)
-    }
-    alipay.ACKNotification(writer) // 确认收到通知消息
-})
-```
-
-此验证方法适用于支付宝所有情况下发送的 Notify，不管是手机 App 支付还是 Wap 支付。
-
-#### 关于应用私钥 (privateKey)
-
-应用私钥是我们通过工具生成的私钥，调用支付宝接口的时候，我们需要使用该私钥对参数进行签名。
-
-#### 关于 alipay.New() 函数中的最后一个参数 isProduction
-
-支付宝提供了用于开发时测试的 sandbox 环境，对接的时候需要注意相关的 app id 和密钥是 sandbox 环境还是 production 环境的。如果是 sandbox 环境，本参数应该传 false，否则为 true。
-
-#### 支持 RSA 签名及验证
-
-默认采用的是 RSA2 签名，不再提供 RSA 的支持
 
 ## 自定义请求
 
