@@ -194,14 +194,18 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	return nil
 }
 
-// LoadAppPublicCert 加载应用公钥证书
-func (this *Client) LoadAppPublicCert(s string) error {
-	cert, err := ncrypto.ParseCertificate([]byte(s))
+func (this *Client) loadAppPublicCert(b []byte) error {
+	cert, err := ncrypto.ParseCertificate(b)
 	if err != nil {
 		return err
 	}
 	this.appPublicCertSN = getCertSN(cert)
 	return nil
+}
+
+// LoadAppPublicCert 加载应用公钥证书
+func (this *Client) LoadAppPublicCert(s string) error {
+	return this.loadAppPublicCert([]byte(s))
 }
 
 // LoadAppPublicCertFromFile 加载应用公钥证书
@@ -211,12 +215,12 @@ func (this *Client) LoadAppPublicCertFromFile(filename string) error {
 		return err
 	}
 
-	return this.LoadAppPublicCert(string(b))
+	return this.loadAppPublicCert(b)
 }
 
 // LoadAliPayPublicCert 加载支付宝公钥证书
-func (this *Client) LoadAliPayPublicCert(s string) error {
-	cert, err := ncrypto.ParseCertificate([]byte(s))
+func (this *Client) loadAliPayPublicCert(b []byte) error {
+	cert, err := ncrypto.ParseCertificate(b)
 	if err != nil {
 		return err
 	}
@@ -231,6 +235,10 @@ func (this *Client) LoadAliPayPublicCert(s string) error {
 	return nil
 }
 
+func (this *Client) LoadAliPayPublicCert(s string) error {
+	return this.loadAliPayPublicCert([]byte(s))
+}
+
 // LoadAliPayPublicCertFromFile 加载支付宝公钥证书
 func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
 	b, err := os.ReadFile(filename)
@@ -238,7 +246,7 @@ func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
 		return err
 	}
 
-	return this.LoadAliPayPublicCert(string(b))
+	return this.loadAliPayPublicCert(b)
 }
 
 // LoadAliPayRootCert 加载支付宝根证书
