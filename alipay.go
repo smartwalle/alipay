@@ -79,7 +79,9 @@ func WithTimeLocation(location *time.Location) OptionFunc {
 
 func WithHTTPClient(client *http.Client) OptionFunc {
 	return func(c *Client) {
-		c.Client = client
+		if client != nil {
+			c.Client = client
+		}
 	}
 }
 
