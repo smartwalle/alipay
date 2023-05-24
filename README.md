@@ -67,9 +67,9 @@ var client, err = alipay.New(appID, privateKey, isProduction)
 如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
 ```go
-client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
-client.LoadAliPayRootCertFromFile("alipayRootCert.crt")             // 加载支付宝根证书
-client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
+client.LoadAppCertPublicKeyFromFile("/路径/appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
+client.LoadAliPayRootCertFromFile("/路径/alipayRootCert.crt")             // 加载支付宝根证书
+client.LoadAlipayCertPublicKeyFromFile("/路径/alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
 ### 普通公钥模式
@@ -342,7 +342,7 @@ if err != nil {
 }
 
 // 加载应用公钥证书
-if err = client.LoadAppPublicCertFromFile("appCertPublicKey_2017011104995404.crt"); err != nil {
+if err = client.LoadAppCertPublicKeyFromFile("appCertPublicKey_2017011104995404.crt"); err != nil {
     // 错误处理
 }
 
@@ -352,7 +352,7 @@ if err = client.LoadAliPayRootCertFromFile("alipayRootCert.crt"); err != nil {
 }
 
 // 加载支付宝公钥证书
-if err = client.LoadAliPayPublicCertFromFile("alipayCertPublicKey_RSA2.crt"); err != nil {
+if err = client.LoadAlipayCertPublicKeyFromFile("alipayCertPublicKey_RSA2.crt"); err != nil {
     // 错误处理
 }
 

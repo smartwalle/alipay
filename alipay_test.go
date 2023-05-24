@@ -34,9 +34,9 @@ func init() {
 	var cert = true
 	if cert {
 		// 使用支付宝证书
-		fmt.Println("加载证书", client.LoadAppPublicCertFromFile("appPublicCert.crt"))
+		fmt.Println("加载证书", client.LoadAppCertPublicKeyFromFile("appCertPublicKey.crt"))
 		fmt.Println("加载证书", client.LoadAliPayRootCertFromFile("alipayRootCert.crt"))
-		fmt.Println("加载证书", client.LoadAliPayPublicCertFromFile("alipayPublicCert.crt"))
+		fmt.Println("加载证书", client.LoadAlipayCertPublicKeyFromFile("alipayCertPublicKey.crt"))
 	} else {
 		// 使用支付宝公钥
 		fmt.Println("加载公钥", client.LoadAliPayPublicKey(aliPublicKey))

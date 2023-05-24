@@ -48,9 +48,9 @@ type Client struct {
 	encryptKey     []byte
 	encryptPadding ncrypto.Padding
 
-	appPublicCertSN string
-	aliRootCertSN   string
-	aliPublicCertSN string
+	appCertSN     string
+	aliRootCertSN string
+	aliCertSN     string
 
 	// 签名和验签
 	signer    Signer
@@ -172,9 +172,9 @@ func (this *Client) SetEncryptKey(key string) error {
 }
 
 func (this *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
-	this.aliPublicCertSN = sn
+	this.aliCertSN = sn
 	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)))
-	this.verifiers[this.aliPublicCertSN] = verifier
+	this.verifiers[this.aliCertSN] = verifier
 	return verifier
 }
 
@@ -196,32 +196,60 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	return nil
 }
 
-func (this *Client) loadAppPublicCert(b []byte) error {
+// LoadAppPublicCert 加载应用公钥证书
+//
+// Deprecated: use LoadAppCertPublicKey instead.
+func (this *Client) LoadAppPublicCert(s string) error {
+	return this.LoadAppCertPublicKey(s)
+}
+
+// LoadAppPublicCertFromFile 加载应用公钥证书
+//
+// Deprecated: use LoadAppCertPublicKeyFromFile instead.
+func (this *Client) LoadAppPublicCertFromFile(filename string) error {
+	return this.LoadAppCertPublicKeyFromFile(filename)
+}
+
+func (this *Client) loadAppCertPublicKey(b []byte) error {
 	cert, err := ncrypto.ParseCertificate(b)
 	if err != nil {
 		return err
 	}
-	this.appPublicCertSN = getCertSN(cert)
+	this.appCertSN = getCertSN(cert)
 	return nil
 }
 
-// LoadAppPublicCert 加载应用公钥证书
-func (this *Client) LoadAppPublicCert(s string) error {
-	return this.loadAppPublicCert([]byte(s))
+// LoadAppCertPublicKey 加载应用公钥证书
+func (this *Client) LoadAppCertPublicKey(s string) error {
+	return this.loadAppCertPublicKey([]byte(s))
 }
 
-// LoadAppPublicCertFromFile 加载应用公钥证书
-func (this *Client) LoadAppPublicCertFromFile(filename string) error {
+// LoadAppCertPublicKeyFromFile 从文件加载应用公钥证书
+func (this *Client) LoadAppCertPublicKeyFromFile(filename string) error {
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
 
-	return this.loadAppPublicCert(b)
+	return this.loadAppCertPublicKey(b)
 }
 
 // LoadAliPayPublicCert 加载支付宝公钥证书
-func (this *Client) loadAliPayPublicCert(b []byte) error {
+//
+// Deprecated: use LoadAlipayCertPublicKey instead.
+func (this *Client) LoadAliPayPublicCert(s string) error {
+	return this.LoadAlipayCertPublicKey(s)
+}
+
+// LoadAliPayPublicCertFromFile 加载支付宝公钥证书
+//
+// Deprecated: use LoadAlipayCertPublicKeyFromFile instead.
+func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
+	return this.LoadAlipayCertPublicKeyFromFile(filename)
+}
+
+// loadAlipayCertPublicKey 加载支付宝公钥证书
+func (this *Client) loadAlipayCertPublicKey(b []byte) error {
 	cert, err := ncrypto.ParseCertificate(b)
 	if err != nil {
 		return err
@@ -237,18 +265,19 @@ func (this *Client) loadAliPayPublicCert(b []byte) error {
 	return nil
 }
 
-func (this *Client) LoadAliPayPublicCert(s string) error {
-	return this.loadAliPayPublicCert([]byte(s))
+// LoadAlipayCertPublicKey 支付宝公钥证书
+func (this *Client) LoadAlipayCertPublicKey(s string) error {
+	return this.loadAlipayCertPublicKey([]byte(s))
 }
 
-// LoadAliPayPublicCertFromFile 加载支付宝公钥证书
-func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
+// LoadAlipayCertPublicKeyFromFile 从文件支付宝公钥证书
+func (this *Client) LoadAlipayCertPublicKeyFromFile(filename string) error {
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
 
-	return this.loadAliPayPublicCert(b)
+	return this.loadAlipayCertPublicKey(b)
 }
 
 // LoadAliPayRootCert 加载支付宝根证书
@@ -290,8 +319,8 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	values.Add("sign_type", kSignTypeRSA2)
 	values.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
 	values.Add("version", kVersion)
-	if this.appPublicCertSN != "" {
-		values.Add("app_cert_sn", this.appPublicCertSN)
+	if this.appCertSN != "" {
+		values.Add("app_cert_sn", this.appCertSN)
 	}
 	if this.aliRootCertSN != "" {
 		values.Add("alipay_root_cert_sn", this.aliRootCertSN)
@@ -457,7 +486,7 @@ func (this *Client) getVerifier(certSN string) (verifier Verifier, err error) {
 	defer this.mu.Unlock()
 
 	if certSN == "" {
-		certSN = this.aliPublicCertSN
+		certSN = this.aliCertSN
 	}
 
 	verifier = this.verifiers[certSN]

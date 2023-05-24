@@ -28,7 +28,7 @@ func main() {
 	}
 
 	// 加载证书
-	if err = client.LoadAppPublicCertFromFile("appPublicCert.crt"); err != nil {
+	if err = client.LoadAppCertPublicKeyFromFile("appCertPublicKey.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
@@ -36,7 +36,7 @@ func main() {
 		log.Println("加载证书发生错误", err)
 		return
 	}
-	if err = client.LoadAliPayPublicCertFromFile("alipayPublicCert.crt"); err != nil {
+	if err = client.LoadAlipayCertPublicKeyFromFile("alipayCertPublicKey.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
