@@ -52,7 +52,7 @@ func TestClient_CertDownload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)

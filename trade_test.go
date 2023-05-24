@@ -58,7 +58,7 @@ func TestClient_TradePreCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -78,7 +78,7 @@ func TestClient_TradePay(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -95,7 +95,7 @@ func TestClient_TradeQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Code, rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -114,7 +114,7 @@ func TestClient_TradeQuery2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Code, rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -147,7 +147,7 @@ func TestClient_TradeRefund(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -165,7 +165,7 @@ func TestClient_TradeFastPayRefundQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -185,7 +185,7 @@ func TestClient_TradeRefundAsync(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -200,7 +200,7 @@ func TestClient_TradeMergePreCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)

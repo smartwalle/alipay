@@ -21,7 +21,7 @@ func TestClient_UserCertifyOpenInitialize(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -47,7 +47,7 @@ func TestClient_UserCertifyOpenQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -66,7 +66,7 @@ func TestClient_UserCertdocCertverifyPreconsult(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -81,7 +81,7 @@ func TestClient_UserCertdocCertverifyConsult(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)

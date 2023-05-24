@@ -30,11 +30,11 @@ const (
 // Code 支付宝接口响应错误码 https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
 type Code string
 
-func (c Code) Successful() bool {
+func (c Code) IsSuccess() bool {
 	return c == CodeSuccess
 }
 
-func (c Code) Failed() bool {
+func (c Code) IsFailure() bool {
 	return c != CodeSuccess
 }
 
@@ -112,12 +112,12 @@ func (this *Error) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
 
-func (this *Error) Successful() bool {
-	return this.Code.Successful()
+func (this *Error) IsSuccess() bool {
+	return this.Code.IsSuccess()
 }
 
-func (this *Error) Failed() bool {
-	return this.Code.Failed()
+func (this *Error) IsFailure() bool {
+	return this.Code.IsFailure()
 }
 
 const (

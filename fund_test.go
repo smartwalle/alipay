@@ -18,7 +18,7 @@ func TestClient_FundTransToAccountTransfer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -36,7 +36,7 @@ func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -78,7 +78,7 @@ func TestClient_FundTransUniTransfer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -96,7 +96,7 @@ func TestClient_FundTransCommonQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -112,7 +112,7 @@ func TestClient_FundAccountQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)

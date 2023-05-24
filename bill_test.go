@@ -15,7 +15,7 @@ func TestClient_BillDownloadURLQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -29,7 +29,7 @@ func TestClient_BillBalanceQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
@@ -43,7 +43,7 @@ func TestClient_BillAccountLogQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rsp.Failed() {
+	if rsp.IsFailure() {
 		t.Fatal(rsp.Msg, rsp.SubMsg)
 	}
 	t.Logf("%v", rsp)
