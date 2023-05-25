@@ -108,15 +108,15 @@ type Error struct {
 	SubMsg  string `json:"sub_msg"`
 }
 
-func (this *Error) Error() string {
+func (this Error) Error() string {
 	return fmt.Sprintf("%s - %s", this.Code, this.SubMsg)
 }
 
-func (this *Error) IsSuccess() bool {
+func (this Error) IsSuccess() bool {
 	return this.Code.IsSuccess()
 }
 
-func (this *Error) IsFailure() bool {
+func (this Error) IsFailure() bool {
 	return this.Code.IsFailure()
 }
 
