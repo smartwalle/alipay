@@ -1,4 +1,6 @@
 github.com/smartwalle/ncrypto v1.0.0 h1:nQFxIS3fRgr8V0xRkhnfNQOrcJGPNF6d5XzFwVm79KU=
 github.com/smartwalle/ncrypto v1.0.0/go.mod h1:NmCbG0nLnSDnMImEDrjptFKs0PiLThnFkjQSMtGYgs4=
+github.com/smartwalle/ncrypto v1.0.1 h1:CVe/h/srt6knLiF/9V5OnDDhguskWR801meHizq7KmU=
+github.com/smartwalle/ncrypto v1.0.1/go.mod h1:Dwlp6sfeNaPMnOxMNayMTacvC5JGEVln3CVdiVDgbBk=
 github.com/smartwalle/nsign v0.0.1 h1:fpEwoThIjr1JRPqz5hEwbH5ADX/so6G/zcwvj0ywYyM=
 github.com/smartwalle/nsign v0.0.1/go.mod h1:eY6I4CJlyNdVMP+t6z1H6Jpd4m5/V+8xi44ufSTxXgc=

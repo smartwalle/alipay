@@ -321,6 +321,21 @@ http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Reque
 
 沙箱环境是独立的，每一个应用都会有一个商家账号和买家账号。
 
+#### 沙箱环境网关地址
+
+沙箱环境目前有两个网关地址：
+
+* 老地址: [https://openapi.alipaydev.com/gateway.do](https://openapi.alipaydev.com/gateway.do)
+* 新地址: [https://openapi-sandbox.dl.alipaydev.com/gateway.do](https://openapi-sandbox.dl.alipaydev.com/gateway.do)
+
+大家在对接的时候一定要确认清楚是新地址还是老地址。
+
+本 SDK 目前默认使用的是老地址，如果需要使用新地址，只需要在初始化的时候通过 alipay.WithSandboxGateway() 指定即可。
+
+```go
+alipay.New(appId, privateKey, isProduction, alipay.WithSandboxGateway("https://openapi-sandbox.dl.alipaydev.com/gateway.do"))
+```
+
 ### 应用信息配置
 
 参考[官网文档](https://docs.open.alipay.com/200/105894) 进行应用的配置。

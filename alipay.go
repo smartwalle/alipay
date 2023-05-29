@@ -114,38 +114,38 @@ func WithProductionGateway(gateway string) OptionFunc {
 // privateKey - 应用私钥，开发者自己生成
 //
 // isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
-func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (client *Client, err error) {
-	priKey, err := ncrypto.ParsePKCS1PrivateKey(ncrypto.FormatPKCS1PrivateKey(privateKey))
+func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClient *Client, err error) {
+	priKey, err := ncrypto.DecodePrivateKey([]byte(privateKey)).PKCS1().RSAPrivateKey()
 	if err != nil {
-		priKey, err = ncrypto.ParsePKCS8PrivateKey(ncrypto.FormatPKCS8PrivateKey(privateKey))
+		priKey, err = ncrypto.DecodePrivateKey([]byte(privateKey)).PKCS8().RSAPrivateKey()
 		if err != nil {
 			return nil, err
 		}
 	}
-	client = &Client{}
-	client.isProduction = isProduction
-	client.appId = appId
+	nClient = &Client{}
+	nClient.isProduction = isProduction
+	nClient.appId = appId
 
-	if client.isProduction {
-		client.host = kProductionGateway
-		client.notifyVerifyHost = kProductionMAPIGateway
+	if nClient.isProduction {
+		nClient.host = kProductionGateway
+		nClient.notifyVerifyHost = kProductionMAPIGateway
 	} else {
-		client.host = kSandboxGateway
-		client.notifyVerifyHost = kSandboxGateway
+		nClient.host = kSandboxGateway
+		nClient.notifyVerifyHost = kSandboxGateway
 	}
-	client.Client = http.DefaultClient
-	client.location = time.Local
+	nClient.Client = http.DefaultClient
+	nClient.location = time.Local
 
-	client.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)))
-	client.verifiers = make(map[string]Verifier)
+	nClient.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)))
+	nClient.verifiers = make(map[string]Verifier)
 
 	for _, opt := range opts {
 		if opt != nil {
-			opt(client)
+			opt(nClient)
 		}
 	}
 
-	return client, nil
+	return nClient, nil
 }
 
 func (this *Client) IsProduction() bool {
@@ -167,7 +167,7 @@ func (this *Client) SetEncryptKey(key string) error {
 	this.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	this.encryptType = "AES"
 	this.encryptKey = data
-	this.encryptPadding = ncrypto.NewPKCS7Padding()
+	this.encryptPadding = ncrypto.PKCS7Padding{}
 	return nil
 }
 
@@ -185,7 +185,8 @@ func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
 	if len(aliPublicKey) < 0 {
 		return ErrAliPublicKeyNotFound
 	}
-	pub, err = ncrypto.ParsePublicKey(ncrypto.FormatPublicKey(aliPublicKey))
+
+	pub, err = ncrypto.DecodePublicKey([]byte(aliPublicKey)).PKIX().RSAPublicKey()
 	if err != nil {
 		return err
 	}
@@ -211,7 +212,7 @@ func (this *Client) LoadAppPublicCertFromFile(filename string) error {
 }
 
 func (this *Client) loadAppCertPublicKey(b []byte) error {
-	cert, err := ncrypto.ParseCertificate(b)
+	cert, err := ncrypto.DecodeCertificate(b)
 	if err != nil {
 		return err
 	}
@@ -250,7 +251,7 @@ func (this *Client) LoadAliPayPublicCertFromFile(filename string) error {
 
 // loadAlipayCertPublicKey 加载支付宝公钥证书
 func (this *Client) loadAlipayCertPublicKey(b []byte) error {
-	cert, err := ncrypto.ParseCertificate(b)
+	cert, err := ncrypto.DecodeCertificate(b)
 	if err != nil {
 		return err
 	}
@@ -289,7 +290,7 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	for _, certStr := range certStrList {
 		certStr = certStr + kCertificateEnd
 
-		var cert, _ = ncrypto.ParseCertificate([]byte(certStr))
+		var cert, _ = ncrypto.DecodeCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
 		}
@@ -527,7 +528,7 @@ func (this *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, e
 		return nil, err
 	}
 
-	cert, err = ncrypto.ParseCertificate(certBytes)
+	cert, err = ncrypto.DecodeCertificate(certBytes)
 	if err != nil {
 		return nil, err
 	}
