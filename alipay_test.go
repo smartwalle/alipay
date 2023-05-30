@@ -31,7 +31,7 @@ func init() {
 	fmt.Println("加载内容密钥", client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="))
 
 	// 下面两种方式只能二选一
-	var cert = false
+	var cert = true
 	if cert {
 		// 使用支付宝证书
 		fmt.Println("加载证书", client.LoadAppCertPublicKeyFromFile("appCertPublicKey.crt"))

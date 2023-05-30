@@ -284,12 +284,10 @@ func (this *Client) LoadAlipayCertPublicKeyFromFile(filename string) error {
 // LoadAliPayRootCert 加载支付宝根证书
 func (this *Client) LoadAliPayRootCert(s string) error {
 	var certStrList = strings.Split(s, kCertificateEnd)
-
 	var certSNList = make([]string, 0, len(certStrList))
-
 	for _, certStr := range certStrList {
-		certStr = certStr + kCertificateEnd
-
+		certStr = strings.TrimSpace(certStr)
+		certStr = strings.TrimPrefix(certStr, "-----BEGIN CERTIFICATE-----")
 		var cert, _ = ncrypto.DecodeCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
