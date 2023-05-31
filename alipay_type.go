@@ -89,10 +89,10 @@ func (this *Payload) AddParam(key, value string) *Payload {
 	return this
 }
 
-// AddField 添加请求参数(业务相关)
+// Set 添加请求参数(业务相关)
 //
 // 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
-func (this *Payload) AddField(key string, value interface{}) *Payload {
+func (this *Payload) Set(key string, value interface{}) *Payload {
 	this.biz[key] = value
 	return this
 }

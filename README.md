@@ -403,7 +403,7 @@ var p = alipay.NewPayload("这里是接口名称，如：alipay.trade.query")
 // 添加公共请求参数，如：app_auth_token
 p.AddParam("key", "value") 
 // 添加请求参数(业务相关)
-p.AddField("key", "value")
+p.Set("key", "value")
 
 var result map[string]interface{} 
 // result 也可以为结构体，可参照 alipay.TradeQueryRsp

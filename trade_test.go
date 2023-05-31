@@ -104,8 +104,8 @@ func TestClient_TradeQuery(t *testing.T) {
 func TestClient_TradeQuery2(t *testing.T) {
 	t.Log("========== TradeQuery ==========")
 	var p = alipay.NewPayload("alipay.trade.query")
-	p.AddField("out_trade_no", "trade_no_20170623021124")
-	p.AddField("query_options", []string{"TRADE_SETTLE_INFO"})
+	p.Set("out_trade_no", "trade_no_20170623021124")
+	p.Set("query_options", []string{"TRADE_SETTLE_INFO"})
 
 	var rsp *alipay.TradeQueryRsp
 	var err = client.Request(p, &rsp)
@@ -123,8 +123,8 @@ func TestClient_TradeQuery2(t *testing.T) {
 func TestClient_TradeQuery3(t *testing.T) {
 	t.Log("========== TradeQuery ==========")
 	var p = alipay.NewPayload("alipay.trade.query")
-	p.AddField("out_trade_no", "trade_no_20170623021124")
-	p.AddField("query_options", []string{"TRADE_SETTLE_INFO"})
+	p.Set("out_trade_no", "trade_no_20170623021124")
+	p.Set("query_options", []string{"TRADE_SETTLE_INFO"})
 
 	var rsp map[string]interface{}
 	var err = client.Request(p, &rsp)
