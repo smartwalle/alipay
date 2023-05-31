@@ -138,8 +138,10 @@ p.NotifyURL = "http://xxx/return"
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
+    request.ParseForm()
+
     // DecodeNotification 内部已调用 VerifySign 方法验证签名
-    var noti, err = client.DecodeNotification(request)
+    var noti, err = client.DecodeNotification(request.Form)
     if err != nil {
         // 错误处理
         fmt.Println(err)
