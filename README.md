@@ -36,6 +36,8 @@ import github.com/smartwalle/alipay
 
 PayPal [https://github.com/smartwalle/paypal](https://github.com/smartwalle/paypal)
 
+银联支付 [https://github.com/smartwalle/unionpay](https://github.com/smartwalle/unionpay)
+
 ## 关于各分支（版本)
 
 * v1 - 最老的版本，实现了完整的支付功能，目前已停止更新维护；
