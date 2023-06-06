@@ -44,6 +44,7 @@ type SystemOauthTokenRsp struct {
 	RefreshToken string `json:"refresh_token"`
 	ReExpiresIn  int64  `json:"re_expires_in"`
 	AuthStart    string `json:"auth_start"`
+	OpenId       string `json:"open_id"`
 }
 
 // UserInfoShare 支付宝会员授权信息查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.info.share
