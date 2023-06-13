@@ -22,6 +22,10 @@ func init() {
 	var err error
 	client, err = alipay.New(appID, privateKey, false)
 
+	client.OnReceivedData(func(method string, data []byte) {
+		fmt.Println(method, string(data))
+	})
+
 	if err != nil {
 		fmt.Println("初始化支付宝失败, 错误信息为", err)
 		os.Exit(-1)

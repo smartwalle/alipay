@@ -40,6 +40,7 @@ type Client struct {
 	notifyVerifyHost string
 	Client           *http.Client
 	location         *time.Location
+	onReceivedData   func(method string, data []byte)
 
 	// 内容加密
 	encryptNeed    bool
@@ -429,6 +430,10 @@ func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool
 
 	// 验证签名
 	if needVerifySign {
+		if this.onReceivedData != nil {
+			this.onReceivedData(bizFieldName, plaintext)
+		}
+
 		if len(signBytes) == 0 {
 			// 没有签名数据，返回的内容一般为错误信息
 			var rErr *Error
@@ -560,6 +565,10 @@ func (this *Client) verify(certSN string, data, signature []byte) (err error) {
 
 func (this *Client) Request(payload *Payload, result interface{}) (err error) {
 	return this.doRequest("POST", payload, result)
+}
+
+func (this *Client) OnReceivedData(fn func(method string, data []byte)) {
+	this.onReceivedData = fn
 }
 
 func base64decode(data []byte) ([]byte, error) {
