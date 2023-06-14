@@ -334,10 +334,10 @@ http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Reque
 
 大家在对接的时候一定要确认清楚是新地址还是老地址。
 
-本 SDK 目前默认使用的是老地址，如果需要使用新地址，只需要在初始化的时候通过 alipay.WithSandboxGateway() 指定即可。
+本 SDK 目前默认使用的是 **【新地址】**，如果需要使用老地址，只需要在初始化的时候通过 alipay.WithSandboxGateway() 指定即可。
 
 ```go
-alipay.New(appId, privateKey, isProduction, alipay.WithSandboxGateway("https://openapi-sandbox.dl.alipaydev.com/gateway.do"))
+alipay.New(appId, privateKey, isProduction, alipay.WithSandboxGateway("https://openapi.alipaydev.com/gateway.do"))
 ```
 
 ### 应用信息配置

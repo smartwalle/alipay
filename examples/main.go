@@ -11,8 +11,8 @@ import (
 var client *alipay.Client
 
 const (
-	kAppId      = "2016073100129537"
-	kPrivateKey = "MIIEogIBAAKCAQEAmF/L4+mkeiFTaCeSy6DoOB3OGOKFmLElx/5pgOuPPGHLXjBsk6X+8Iq0VqRhug3hFndSPB4e8UxKftXmzjYswlhcEBG/huBlTQhiKbNAq7Iia1L3tIs+vV8lEuFJlI9lZwOfczHIDo3gYZFKnEumyLntWq5sebYkhazg9NG56D9cBeXPz7rPzKwzVmjCL8HkB4BkvEZYUqw0WFm6GFt0Pc0VOcCwoio9oRlZOgVI/kHCGbLfChgJAqs+Id1pYOvB0CoYv49uaXG4qqcUCG5tW9EE/IVUCXRjV7+v9ypd+PejNyFWtC+5S6I8xVa3LjmMpFr881n+QtKeYQq0hFijBQIDAQABAoIBABKqSXOVv0wmoOz1TAodn9Sf8gsiVHMr4BDrnUjpkhY3dI4JKIO9pckZdJXYdRAxew0heLVcizXLvqRi128TO9BiuoRNaETBYCdbi4rIJnfhzk2PUECRfhH8gbIaXsUP+7/uta2Kv5Lo1j+daKJUsg2MmQKusyMFqNunHbdfqYJFb5FVJieojngXhBeE/pOkCDKfVbbcYNg8MZSHqGBh6U15/H2qCewdfstnVJKMr8gs4xK7ITygev3jdE9PuxDpsiBexXNT4AXuhHpydYUKgPuAoFj2fnMIvdDY+bo5dpgN4sCFVjnPEp1HBkfviY1X2k3Ca/e0bGjfS1qxs2fDy1ECgYEA6bOPRx3AIO73aesBmVwRCxaZ2m1o9HsMmT0WeW/yaQ/NeEUFgn36BrKwkr8TQZwPrMUEMshFIowgSjOWSJbV243/xEi25i4IE76NeTPK6OJv1sOocc4dogpGmXq2U+lepPQTX8ZNXh6+MeT96IT//kIrc0u1tOe8v+Cfn6nUH48CgYEApum4o5VSHfHL3j3U6o9+eAsQXfoaPhEd9B2lkUU6btGLegR3lwycCDfP94dHKQe9JAL6UCvUcWvAEpU+gZT/vFrh0krs1XjP/i3S8PH5rd11NhRrYTn2K4ELDfcvhFYelHF7MLz9Yk6j5anze3fRGeAve45fqLl8CEaaVj3oSisCgYAeMHXnx+4T0wrfAd65Au2oswi48L1IJ8Ue3odStKVp8QKn8LKfgsqTpu2sZ0aDiTd1KBY8wSY9KkDZlQRq6CFENXm+z23hGj0s38bCy3AA2Y98/NV7rhah4hXwqat394OkZ2tBSgqgh/Ql2eD68oNnQwD96d/VOMJnPwsfwv6F/QKBgDcBHHyj74y4qwNRAwJNSVML6lfd3JoJkAJrZq1pz+jHGxyZrkNTv3Oh2OHsbZHi3/ynEpAq8XZzGLfHAPM5A9GxbWucj1GF350WwsXuJ+aY7VBmCEDhFfOeMeNnSvxkWO14PC2CiknEOpSrnfZZNMo/K8ae031JqssbYS78dblDAoGATqM5N4n8cS7NPzGLoj8+sZshJmtWZsefxV+QUBYKVeeDyjiPr/E1CA8zAewapnh5eeUF68A9uAqwXyuU8Cs8i6WaeBJf32llOgAgKfjaYtQJFfoc0xeGIPDltFQSL630pVwdIQTbYtj4WTm6UEPqGr/kBJ4/O7F4fWJOAyr0pT0="
+	kAppId      = "9021000122689420"
+	kPrivateKey = "MIIEpAIBAAKCAQEAtrCYn039gp/IjLZsNl64QjHjPfAklyYZyIPSqlPNmColRMOAb2rbnLASRpP1VgT7YzA4JgJ1f/fhGsSBexpIi2BOZdwDexBtmfe9dFGzbWhpqAxzWnZazLde+BGOs6BGk0v1B0cWUqlv6wgSSo57Xu7xL56a34gDsBi1qoXnu4f1CzrvviRsNCgDDurNsAtkjLzoPuzHri6sThsQ7P3amb3zyG5xVxSGZRFKgPNoiiZpBpXPoEwMrHQRE8rmsmgdz+E4YL1xuD+ICQxCCTBOJwUuDzPt5wr793Pxgloqh0p3yPvOShmbMAxUtLiGgcZNqxy49ddG89egVyGxRJpimQIDAQABAoIBAEfGUfAkn/j19cDy2sjxpcq79t+avYV0vqR8xgONMTUbOdEuTgN4JBgHRObdsoG9K1bo1uZ4CNnh9Vqi4YwP43h+uc5jBisPZUAciR5uCuRtJTWUzq032qybToB/xWTlD1VHflkBoM+RKhtY7HbGS8ocbj2bPpWbxnck/hqkyUpvkFkO0/ngHr6V44pxEK7sm53abiey4jtAQwJcLgS3wLcbSbVGsfRI1srq1I1s54EKzZfJxqRynuMiaKDPGHrUHEcNCQcWS3k4cU1sZF5jMk17f97SzwC8Iz0Kfd7zzw8IiGmvX7sYHJL0mPwqAF+rSlVwZs+Fj/DDcFcBHvpSlBECgYEA+BzskUzgQng3KoMY3Ho6bCxm2At00+Jmfz/bLknj/KB8qie0ionuvOkSFSc1rqPtijVN4L5EJRS1y8LWMGxJTsxAnqJdlLynFx7zi3n/C3Aywwhtz2ijyQNFLgZtnbhVIZYDnf8GwLsWPJjbEeE1JoDAO4wNtT4DuV5mHAdWqY8CgYEAvH9GuQgc+7un90kAFY9nyvlkD/D2cRcfF0Z+FPoj3/k3GS6pXWfnrORgkiGwyqm1e83Tx8RPYMtkRgAGy2mW4ibj7jbOFJYQNBZiML7DAtYuwDDdILm1d4F3840/QHYdtXdWHIryKmdthjmA/Bt1u0MSMmhaGVfHFdYUF2mNjVcCgYEA6mDAZN3fN0tCqakf0h6wk8E6AbqIySOkuW5ECa0JbnrYaRCK7xgva0sspsjcYDZAzX9fKv/xdanjtjE+jo2sjoBKRtCQYFH58dBuNoKvGEoL2ctbmEN7/QZW0oyF/ijEWq7Qie8AnQ3eiq3GvFQnFlEnxtidlmmXsQNop++SwScCgYBQCHJMyccUkx7D/fjNLrBRHAaCRjs81SZcSY/q9DIbPMNKK+e5Qw6499aQ9UENK3Vk9YWAAjf5zyHqHsTDxTdNGloYoKhrUTPcCczzCWvfXnVHIPgilvcXoJ7/h+9dPUlr7Rlg0RX1LyjvnqbHZBlewyGMyYXH0N80xEqPjj+NzQKBgQCyhmWVWUiZNNMV5aWcHy8XFoXuvLIFWbA2WvPoPG+Xia+5BO2ytTI0VJKBY5ACaEofWsy5R2/L6cJhYeSTGe9z0K6Wg96NsxV4BSawp+jseV7oi1HdpTMB4dGph0DJUFMJZ1Lm0s7r5aZ5pkZ6+JYGry1EGmjmR+xaVHodd2LNpw=="
 	kServerPort = "9989"
 	// TODO 设置回调地址域名
 	kServerDomain = ""
@@ -27,7 +27,7 @@ func main() {
 	}
 
 	// 加载证书
-	if err = client.LoadAppCertPublicKeyFromFile("appCertPublicKey.crt"); err != nil {
+	if err = client.LoadAppCertPublicKeyFromFile("appPublicCert.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
@@ -35,12 +35,12 @@ func main() {
 		log.Println("加载证书发生错误", err)
 		return
 	}
-	if err = client.LoadAlipayCertPublicKeyFromFile("alipayCertPublicKey.crt"); err != nil {
+	if err = client.LoadAlipayCertPublicKeyFromFile("alipayPublicCert.crt"); err != nil {
 		log.Println("加载证书发生错误", err)
 		return
 	}
 
-	if err = client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="); err != nil {
+	if err = client.SetEncryptKey("iotxR/d99T9Awom/UaSqiQ=="); err != nil {
 		log.Println("加载内容加密密钥发生错误", err)
 		return
 	}
