@@ -89,7 +89,7 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 func WithSandboxGateway(gateway string) OptionFunc {
 	return func(c *Client) {
 		if gateway == "" {
-			gateway = kSandboxGateway
+			gateway = kNewSandboxGateway
 		}
 		if !c.isProduction {
 			c.host = gateway
@@ -106,6 +106,14 @@ func WithProductionGateway(gateway string) OptionFunc {
 			c.host = gateway
 		}
 	}
+}
+
+func WithNewSandboxGateway() OptionFunc {
+	return WithSandboxGateway(kNewSandboxGateway)
+}
+
+func WithPastSandboxGateway() OptionFunc {
+	return WithSandboxGateway(kPastSandboxGateway)
 }
 
 // New 初始化支付宝客户端
@@ -131,8 +139,8 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClie
 		nClient.host = kProductionGateway
 		nClient.notifyVerifyHost = kProductionMAPIGateway
 	} else {
-		nClient.host = kSandboxGateway
-		nClient.notifyVerifyHost = kSandboxGateway
+		nClient.host = kNewSandboxGateway
+		nClient.notifyVerifyHost = kNewSandboxGateway
 	}
 	nClient.Client = http.DefaultClient
 	nClient.location = time.Local
