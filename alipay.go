@@ -32,6 +32,7 @@ var (
 const (
 	kAliPayPublicKeySN = "alipay-public-key"
 	kAppAuthToken      = "app_auth_token"
+	kEmptyBizContent   = "{}"
 )
 
 type Client struct {
@@ -297,13 +298,12 @@ func (this *Client) LoadAliPayRootCert(s string) error {
 	var certStrList = strings.Split(s, kCertificateEnd)
 	var certSNList = make([]string, 0, len(certStrList))
 	for _, certStr := range certStrList {
-		certStr = strings.Replace(certStr, "-----BEGIN CERTIFICATE-----", "", 1)
+		certStr = strings.Replace(certStr, kCertificateBegin, "", 1)
 		var cert, _ = ncrypto.DecodeCertificate([]byte(certStr))
 		if cert != nil && (cert.SignatureAlgorithm == x509.SHA256WithRSA || cert.SignatureAlgorithm == x509.SHA1WithRSA) {
 			certSNList = append(certSNList, getCertSN(cert))
 		}
 	}
-
 	this.aliRootCertSN = strings.Join(certSNList, "_")
 	return nil
 }
@@ -341,15 +341,17 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	}
 
 	var content = string(jsonBytes)
-	if this.needEncrypt && param.NeedEncrypt() {
-		jsonBytes, err = ncrypto.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV, this.encryptPadding)
-		if err != nil {
-			return nil, err
+	if content != kEmptyBizContent {
+		if this.needEncrypt && param.NeedEncrypt() {
+			jsonBytes, err = ncrypto.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV, this.encryptPadding)
+			if err != nil {
+				return nil, err
+			}
+			content = base64.StdEncoding.EncodeToString(jsonBytes)
+			values.Add("encrypt_type", this.encryptType)
 		}
-		content = base64.StdEncoding.EncodeToString(jsonBytes)
-		values.Add("encrypt_type", this.encryptType)
+		values.Add("biz_content", content)
 	}
-	values.Add("biz_content", content)
 
 	var params = param.Params()
 	for k, v := range params {
@@ -574,7 +576,7 @@ func (this *Client) verify(certSN string, data, signature []byte) (err error) {
 }
 
 func (this *Client) Request(payload *Payload, result interface{}) (err error) {
-	return this.doRequest("POST", payload, result)
+	return this.doRequest(http.MethodPost, payload, result)
 }
 
 func (this *Client) OnReceivedData(fn func(method string, data []byte)) {

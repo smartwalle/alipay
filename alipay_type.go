@@ -25,6 +25,7 @@ const (
 	kSignFieldName     = "sign"
 	kSignTypeFieldName = "sign_type"
 	kCertSNFieldName   = "alipay_cert_sn"
+	kCertificateBegin  = "-----BEGIN CERTIFICATE-----"
 	kCertificateEnd    = "-----END CERTIFICATE-----"
 )
 
