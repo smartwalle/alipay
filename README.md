@@ -419,6 +419,24 @@ if err != nil {
 
 [更多信息](https://github.com/smartwalle/alipay/blob/master/trade_test.go#L104)
 
+## 文件上传
+
+使用 **自定义请求** 实现 [alipay.open.file.upload(支付宝文件上传接口)](https://opendocs.alipay.com/mini/05snwo) 功能，需要注意本接口是小程序应用的功能，需要在小程序应用中开启 **搜素直达** 才能正常使用。
+
+```go
+var p = alipay.NewPayload("alipay.open.file.upload")
+p.Encrypt = false // 文件上传不支持接口内容加密
+
+// 设置参数
+p.AddParam("biz_code", "content_creation")
+
+// 添加文件
+p.AddFile("file_content", "a.jpg", "path/a.jpg")
+
+var result map[string]interface{}
+var err = client.Request(p, &result)
+```
+
 ## 示例
 
 [网页支付](https://github.com/smartwalle/alipay/blob/master/examples/main.go)
