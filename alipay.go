@@ -321,18 +321,18 @@ func (this *Client) LoadAliPayRootCertFromFile(filename string) error {
 
 func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	var values = url.Values{}
-	values.Add("app_id", this.appId)
-	values.Add("method", param.APIName())
-	values.Add("format", kFormat)
-	values.Add("charset", kCharset)
-	values.Add("sign_type", kSignTypeRSA2)
-	values.Add("timestamp", time.Now().In(this.location).Format(kTimeFormat))
-	values.Add("version", kVersion)
+	values.Add(kFieldAppId, this.appId)
+	values.Add(kFieldMethod, param.APIName())
+	values.Add(kFieldFormat, kFormat)
+	values.Add(kFieldCharset, kCharset)
+	values.Add(kFieldSignType, kSignTypeRSA2)
+	values.Add(kFieldTimestamp, time.Now().In(this.location).Format(kTimeFormat))
+	values.Add(kFieldVersion, kVersion)
 	if this.appCertSN != "" {
-		values.Add("app_cert_sn", this.appCertSN)
+		values.Add(kFieldAppCertSN, this.appCertSN)
 	}
 	if this.aliRootCertSN != "" {
-		values.Add("alipay_root_cert_sn", this.aliRootCertSN)
+		values.Add(kFieldAliPayRootCertSN, this.aliRootCertSN)
 	}
 
 	jsonBytes, err := json.Marshal(param)
@@ -348,9 +348,9 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 				return nil, err
 			}
 			content = base64.StdEncoding.EncodeToString(jsonBytes)
-			values.Add("encrypt_type", this.encryptType)
+			values.Add(kFieldEncryptType, this.encryptType)
 		}
-		values.Add("biz_content", content)
+		values.Add(kFieldBizContent, content)
 	}
 
 	var params = param.Params()
@@ -366,7 +366,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 		return nil, err
 	}
 
-	values.Add("sign", signature)
+	values.Add(kFieldSign, signature)
 	return values, nil
 }
 
@@ -411,8 +411,8 @@ func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool
 		return err
 	}
 
-	var signBytes = raw[kSignFieldName]
-	var certBytes = raw[kCertSNFieldName]
+	var signBytes = raw[kFieldSign]
+	var certBytes = raw[kFieldAlyPayCertSN]
 	var bizBytes = raw[bizFieldName]
 	var errBytes = raw[kErrorResponse]
 
@@ -484,16 +484,16 @@ func (this *Client) decrypt(data []byte) ([]byte, error) {
 
 func (this *Client) VerifySign(values url.Values) (err error) {
 	var verifier Verifier
-	if verifier, err = this.getVerifier(values.Get(kCertSNFieldName)); err != nil {
+	if verifier, err = this.getVerifier(values.Get(kFieldAlyPayCertSN)); err != nil {
 		return err
 	}
 
 	var signBytes []byte
-	if signBytes, err = base64.StdEncoding.DecodeString(values.Get(kSignFieldName)); err != nil {
+	if signBytes, err = base64.StdEncoding.DecodeString(values.Get(kFieldSign)); err != nil {
 		return err
 	}
 
-	return verifier.VerifyValues(values, signBytes, nsign.WithIgnore(kSignFieldName, kSignTypeFieldName, kCertSNFieldName))
+	return verifier.VerifyValues(values, signBytes, nsign.WithIgnore(kFieldSign, kFieldSignType, kFieldAlyPayCertSN))
 }
 
 func (this *Client) getVerifier(certSN string) (verifier Verifier, err error) {
@@ -526,7 +526,7 @@ func (this *Client) getVerifier(certSN string) (verifier Verifier, err error) {
 }
 
 func (this *Client) CertDownload(param CertDownload) (result *CertDownloadRsp, err error) {
-	err = this.doRequest("POST", param, &result)
+	err = this.doRequest(http.MethodPost, param, &result)
 	return result, err
 }
 

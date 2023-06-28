@@ -20,13 +20,23 @@ const (
 )
 
 const (
-	kResponseSuffix    = "_response"
-	kErrorResponse     = "error_response"
-	kSignFieldName     = "sign"
-	kSignTypeFieldName = "sign_type"
-	kCertSNFieldName   = "alipay_cert_sn"
-	kCertificateBegin  = "-----BEGIN CERTIFICATE-----"
-	kCertificateEnd    = "-----END CERTIFICATE-----"
+	kResponseSuffix        = "_response"
+	kErrorResponse         = "error_response"
+	kFieldAppId            = "app_id"
+	kFieldMethod           = "method"
+	kFieldFormat           = "format"
+	kFieldCharset          = "charset"
+	kFieldSign             = "sign"
+	kFieldSignType         = "sign_type"
+	kFieldTimestamp        = "timestamp"
+	kFieldVersion          = "version"
+	kFieldBizContent       = "biz_content"
+	kFieldAppCertSN        = "app_cert_sn"
+	kFieldEncryptType      = "encrypt_type"
+	kFieldAliPayRootCertSN = "alipay_root_cert_sn"
+	kFieldAlyPayCertSN     = "alipay_cert_sn"
+	kCertificateBegin      = "-----BEGIN CERTIFICATE-----"
+	kCertificateEnd        = "-----END CERTIFICATE-----"
 )
 
 // Code 支付宝接口响应错误码 https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
