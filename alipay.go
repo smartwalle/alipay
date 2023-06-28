@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"context"
 	"crypto"
 	"crypto/md5"
 	"crypto/rsa"
@@ -9,6 +10,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/smartwalle/ngx"
 	"github.com/smartwalle/nsign"
 	"io"
 	"net/http"
@@ -43,7 +45,7 @@ type Client struct {
 	onReceivedData   func(method string, data []byte)
 
 	// 内容加密
-	encryptNeed    bool
+	needEncrypt    bool
 	encryptIV      []byte
 	encryptType    string
 	encryptKey     []byte
@@ -164,7 +166,7 @@ func (this *Client) IsProduction() bool {
 // SetEncryptKey 接口内容加密密钥 https://opendocs.alipay.com/common/02mse3
 func (this *Client) SetEncryptKey(key string) error {
 	if key == "" {
-		this.encryptNeed = false
+		this.needEncrypt = false
 		return nil
 	}
 
@@ -172,7 +174,7 @@ func (this *Client) SetEncryptKey(key string) error {
 	if err != nil {
 		return err
 	}
-	this.encryptNeed = true
+	this.needEncrypt = true
 	this.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	this.encryptType = "AES"
 	this.encryptKey = data
@@ -339,7 +341,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	}
 
 	var content = string(jsonBytes)
-	if this.encryptNeed && param.APIName() != kCertDownloadAPI {
+	if this.needEncrypt && param.NeedEncrypt() {
 		jsonBytes, err = ncrypto.AESCBCEncrypt(jsonBytes, this.encryptKey, this.encryptIV, this.encryptPadding)
 		if err != nil {
 			return nil, err
@@ -367,23 +369,23 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 }
 
 func (this *Client) doRequest(method string, param Param, result interface{}) (err error) {
-	var body io.Reader
+	var req = ngx.NewRequest(method, this.host, ngx.WithClient(this.Client))
+	req.SetContentType(kContentType)
 	if param != nil {
 		var values url.Values
 		values, err = this.URLValues(param)
 		if err != nil {
 			return err
 		}
-		body = strings.NewReader(values.Encode())
+		req.SetParams(values)
+
+		var files = param.FileParams()
+		for _, file := range files {
+			req.AddFile(file.Name, file.Filename, file.Filepath)
+		}
 	}
 
-	req, err := http.NewRequest(method, this.host, body)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", kContentType)
-
-	rsp, err := this.Client.Do(req)
+	rsp, err := req.Do(context.Background())
 	if err != nil {
 		return err
 	}

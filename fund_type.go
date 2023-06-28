@@ -2,6 +2,7 @@ package alipay
 
 // FundTransToAccountTransfer 单笔转账到支付宝账户接口请求参数 https://opendocs.alipay.com/apis/api_33/alipay.fund.trans.toaccount.transfer
 type FundTransToAccountTransfer struct {
+	AuxParam
 	AppAuthToken  string `json:"-"`               // 可选
 	OutBizNo      string `json:"out_biz_no"`      // 必选 商户转账唯一订单号
 	PayeeType     string `json:"payee_type"`      // 必选 收款方账户类型,"ALIPAY_LOGONID":支付宝帐号
@@ -32,6 +33,7 @@ type FundTransToAccountTransferRsp struct {
 
 // FundTransOrderQuery 查询转账订单接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query/
 type FundTransOrderQuery struct {
+	AuxParam
 	AppAuthToken string `json:"-"`                    // 可选
 	OutBizNo     string `json:"out_biz_no,omitempty"` // 与 OrderId 二选一
 	OrderId      string `json:"order_id,omitempty"`   // 与 OutBizNo 二选一
@@ -62,6 +64,7 @@ type FundTransOrderQueryRsp struct {
 
 // FundAuthOrderVoucherCreate 资金授权发码接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.voucher.create/
 type FundAuthOrderVoucherCreate struct {
+	AuxParam
 	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号，创建后不能修改，需要保证在商户端不重复。
@@ -101,6 +104,7 @@ type FundAuthOrderVoucherCreateRsp struct {
 
 // FundAuthOrderFreeze 资金授权冻结接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.freeze/
 type FundAuthOrderFreeze struct {
+	AuxParam
 	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthCode     string `json:"auth_code"`                // 必选, 支付授权码，25~30开头的长度为16~24位的数字，实际字符串长度以开发者获取的付款码长度为准
@@ -142,6 +146,7 @@ type FundAuthOrderFreezeRsp struct {
 
 // FundAuthOrderUnfreeze 资金授权解冻接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.unfreeze/
 type FundAuthOrderUnfreeze struct {
+	AuxParam
 	NotifyURL    string `json:"-"`
 	AuthNo       string `json:"auth_no"`               // 必选,支付宝资金授权订单号,支付宝冻结时返回的交易号，数字格式 2016101210002001810258115912
 	AppAuthToken string `json:"-"`                     // 可选
@@ -178,6 +183,7 @@ type FundAuthOrderUnfreezeRsp struct {
 
 // FundAuthOperationCancel 资金授权撤销接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.cancel/
 type FundAuthOperationCancel struct {
+	AuxParam
 	NotifyURL    string `json:"-"`
 	AppAuthToken string `json:"-"`                        // 可选
 	AuthNo       string `json:"auth_no,omitempty"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
@@ -210,6 +216,7 @@ type FundAuthOperationCancelRsp struct {
 
 // FundAuthOperationDetailQuery 资金授权操作查询接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.operation.detail.query/
 type FundAuthOperationDetailQuery struct {
+	AuxParam
 	AppAuthToken string `json:"-"`              // 可选
 	AuthNo       string `json:"auth_no"`        // 特殊可选, 支付宝授权资金订单号，与商户的授权资金订单号不能同时为空，二者都存在时，以支付宝资金授权订单号为准，该参数与支付宝授权资金操作流水号配对使用。
 	OutOrderNo   string `json:"out_order_no"`   // 特殊可选, 商户的授权资金订单号，与支付宝的授权资金订单号不能同时为空，二者都存在时，以支付宝的授权资金订单号为准，该参数与商户的授权资金操作流水号配对使用。
@@ -271,6 +278,7 @@ type FundAuthOperationDetailQueryRsp struct {
 
 // FundAuthOrderAppFreeze 线上资金授权冻结接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 type FundAuthOrderAppFreeze struct {
+	AuxParam
 	NotifyURL         string `json:"-"`
 	AppAuthToken      string `json:"-"`                             // 可选
 	OutOrderNo        string `json:"out_order_no"`                  // 必选, 商户授权资金订单号 ,不能包含除中文、英文、数字以外的字符，创建后不能修改，需要保证在商户端不重复。
@@ -314,6 +322,7 @@ type FundAuthOrderAppFreezeRsp struct {
 
 // FundTransUniTransfer 单笔转账接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.uni.transfer/
 type FundTransUniTransfer struct {
+	AuxParam
 	AppAuthToken    string     `json:"-"`                 // 可选
 	OutBizNo        string     `json:"out_biz_no"`        // 必选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
 	TransAmount     string     `json:"trans_amount"`      // 必选 订单总金额，单位为元，精确到小数点后两位，STD_RED_PACKET 产品取值范围[0.01,100000000]； TRANS_ACCOUNT_NO_PWD产品取值范围[0.1,100000000]
@@ -354,6 +363,7 @@ type FundTransUniTransferRsp struct {
 
 // FundTransCommonQuery 转账业务单据查询接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.common.query/
 type FundTransCommonQuery struct {
+	AuxParam
 	AppAuthToken   string `json:"-"`                 // 可选
 	ProductCode    string `json:"product_code"`      // 必选 业务产品码， 收发现金红包固定为：STD_RED_PACKET； 单笔无密转账到支付宝账户固定为：TRANS_ACCOUNT_NO_PWD； 单笔无密转账到银行卡固定为：TRANS_BANKCARD_NO_PWD
 	BizScene       string `json:"biz_scene"`         // 必选 描述特定的业务场景，可传的参数如下： PERSONAL_COLLECTION：C2C现金红包-领红包； DIRECT_TRANSFER：B2C现金红包、单笔无密转账到支付宝/银行卡
@@ -391,6 +401,7 @@ type FundTransCommonQueryRsp struct {
 
 // FundAccountQuery 支付宝资金账户资产查询接口请求参数  https://docs.open.alipay.com/api_28/alipay.fund.account.query
 type FundAccountQuery struct {
+	AuxParam
 	AppAuthToken string `json:"-"`              // 可选
 	AliPayUserId string `json:"alipay_user_id"` // 必选 蚂蚁统一会员ID
 	AccountType  string `json:"account_type"`   // 特殊可选 查询的账号类型，如查询托管账户值为TRUSTEESHIP_ACCOUNT，查询余额账户值为ACCTRANS_ACCOUNT。查询余额账户时必填。
@@ -415,6 +426,7 @@ type FundAccountQueryRsp struct {
 
 // FundTransAppPay https://opendocs.alipay.com/open/03rbyf https://opendocs.alipay.com/open/03rbyf
 type FundTransAppPay struct {
+	AuxParam
 	AppAuthToken     string `json:"-"`                  // 可选
 	OutBizNo         string `json:"out_biz_no"`         // 必选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
 	TransAmount      string `json:"trans_amount"`       // 必选 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,9999999999999.99]

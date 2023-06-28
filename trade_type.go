@@ -3,6 +3,7 @@ package alipay
 import "encoding/json"
 
 type Trade struct {
+	AuxParam
 	NotifyURL    string `json:"-"`
 	ReturnURL    string `json:"-"`
 	AppAuthToken string `json:"-"` // 可选
@@ -102,6 +103,7 @@ const (
 
 // TradeQuery 统一收单线下交易查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.query/
 type TradeQuery struct {
+	AuxParam
 	AppAuthToken string   `json:"-"`                       // 可选
 	OutTradeNo   string   `json:"out_trade_no,omitempty"`  // 订单支付时传入的商户订单号, 与 TradeNo 二选一
 	TradeNo      string   `json:"trade_no,omitempty"`      // 支付宝交易号
@@ -230,6 +232,7 @@ type TradeSettleDetail struct {
 
 // TradeClose 统一收单交易关闭接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.close/
 type TradeClose struct {
+	AuxParam
 	AppAuthToken string `json:"-"`                      // 可选
 	NotifyURL    string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
@@ -257,6 +260,7 @@ type TradeCloseRsp struct {
 
 // TradeRefund 统一收单交易退款接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type TradeRefund struct {
+	AuxParam
 	AppAuthToken            string                    `json:"-"`                                   // 可选
 	OutTradeNo              string                    `json:"out_trade_no,omitempty"`              // 与 TradeNo 二选一
 	TradeNo                 string                    `json:"trade_no,omitempty"`                  // 与 OutTradeNo 二选一
@@ -329,6 +333,7 @@ type RefundSubFeeDetail struct {
 
 // TradeFastPayRefundQuery 统一收单交易退款查询接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
 type TradeFastPayRefundQuery struct {
+	AuxParam
 	AppAuthToken string   `json:"-"`                       // 可选
 	OutTradeNo   string   `json:"out_trade_no,omitempty"`  // 与 TradeNo 二选一
 	TradeNo      string   `json:"trade_no,omitempty"`      // 与 OutTradeNo 二选一
@@ -384,6 +389,7 @@ type DepositBackInfo struct {
 
 // TradeOrderSettle 统一收单交易结算接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 type TradeOrderSettle struct {
+	AuxParam
 	AppAuthToken      string              `json:"-"`                  // 可选
 	OutRequestNo      string              `json:"out_request_no"`     // 必须 结算请求流水号 开发者自行生成并保证唯一性
 	TradeNo           string              `json:"trade_no"`           // 必须 支付宝订单号
@@ -578,6 +584,7 @@ type TradePreCreateRsp struct {
 
 // TradeCancel 统一收单交易撤销接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.cancel/
 type TradeCancel struct {
+	AuxParam
 	AppAuthToken string `json:"-"` // 可选
 	NotifyURL    string `json:"-"` // 可选
 
@@ -607,6 +614,7 @@ type TradeCancelRsp struct {
 
 // TradeOrderInfoSync 支付宝订单信息同步接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.orderinfo.sync/
 type TradeOrderInfoSync struct {
+	AuxParam
 	AppAuthToken string `json:"-"`              // 可选
 	OutRequestNo string `json:"out_request_no"` // 必选 标识一笔交易多次请求，同一笔交易多次信息同步时需要保证唯一
 	BizType      string `json:"biz_type"`       // 必选 交易信息同步对应的业务类型，具体值与支付宝约定；信用授权场景下传CREDIT_AUTH
@@ -634,6 +642,7 @@ type TradeOrderInfoSyncRsp struct {
 
 // TradeMergePreCreate 统一收单合并支付预创建接口请求参数 https://opendocs.alipay.com/open/028xr9
 type TradeMergePreCreate struct {
+	AuxParam
 	NotifyURL    string `json:"-"` // 可选
 	AppAuthToken string `json:"-"` // 可选
 
@@ -716,6 +725,7 @@ type PreOrderResult struct {
 
 // TradeAppMergePay App合并支付接口 https://opendocs.alipay.com/open/028py8
 type TradeAppMergePay struct {
+	AuxParam
 	AppAuthToken string `json:"-"`            // 可选
 	PreOrderNo   string `json:"pre_order_no"` // 必选 预下单号。通过 alipay.trade.merge.precreate(统一收单合并支付预创建接口)返回。
 }

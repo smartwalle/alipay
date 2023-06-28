@@ -2,6 +2,7 @@ package alipay
 
 // TradeRefundAsync 统一收单交易退款接口(异步)请求参数 https://opendocs.alipay.com/pre-apis/api_pre/alipay.trade.refund.apply
 type TradeRefundAsync struct {
+	AuxParam
 	AppAuthToken string `json:"-"`                      // 可选
 	NotifyURL    string `json:"-"`                      // 可选
 	OutTradeNo   string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一

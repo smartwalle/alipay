@@ -58,17 +58,43 @@ type Param interface {
 
 	// Params 返回公共请求参数
 	Params() map[string]string
+
+	// FileParams 返回文件参数
+	FileParams() map[string]*FileItem
+
+	// NeedEncrypt 返回该接口是否支持内容加密，有的接口不支持内容加密，比如文件上传接口：alipay.open.file.upload
+	NeedEncrypt() bool
+}
+
+type AuxParam struct {
+}
+
+func (this AuxParam) FileParams() map[string]*FileItem {
+	return nil
+}
+
+func (this AuxParam) NeedEncrypt() bool {
+	return true
+}
+
+type FileItem struct {
+	Name     string
+	Filename string
+	Filepath string
 }
 
 type Payload struct {
-	method string
-	param  map[string]string
-	biz    map[string]interface{}
+	method  string
+	Encrypt bool
+	param   map[string]string
+	biz     map[string]interface{}
+	files   map[string]*FileItem
 }
 
 func NewPayload(method string) *Payload {
 	var nPayload = &Payload{}
 	nPayload.method = method
+	nPayload.Encrypt = true
 	nPayload.param = make(map[string]string)
 	nPayload.biz = make(map[string]interface{})
 	return nPayload
@@ -82,6 +108,14 @@ func (this *Payload) Params() map[string]string {
 	return this.param
 }
 
+func (this *Payload) FileParams() map[string]*FileItem {
+	return this.files
+}
+
+func (this *Payload) NeedEncrypt() bool {
+	return this.Encrypt
+}
+
 // AddParam 添加公共请求参数
 //
 // 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
@@ -90,12 +124,28 @@ func (this *Payload) AddParam(key, value string) *Payload {
 	return this
 }
 
-// Set 添加请求参数(业务相关)
+// Set 添加请求参数(业务相关)，这里添加的参数会序列化成 JSON 字符串，然后通过 biz_content 参数传递
 //
 // 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
 func (this *Payload) Set(key string, value interface{}) *Payload {
 	this.biz[key] = value
 	return this
+}
+
+// AddFile 添加需要上传的文件
+//
+// name: 参数名称
+// filename: 文件名称
+// filepath: 本地文件完整路径
+func (this *Payload) AddFile(name, filename, filepath string) {
+	if this.files == nil {
+		this.files = make(map[string]*FileItem)
+	}
+
+	if filename == "" {
+		filename = name
+	}
+	this.files[name] = &FileItem{Name: name, Filename: filename, Filepath: filepath}
 }
 
 func (this *Payload) MarshalJSON() ([]byte, error) {
@@ -127,6 +177,7 @@ const (
 
 // CertDownload 应用支付宝公钥证书下载 https://opendocs.alipay.com/common/06ue2z
 type CertDownload struct {
+	AuxParam
 	AppAuthToken string `json:"-"`              // 可选
 	AliPayCertSN string `json:"alipay_cert_sn"` // 支付宝公钥证书序列号
 }
@@ -139,6 +190,10 @@ func (this CertDownload) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = this.AppAuthToken
 	return m
+}
+
+func (this CertDownload) NeedEncrypt() bool {
+	return false
 }
 
 type CertDownloadRsp struct {

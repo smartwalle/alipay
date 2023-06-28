@@ -44,6 +44,7 @@ type PeriodRuleParams struct {
 
 // AgreementPageSign 支付宝个人协议页面签约接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.page.sign
 type AgreementPageSign struct {
+	AuxParam
 	AppAuthToken        string             `json:"-"`
 	ReturnURL           string             `json:"-"`
 	NotifyURL           string             `json:"-"`
@@ -99,6 +100,7 @@ func (this AgreementPageSign) Params() map[string]string {
 
 // AgreementQuery 支付宝个人代扣协议查询接口请求参数 https://opendocs.alipay.com/open/02fkao?scene=8837b4183390497f84bb53783b488ecc
 type AgreementQuery struct {
+	AuxParam
 	AppAuthToken        string `json:"-"`
 	PersonalProductCode string `json:"personal_product_code,omitempty"` // 协议产品码，商户和支付宝签约时确定，商户可咨询技术支持
 	AlipayUserId        string `json:"alipay_user_id,omitempty"`        // 用户的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成;本参数与alipay_logon_id不可同时为空，若都填写，则以本参数为准，优先级高于alipay_logon_id
@@ -145,6 +147,7 @@ func (this AgreementQuery) Params() map[string]string {
 
 // AgreementUnsign 支付宝个人代扣协议解约接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.unsign
 type AgreementUnsign struct {
+	AuxParam
 	AppAuthToken        string `json:"-"`
 	NotifyURL           string `json:"-"`
 	AlipayUserId        string `json:"alipay_user_id,omitempty"`        // 用户的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成;本参数与alipay_logon_id不可同时为空，若都填写，则以本参数为准，优先级高于alipay_logon_id
@@ -176,6 +179,7 @@ type AgreementUnsignRsp struct {
 
 // AgreementExecutionPlanModify 周期性扣款协议执行计划修改接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.agreement.executionplan.modify
 type AgreementExecutionPlanModify struct {
+	AuxParam
 	AppAuthToken string `json:"-"`
 	NotifyURL    string `json:"-"`
 	AgreementNo  string `json:"agreement_no,omitempty"` // 支付宝系统中用以唯一标识用户签约记录的编号（用户签约成功后的协议号）
