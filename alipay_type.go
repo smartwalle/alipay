@@ -64,17 +64,21 @@ const (
 )
 
 type Param interface {
-	// APIName 用于提供访问的 method
+	// APIName 用于提供访问的 method，即接口名称
 	APIName() string
 
-	// Params 返回公共请求参数
+	// Params 公共请求参数
 	Params() map[string]string
 
-	// FileParams 返回文件参数
+	// FileParams 文件参数
 	FileParams() map[string]*FileItem
 
-	// NeedEncrypt 返回该接口是否支持内容加密，有的接口不支持内容加密，比如文件上传接口：alipay.open.file.upload
+	// NeedEncrypt 该接口是否支持内容加密，有的接口不支持内容加密，比如文件上传接口：alipay.open.file.upload
 	NeedEncrypt() bool
+
+	// NeedVerify 是否对支付宝接口返回的数据进行签名验证， 为了安全建议都需要对签名进行验证，本方法存在是因为部分接口不支持签名验证。
+	// 比如：应用支付宝公钥证书下载 https://opendocs.alipay.com/common/06ue2z
+	NeedVerify() bool
 }
 
 type AuxParam struct {
@@ -88,6 +92,10 @@ func (this AuxParam) NeedEncrypt() bool {
 	return true
 }
 
+func (this AuxParam) NeedVerify() bool {
+	return true
+}
+
 type FileItem struct {
 	Name     string
 	Filename string
@@ -95,17 +103,19 @@ type FileItem struct {
 }
 
 type Payload struct {
-	method  string
-	Encrypt bool
-	param   map[string]string
-	biz     map[string]interface{}
-	files   map[string]*FileItem
+	method  string                 // 接口名称
+	Encrypt bool                   // 是否进行内容加密
+	Verify  bool                   // 是否验证签名
+	param   map[string]string      // 请求参数
+	biz     map[string]interface{} // biz_content 请求参数
+	files   map[string]*FileItem   // 文件参数
 }
 
 func NewPayload(method string) *Payload {
 	var nPayload = &Payload{}
 	nPayload.method = method
 	nPayload.Encrypt = true
+	nPayload.Verify = true
 	nPayload.param = make(map[string]string)
 	nPayload.biz = make(map[string]interface{})
 	return nPayload
@@ -127,27 +137,45 @@ func (this *Payload) NeedEncrypt() bool {
 	return this.Encrypt
 }
 
-// AddParam 添加公共请求参数
+func (this *Payload) NeedVerify() bool {
+	return this.Verify
+}
+
+// AddParam 添加公共请求参数。
 //
-// 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
+// 这里添加的参数一般为支付宝接口文档中的【公共请求参数】，参考：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0。
+//
+// 一般情况下，不需要调用本方法添加公共请求参数，因为公共参数基本都是必须且其值相对固定，都已处理。除了个别参数，如：app_auth_token。
 func (this *Payload) AddParam(key, value string) *Payload {
 	this.param[key] = value
 	return this
 }
 
-// Set 添加请求参数(业务相关)，这里添加的参数会序列化成 JSON 字符串，然后通过 biz_content 参数传递
+// AddBizField 添加请求参数 biz_content 的字段，这里添加的信息会序列化成 JSON 字符串，然后通过 biz_content 参数传递。
 //
-// 例如：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0
+// 这里添加的参数一般为支付宝接口文档中的【请求参数】，参考：https://opendocs.alipay.com/apis/api_1/alipay.trade.query/#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0。
+//
+// 一般情况下，支付宝接口文档中的【请求参数】都是通过调用本方法添加。但是也有例外，如 https://opendocs.alipay.com/mini/05snwo#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0 中的【请求参数】就需要调用 AddParam 进行添加，因为其【公共请求参数】中没有 biz_content 字段。
+func (this *Payload) AddBizField(key string, value interface{}) *Payload {
+	this.biz[key] = value
+	return this
+}
+
+// Set 参考 AddBizField。
+//
+// Deprecated: use AddBizField instead.
 func (this *Payload) Set(key string, value interface{}) *Payload {
 	this.biz[key] = value
 	return this
 }
 
-// AddFile 添加需要上传的文件
+// AddFile 添加需要上传的文件。
 //
-// name: 参数名称
-// filename: 文件名称
-// filepath: 本地文件完整路径
+// name: 参数名称。
+//
+// filename: 文件名称。
+//
+// filepath: 本地文件完整路径。
 func (this *Payload) AddFile(name, filename, filepath string) {
 	if this.files == nil {
 		this.files = make(map[string]*FileItem)
@@ -182,10 +210,6 @@ func (this Error) IsFailure() bool {
 	return this.Code.IsFailure()
 }
 
-const (
-	kCertDownloadAPI = "alipay.open.app.alipaycert.download"
-)
-
 // CertDownload 应用支付宝公钥证书下载 https://opendocs.alipay.com/common/06ue2z
 type CertDownload struct {
 	AuxParam
@@ -194,7 +218,7 @@ type CertDownload struct {
 }
 
 func (this CertDownload) APIName() string {
-	return kCertDownloadAPI
+	return "alipay.open.app.alipaycert.download"
 }
 
 func (this CertDownload) Params() map[string]string {
@@ -204,6 +228,10 @@ func (this CertDownload) Params() map[string]string {
 }
 
 func (this CertDownload) NeedEncrypt() bool {
+	return false
+}
+
+func (this CertDownload) NeedVerify() bool {
 	return false
 }
 

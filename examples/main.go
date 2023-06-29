@@ -111,7 +111,7 @@ func notify(writer http.ResponseWriter, request *http.Request) {
 	log.Println("解析异步通知成功:", notification.NotifyId)
 
 	var p = alipay.NewPayload("alipay.trade.query")
-	p.Set("out_trade_no", notification.OutTradeNo)
+	p.AddBizField("out_trade_no", notification.OutTradeNo)
 
 	var rsp *alipay.TradeQueryRsp
 	if err = client.Request(p, &rsp); err != nil {

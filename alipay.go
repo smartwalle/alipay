@@ -400,9 +400,8 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 
 	var apiName = param.APIName()
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
-	var needVerifySign = apiName != kCertDownloadAPI
 
-	return this.decode(bodyBytes, bizFieldName, needVerifySign, result)
+	return this.decode(bodyBytes, bizFieldName, param.NeedVerify(), result)
 }
 
 func (this *Client) decode(data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
