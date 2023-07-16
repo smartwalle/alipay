@@ -426,6 +426,7 @@ type TradeCreate struct {
 	Trade
 	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
 	BuyerId            string             `json:"buyer_id"`
+	BuyerOpenId        string             `json:"buyer_open_id"` // 新版接口无法获取user_id, 这里只能传递openid值
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"`
 	OperatorId         string             `json:"operator_id"`
 	TerminalId         string             `json:"terminal_id"`
