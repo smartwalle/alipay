@@ -556,6 +556,10 @@ func (this TradeAppPay) Params() map[string]string {
 	return m
 }
 
+func (this TradeAppPay) NeedEncrypt() bool {
+	return false
+}
+
 // TradePreCreate 统一收单线下交易预创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.precreate/
 type TradePreCreate struct {
 	Trade
