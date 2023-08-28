@@ -191,14 +191,14 @@ func (this *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
 }
 
 // LoadAliPayPublicKey 加载支付宝公钥
-func (this *Client) LoadAliPayPublicKey(aliPublicKey string) error {
+func (this *Client) LoadAliPayPublicKey(s string) error {
 	var pub *rsa.PublicKey
 	var err error
-	if len(aliPublicKey) < 0 {
+	if len(s) < 0 {
 		return ErrAliPublicKeyNotFound
 	}
 
-	pub, err = ncrypto.DecodePublicKey([]byte(aliPublicKey)).PKIX().RSAPublicKey()
+	pub, err = ncrypto.DecodePublicKey([]byte(s)).PKIX().RSAPublicKey()
 	if err != nil {
 		return err
 	}
