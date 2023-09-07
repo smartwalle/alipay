@@ -40,7 +40,7 @@ type Trade struct {
 }
 
 type SignParams struct {
-	Product             string             `json:"product"`                      // 必选 商家和支付宝签约的产品码。 商家扣款产品传入固定值：GENERAL_WITHHOLDING
+	ProductCode         string             `json:"product_code"`                 // 必选 商家和支付宝签约的产品码。 商家扣款产品传入固定值：GENERAL_WITHHOLDING
 	PersonalProductCode string             `json:"personal_product_code"`        // 必选 个人签约产品码，商户和支付宝签约时确定。
 	SignScene           string             `json:"sign_scene"`                   // 必选 协议签约场景，商户和支付宝签约时确定，商户可咨询技术支持。
 	ExternalAgreementNo string             `json:"external_agreement_no"`        // 可选 商户签约号，代扣协议中标示用户的唯一签约号（确保在商户系统中唯一）。 格式规则：支持大写小写字母和数字，最长32位。 商户系统按需传入，如果同一用户在同一产品码、同一签约场景下，签订了多份代扣协议，那么需要指定并传入该值。
