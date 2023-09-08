@@ -3,6 +3,8 @@ package alipay
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/smartwalle/ngx"
+	"io"
 )
 
 const (
@@ -71,7 +73,7 @@ type Param interface {
 	Params() map[string]string
 
 	// FileParams 文件参数
-	FileParams() map[string]*FileItem
+	FileParams() ngx.FormFiles
 
 	// NeedEncrypt 该接口是否支持内容加密，有的接口不支持内容加密，比如文件上传接口：alipay.open.file.upload
 	NeedEncrypt() bool
@@ -84,7 +86,7 @@ type Param interface {
 type AuxParam struct {
 }
 
-func (this AuxParam) FileParams() map[string]*FileItem {
+func (this AuxParam) FileParams() ngx.FormFiles {
 	return nil
 }
 
@@ -96,19 +98,13 @@ func (this AuxParam) NeedVerify() bool {
 	return true
 }
 
-type FileItem struct {
-	Name     string
-	Filename string
-	Filepath string
-}
-
 type Payload struct {
 	method  string                 // 接口名称
 	Encrypt bool                   // 是否进行内容加密
 	Verify  bool                   // 是否验证签名
 	param   map[string]string      // 请求参数
 	biz     map[string]interface{} // biz_content 请求参数
-	files   map[string]*FileItem   // 文件参数
+	files   ngx.FormFiles          // 文件参数
 }
 
 func NewPayload(method string) *Payload {
@@ -129,7 +125,7 @@ func (this *Payload) Params() map[string]string {
 	return this.param
 }
 
-func (this *Payload) FileParams() map[string]*FileItem {
+func (this *Payload) FileParams() ngx.FormFiles {
 	return this.files
 }
 
@@ -176,15 +172,34 @@ func (this *Payload) Set(key string, value interface{}) *Payload {
 // filename: 文件名称。
 //
 // filepath: 本地文件完整路径。
+//
+// Deprecated: use AddFilePath instead.
 func (this *Payload) AddFile(name, filename, filepath string) {
 	if this.files == nil {
-		this.files = make(map[string]*FileItem)
+		this.files = ngx.FormFiles{}
 	}
+	this.files.AddFilePath(name, filename, filepath)
+}
 
-	if filename == "" {
-		filename = name
+// AddFilePath 添加需要上传的文件。
+//
+// name: 参数名称。
+//
+// filename: 文件名称。
+//
+// filepath: 本地文件完整路径。
+func (this *Payload) AddFilePath(name, filename, filepath string) {
+	if this.files == nil {
+		this.files = ngx.FormFiles{}
 	}
-	this.files[name] = &FileItem{Name: name, Filename: filename, Filepath: filepath}
+	this.files.AddFilePath(name, filename, filepath)
+}
+
+func (this *Payload) AddFileObject(name, filename string, file io.Reader) {
+	if this.files == nil {
+		this.files = ngx.FormFiles{}
+	}
+	this.files.AddFileObject(name, filename, file)
 }
 
 func (this *Payload) MarshalJSON() ([]byte, error) {

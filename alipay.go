@@ -379,12 +379,8 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		if err != nil {
 			return err
 		}
-		req.SetParams(values)
-
-		var files = param.FileParams()
-		for _, file := range files {
-			req.AddFile(file.Name, file.Filename, file.Filepath)
-		}
+		req.SetForm(values)
+		req.SetFileForm(param.FileParams())
 	}
 
 	rsp, err := req.Do(context.Background())

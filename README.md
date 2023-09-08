@@ -431,7 +431,9 @@ p.Encrypt = false // 文件上传不支持接口内容加密
 p.AddParam("biz_code", "content_creation")
 
 // 添加文件
-p.AddFile("file_content", "a.jpg", "path/a.jpg")
+p.AddFilePath("file_content", "a.jpg", "path/a.jpg")
+// 或者
+p.AddFileObject("file_content", "a.jpg", io.Reader)
 
 var result map[string]interface{}
 var err = client.Request(p, &result)
