@@ -1,6 +1,6 @@
 module github.com/smartwalle/alipay/examples
 
-go 1.12
+go 1.18
 
 require (
 	github.com/smartwalle/alipay/v3 v3.2.0

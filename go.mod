@@ -6,4 +6,4 @@ require (
 	github.com/smartwalle/nsign v1.0.8
 )
 
-go 1.12
+go 1.18
