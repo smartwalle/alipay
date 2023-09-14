@@ -693,6 +693,7 @@ type ExtendParams struct {
 	IndustryRefluxInfo   string `json:"industry_reflux_info"`    // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
 	CardType             string `json:"card_type"`               // 可选 卡类型
 	SpecifiedSellerName  string `json:"specified_seller_name"`   // 可选 特殊场景下，允许商户指定交易展示的卖家名称
+	OrigTotalAmount      string `json:"orig_total_amount"`       // 可选 外部订单金额。
 }
 
 type Merchant struct {
