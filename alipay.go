@@ -32,6 +32,8 @@ var (
 const (
 	kAliPayPublicKeySN = "alipay-public-key"
 	kAppAuthToken      = "app_auth_token"
+	kReturnURL         = "return_url"
+	kNotifyURL         = "notify_url"
 	kEmptyBizContent   = "{}"
 )
 
@@ -355,7 +357,7 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 
 	var params = param.Params()
 	for k, v := range params {
-		if k == kAppAuthToken && v == "" {
+		if v == "" {
 			continue
 		}
 		values.Add(k, v)
