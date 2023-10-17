@@ -19,19 +19,19 @@ type SystemOauthToken struct {
 	RefreshToken string `json:"-"`
 }
 
-func (this SystemOauthToken) APIName() string {
+func (s SystemOauthToken) APIName() string {
 	return "alipay.system.oauth.token"
 }
 
-func (this SystemOauthToken) Params() map[string]string {
+func (s SystemOauthToken) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["grant_type"] = this.GrantType
-	if this.Code != "" {
-		m["code"] = this.Code
+	m["app_auth_token"] = s.AppAuthToken
+	m["grant_type"] = s.GrantType
+	if s.Code != "" {
+		m["code"] = s.Code
 	}
-	if this.RefreshToken != "" {
-		m["refresh_token"] = this.RefreshToken
+	if s.RefreshToken != "" {
+		m["refresh_token"] = s.RefreshToken
 	}
 	return m
 }
@@ -55,14 +55,14 @@ type UserInfoShare struct {
 	AuthToken    string `json:"-"` // 是
 }
 
-func (this UserInfoShare) APIName() string {
+func (u UserInfoShare) APIName() string {
 	return "alipay.user.info.share"
 }
 
-func (this UserInfoShare) Params() map[string]string {
+func (u UserInfoShare) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["auth_token"] = this.AuthToken
+	m["app_auth_token"] = u.AppAuthToken
+	m["auth_token"] = u.AuthToken
 	return m
 }
 
@@ -90,18 +90,18 @@ type OpenAuthTokenApp struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func (this OpenAuthTokenApp) APIName() string {
+func (o OpenAuthTokenApp) APIName() string {
 	return "alipay.open.auth.token.app"
 }
 
-func (this OpenAuthTokenApp) Params() map[string]string {
+func (o OpenAuthTokenApp) Params() map[string]string {
 	var m = make(map[string]string)
-	m["grant_type"] = this.GrantType
-	if this.Code != "" {
-		m["code"] = this.Code
+	m["grant_type"] = o.GrantType
+	if o.Code != "" {
+		m["code"] = o.Code
 	}
-	if this.RefreshToken != "" {
-		m["refresh_token"] = this.RefreshToken
+	if o.RefreshToken != "" {
+		m["refresh_token"] = o.RefreshToken
 	}
 	return m
 }
@@ -127,11 +127,11 @@ type OpenAuthTokenAppQuery struct {
 	AppAuthToken string `json:"app_auth_token"` // 必选 应用授权令牌
 }
 
-func (this OpenAuthTokenAppQuery) APIName() string {
+func (o OpenAuthTokenAppQuery) APIName() string {
 	return "alipay.open.auth.token.app.query"
 }
 
-func (this OpenAuthTokenAppQuery) Params() map[string]string {
+func (o OpenAuthTokenAppQuery) Params() map[string]string {
 	return nil
 }
 
@@ -155,20 +155,20 @@ type AccountAuth struct {
 	AuthType string `json:"auth_type"`
 }
 
-func (this AccountAuth) APIName() string {
+func (account AccountAuth) APIName() string {
 	return "alipay.open.auth.sdk.code.get"
 }
 
-func (this AccountAuth) Params() map[string]string {
+func (account AccountAuth) Params() map[string]string {
 	var m = make(map[string]string)
 	m["apiname"] = "com.alipay.account.auth"
 	m["app_name"] = "mc"
 	m["biz_type"] = "openservice"
-	m["pid"] = this.Pid
+	m["pid"] = account.Pid
 	m["product_id"] = "APP_FAST_LOGIN"
 	m["scope"] = "kuaijie"
-	m["target_id"] = this.TargetId
-	m["auth_type"] = this.AuthType
+	m["target_id"] = account.TargetId
+	m["auth_type"] = account.AuthType
 	return m
 }
 
@@ -181,12 +181,12 @@ type OpenAuthAppAuthInviteCreate struct {
 	State        string `json:"state"`        // 可选 自定义参数，授权后回调时透传回服务商。对应的值必须为 base64 编码。
 }
 
-func (this OpenAuthAppAuthInviteCreate) APIName() string {
+func (o OpenAuthAppAuthInviteCreate) APIName() string {
 	return "alipay.open.auth.appauth.invite.create"
 }
 
-func (this OpenAuthAppAuthInviteCreate) Params() map[string]string {
+func (o OpenAuthAppAuthInviteCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = o.AppAuthToken
 	return m
 }

@@ -11,17 +11,17 @@ var (
 	kSuccess = []byte("success")
 )
 
-func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
+func (c *Client) NotifyVerify(partnerId, notifyId string) bool {
 	var values = url.Values{}
 	values.Add("service", "notify_verify")
 	values.Add("partner", partnerId)
 	values.Add("notify_id", notifyId)
-	req, err := http.NewRequest(http.MethodGet, this.notifyVerifyHost+"?"+values.Encode(), nil)
+	req, err := http.NewRequest(http.MethodGet, c.notifyVerifyHost+"?"+values.Encode(), nil)
 	if err != nil {
 		return false
 	}
 
-	rsp, err := this.Client.Do(req)
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return false
 	}
@@ -39,18 +39,18 @@ func (this *Client) NotifyVerify(partnerId, notifyId string) bool {
 
 // GetTradeNotification
 // Deprecated: use DecodeNotification instead.
-func (this *Client) GetTradeNotification(req *http.Request) (notification *Notification, err error) {
+func (c *Client) GetTradeNotification(req *http.Request) (notification *Notification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
 	}
 	if err = req.ParseForm(); err != nil {
 		return nil, err
 	}
-	return this.DecodeNotification(req.Form)
+	return c.DecodeNotification(req.Form)
 }
 
-func (this *Client) DecodeNotification(values url.Values) (notification *Notification, err error) {
-	if err = this.VerifySign(values); err != nil {
+func (c *Client) DecodeNotification(values url.Values) (notification *Notification, err error) {
+	if err = c.VerifySign(values); err != nil {
 		return nil, err
 	}
 
@@ -94,12 +94,12 @@ func (this *Client) DecodeNotification(values url.Values) (notification *Notific
 
 // AckNotification
 // Deprecated: use ACKNotification instead.
-func (this *Client) AckNotification(w http.ResponseWriter) {
+func (c *Client) AckNotification(w http.ResponseWriter) {
 	AckNotification(w)
 }
 
 // ACKNotification 返回异步通知成功处理的消息给支付宝
-func (this *Client) ACKNotification(w http.ResponseWriter) {
+func (c *Client) ACKNotification(w http.ResponseWriter) {
 	ACKNotification(w)
 }
 

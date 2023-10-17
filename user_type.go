@@ -86,15 +86,15 @@ type AgreementPageSignRsp struct {
 	AlipayLogonId       string `json:"alipay_logon_id"`       // 返回脱敏的支付宝账号
 }
 
-func (this AgreementPageSign) APIName() string {
+func (ag AgreementPageSign) APIName() string {
 	return "alipay.user.agreement.page.sign"
 }
 
-func (this AgreementPageSign) Params() map[string]string {
+func (ag AgreementPageSign) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
-	m["return_url"] = this.ReturnURL
+	m["app_auth_token"] = ag.AppAuthToken
+	m["notify_url"] = ag.NotifyURL
+	m["return_url"] = ag.ReturnURL
 	return m
 }
 
@@ -135,13 +135,13 @@ type AgreementQueryRsp struct {
 	NextDeductTime      string `json:"next_deduct_time"`      // 周期扣协议，预计下次扣款时间
 }
 
-func (this AgreementQuery) APIName() string {
+func (ag AgreementQuery) APIName() string {
 	return "alipay.user.agreement.query"
 }
 
-func (this AgreementQuery) Params() map[string]string {
+func (ag AgreementQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = ag.AppAuthToken
 	return m
 }
 
@@ -161,14 +161,14 @@ type AgreementUnsign struct {
 	OperateType         string `json:"operate_type,omitempty"`
 }
 
-func (this AgreementUnsign) APIName() string {
+func (ag AgreementUnsign) APIName() string {
 	return "alipay.user.agreement.unsign"
 }
 
-func (this AgreementUnsign) Params() map[string]string {
+func (ag AgreementUnsign) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = ag.AppAuthToken
+	m["notify_url"] = ag.NotifyURL
 	return m
 }
 
@@ -187,14 +187,14 @@ type AgreementExecutionPlanModify struct {
 	Memo         string `json:"memo,omitempty"`         // 具体修改原因
 }
 
-func (this AgreementExecutionPlanModify) APIName() string {
+func (ag AgreementExecutionPlanModify) APIName() string {
 	return "alipay.user.agreement.executionplan.modify"
 }
 
-func (this AgreementExecutionPlanModify) Params() map[string]string {
+func (ag AgreementExecutionPlanModify) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = ag.AppAuthToken
+	m["notify_url"] = ag.NotifyURL
 	return m
 }
 

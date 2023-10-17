@@ -13,13 +13,13 @@ type FundTransToAccountTransfer struct {
 	Remark        string `json:"remark"`          // 可选 转账备注,金额大于50000时必填
 }
 
-func (this FundTransToAccountTransfer) APIName() string {
+func (f FundTransToAccountTransfer) APIName() string {
 	return "alipay.fund.trans.toaccount.transfer"
 }
 
-func (this FundTransToAccountTransfer) Params() map[string]string {
+func (f FundTransToAccountTransfer) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -39,13 +39,13 @@ type FundTransOrderQuery struct {
 	OrderId      string `json:"order_id,omitempty"`   // 与 OutBizNo 二选一
 }
 
-func (this FundTransOrderQuery) APIName() string {
+func (f FundTransOrderQuery) APIName() string {
 	return "alipay.fund.trans.order.query"
 }
 
-func (this FundTransOrderQuery) Params() map[string]string {
+func (f FundTransOrderQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -81,14 +81,14 @@ type FundAuthOrderVoucherCreate struct {
 	EnablePayChannels string `json:"enable_pay_channels,omitempty"` // 可选, 商户可用该参数指定用户可使用的支付渠道，本期支持商户可支持三种支付渠道，余额宝（MONEY_FUND）、花呗（PCREDIT_PAY）以及芝麻信用（CREDITZHIMA）。商户可设置一种支付渠道，也可设置多种支付渠道。
 }
 
-func (this FundAuthOrderVoucherCreate) APIName() string {
+func (f FundAuthOrderVoucherCreate) APIName() string {
 	return "alipay.fund.auth.order.voucher.create"
 }
 
-func (this FundAuthOrderVoucherCreate) Params() map[string]string {
+func (f FundAuthOrderVoucherCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = f.AppAuthToken
+	m["notify_url"] = f.NotifyURL
 	return m
 }
 
@@ -120,14 +120,14 @@ type FundAuthOrderFreeze struct {
 	ProductCode  string `json:"product_code,omitempty"`   // 可选, 销售产品码，后续新接入预授权当面付的业务，本字段取值固定为PRE_AUTH。
 }
 
-func (this FundAuthOrderFreeze) APIName() string {
+func (f FundAuthOrderFreeze) APIName() string {
 	return "alipay.fund.auth.order.app.freeze"
 }
 
-func (this FundAuthOrderFreeze) Params() map[string]string {
+func (f FundAuthOrderFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = f.AppAuthToken
+	m["notify_url"] = f.NotifyURL
 	return m
 }
 
@@ -156,14 +156,14 @@ type FundAuthOrderUnfreeze struct {
 	ExtraParam   string `json:"extra_param,omitempty"` // 可选, 解冻扩展信息，json格式；unfreezeBizInfo 目前为芝麻消费字段，支持Key值如下： "bizComplete":"true" -- 选填：标识本次解冻用户是否履约，如果true信用单会完结为COMPLETE
 }
 
-func (this FundAuthOrderUnfreeze) APIName() string {
+func (f FundAuthOrderUnfreeze) APIName() string {
 	return "alipay.fund.auth.order.unfreeze"
 }
 
-func (this FundAuthOrderUnfreeze) Params() map[string]string {
+func (f FundAuthOrderUnfreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = f.AppAuthToken
+	m["notify_url"] = f.NotifyURL
 	return m
 }
 
@@ -193,14 +193,14 @@ type FundAuthOperationCancel struct {
 	Remark       string `json:"remark"`                   // 必选, 商户对本次撤销操作的附言描述，长度不超过100个字母或50个汉字
 }
 
-func (this FundAuthOperationCancel) APIName() string {
+func (f FundAuthOperationCancel) APIName() string {
 	return "alipay.fund.auth.operation.cancel"
 }
 
-func (this FundAuthOperationCancel) Params() map[string]string {
+func (f FundAuthOperationCancel) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = f.AppAuthToken
+	m["notify_url"] = f.NotifyURL
 	return m
 }
 
@@ -224,13 +224,13 @@ type FundAuthOperationDetailQuery struct {
 	OutRequestNo string `json:"out_request_no"` // 特殊可选, 商户的授权资金操作流水号，与支付宝的授权资金操作流水号不能同时为空，二者都存在时，以支付宝的授权资金操作流水号为准，该参数与商户的授权资金订单号配对使用。
 }
 
-func (this FundAuthOperationDetailQuery) APIName() string {
+func (f FundAuthOperationDetailQuery) APIName() string {
 	return "alipay.fund.auth.operation.detail.query"
 }
 
-func (this FundAuthOperationDetailQuery) Params() map[string]string {
+func (f FundAuthOperationDetailQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -293,14 +293,14 @@ type FundAuthOrderAppFreeze struct {
 	EnablePayChannels string `json:"enable_pay_channels,omitempty"` // 商户可用该参数指定用户可使用的支付渠道，本期支持商户可支持三种支付渠道，余额宝（MONEY_FUND）、花呗（PCREDIT_PAY）以及芝麻信用（CREDITZHIMA）。商户可设置一种支付渠道，也可设置多种支付渠道。
 }
 
-func (this FundAuthOrderAppFreeze) APIName() string {
+func (f FundAuthOrderAppFreeze) APIName() string {
 	return "alipay.fund.auth.order.app.freeze"
 }
 
-func (this FundAuthOrderAppFreeze) Params() map[string]string {
+func (f FundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = f.AppAuthToken
+	m["notify_url"] = f.NotifyURL
 	return m
 }
 
@@ -335,13 +335,13 @@ type FundTransUniTransfer struct {
 	BusinessParams  string     `json:"business_params"`   // 可选 转账业务请求的扩展参数，支持传入的扩展参数如下： 1、sub_biz_scene 子业务场景，红包业务必传，取值REDPACKET，C2C现金红包、B2C现金红包均需传入； 2、withdraw_timeliness为转账到银行卡的预期到账时间，可选（不传入则默认为T1），取值T0表示预期T+0到账，取值T1表示预期T+1到账，因到账时效受银行机构处理影响，支付宝无法保证一定是T0或者T1到账；
 }
 
-func (this FundTransUniTransfer) APIName() string {
+func (f FundTransUniTransfer) APIName() string {
 	return "alipay.fund.trans.uni.transfer"
 }
 
-func (this FundTransUniTransfer) Params() map[string]string {
+func (f FundTransUniTransfer) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -372,13 +372,13 @@ type FundTransCommonQuery struct {
 	PayFundOrderId string `json:"pay_fund_order_id"` // 可选 支付宝支付资金流水号
 }
 
-func (this FundTransCommonQuery) APIName() string {
+func (f FundTransCommonQuery) APIName() string {
 	return "alipay.fund.trans.common.query"
 }
 
-func (this FundTransCommonQuery) Params() map[string]string {
+func (f FundTransCommonQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -407,13 +407,13 @@ type FundAccountQuery struct {
 	AccountType  string `json:"account_type"`   // 特殊可选 查询的账号类型，如查询托管账户值为TRUSTEESHIP_ACCOUNT，查询余额账户值为ACCTRANS_ACCOUNT。查询余额账户时必填。
 }
 
-func (this FundAccountQuery) APIName() string {
+func (f FundAccountQuery) APIName() string {
 	return "alipay.fund.account.query"
 }
 
-func (this FundAccountQuery) Params() map[string]string {
+func (f FundAccountQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }
 
@@ -440,12 +440,12 @@ type FundTransAppPay struct {
 	BusinessParams   string `json:"business_params"`    // 可选 JSON格式，传递业务扩展参数. 业务扩展字段，JSON格式。支持如下属性： sub_biz_scene 子场景，必填，传REDPACKET payer_binded_alipay_uid 创建红包的商户会员绑定的支付宝userId，必填
 }
 
-func (this FundTransAppPay) APIName() string {
+func (f FundTransAppPay) APIName() string {
 	return "alipay.fund.trans.app.pay"
 }
 
-func (this FundTransAppPay) Params() map[string]string {
+func (f FundTransAppPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = f.AppAuthToken
 	return m
 }

@@ -81,15 +81,15 @@ type GoodsDetail struct {
 	ShowURL        string  `json:"show_url,omitempty"`
 }
 
-func (this TradePagePay) APIName() string {
+func (t TradePagePay) APIName() string {
 	return "alipay.trade.page.pay"
 }
 
-func (this TradePagePay) Params() map[string]string {
+func (t TradePagePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
-	m["return_url"] = this.ReturnURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
+	m["return_url"] = t.ReturnURL
 	return m
 }
 
@@ -112,13 +112,13 @@ type TradeQuery struct {
 	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户传入该参数可定制本接口同步响应额外返回的信息字段，数组格式。支持枚举如下：trade_settle_info：返回的交易结算信息，包含分账、补差等信息； fund_bill_list：交易支付使用的资金渠道；voucher_detail_list：交易支付时使用的所有优惠券信息；discount_goods_detail：交易支付所使用的单品券优惠的商品优惠信息；mdiscount_amount：商家优惠金额；
 }
 
-func (this TradeQuery) APIName() string {
+func (t TradeQuery) APIName() string {
 	return "alipay.trade.query"
 }
 
-func (this TradeQuery) Params() map[string]string {
+func (t TradeQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }
 
@@ -241,14 +241,14 @@ type TradeClose struct {
 	OperatorId   string `json:"operator_id,omitempty"`  // 可选
 }
 
-func (this TradeClose) APIName() string {
+func (t TradeClose) APIName() string {
 	return "alipay.trade.close"
 }
 
-func (this TradeClose) Params() map[string]string {
+func (t TradeClose) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -275,13 +275,13 @@ type TradeRefund struct {
 	// TerminalId string `json:"terminal_id"` // 可选 商户的终端编号
 }
 
-func (this TradeRefund) APIName() string {
+func (t TradeRefund) APIName() string {
 	return "alipay.trade.refund"
 }
 
-func (this TradeRefund) Params() map[string]string {
+func (t TradeRefund) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }
 
@@ -342,13 +342,13 @@ type TradeFastPayRefundQuery struct {
 	QueryOptions []string `json:"query_options,omitempty"` // 可选 查询选项，商户通过上送该参数来定制同步需要额外返回的信息字段，数组格式。 refund_detail_item_list
 }
 
-func (this TradeFastPayRefundQuery) APIName() string {
+func (t TradeFastPayRefundQuery) APIName() string {
 	return "alipay.trade.fastpay.refund.query"
 }
 
-func (this TradeFastPayRefundQuery) Params() map[string]string {
+func (t TradeFastPayRefundQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }
 
@@ -398,13 +398,13 @@ type TradeOrderSettle struct {
 	OperatorId        string              `json:"operator_id"`        //可选 操作员id
 }
 
-func (this TradeOrderSettle) APIName() string {
+func (t TradeOrderSettle) APIName() string {
 	return "alipay.trade.order.settle"
 }
 
-func (this TradeOrderSettle) Params() map[string]string {
+func (t TradeOrderSettle) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }
 
@@ -433,14 +433,14 @@ type TradeCreate struct {
 	TerminalId         string             `json:"terminal_id"`
 }
 
-func (this TradeCreate) APIName() string {
+func (t TradeCreate) APIName() string {
 	return "alipay.trade.create"
 }
 
-func (this TradeCreate) Params() map[string]string {
+func (t TradeCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -510,14 +510,14 @@ type TradePay struct {
 	AgreementParams    *AgreementParams   `json:"agreement_params,omitempty"`
 }
 
-func (this TradePay) APIName() string {
+func (t TradePay) APIName() string {
 	return "alipay.trade.pay"
 }
 
-func (this TradePay) Params() map[string]string {
+func (t TradePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -546,18 +546,18 @@ type TradeAppPay struct {
 	Trade
 }
 
-func (this TradeAppPay) APIName() string {
+func (t TradeAppPay) APIName() string {
 	return "alipay.trade.app.pay"
 }
 
-func (this TradeAppPay) Params() map[string]string {
+func (t TradeAppPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
-func (this TradeAppPay) NeedEncrypt() bool {
+func (t TradeAppPay) NeedEncrypt() bool {
 	return false
 }
 
@@ -570,14 +570,14 @@ type TradePreCreate struct {
 	TerminalId         string             `json:"terminal_id"`            // 可选 商户机具终端编号
 }
 
-func (this TradePreCreate) APIName() string {
+func (t TradePreCreate) APIName() string {
 	return "alipay.trade.precreate"
 }
 
-func (this TradePreCreate) Params() map[string]string {
+func (t TradePreCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -598,14 +598,14 @@ type TradeCancel struct {
 	TradeNo    string `json:"trade_no"`     // 支付宝交易号，和商户订单号不能同时为空
 }
 
-func (this TradeCancel) APIName() string {
+func (t TradeCancel) APIName() string {
 	return "alipay.trade.cancel"
 }
 
-func (this TradeCancel) Params() map[string]string {
+func (t TradeCancel) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -628,13 +628,13 @@ type TradeOrderInfoSync struct {
 	OrderBizInfo string `json:"order_biz_info"` // 可选 商户传入同步信息，具体值要和支付宝约定；用于芝麻信用租车、单次授权等信息同步场景，格式为json格式
 }
 
-func (this TradeOrderInfoSync) APIName() string {
+func (t TradeOrderInfoSync) APIName() string {
 	return "alipay.trade.orderinfo.sync"
 }
 
-func (this TradeOrderInfoSync) Params() map[string]string {
+func (t TradeOrderInfoSync) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }
 
@@ -658,14 +658,14 @@ type TradeMergePreCreate struct {
 	OrderDetails   []*OrderDetail `json:"order_details"`   // 必选 子订单详情
 }
 
-func (this TradeMergePreCreate) APIName() string {
+func (t TradeMergePreCreate) APIName() string {
 	return "alipay.trade.merge.precreate"
 }
 
-func (this TradeMergePreCreate) Params() map[string]string {
+func (t TradeMergePreCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
@@ -737,12 +737,12 @@ type TradeAppMergePay struct {
 	PreOrderNo   string `json:"pre_order_no"` // 必选 预下单号。通过 alipay.trade.merge.precreate(统一收单合并支付预创建接口)返回。
 }
 
-func (this TradeAppMergePay) APIName() string {
+func (t TradeAppMergePay) APIName() string {
 	return "alipay.trade.app.merge.pay"
 }
 
-func (this TradeAppMergePay) Params() map[string]string {
+func (t TradeAppMergePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }

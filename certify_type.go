@@ -31,13 +31,13 @@ type MerchantConfig struct {
 	ReturnURL string `json:"return_url"`
 }
 
-func (this UserCertifyOpenInitialize) APIName() string {
+func (u UserCertifyOpenInitialize) APIName() string {
 	return "alipay.user.certify.open.initialize"
 }
 
-func (this UserCertifyOpenInitialize) Params() map[string]string {
+func (u UserCertifyOpenInitialize) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = u.AppAuthToken
 	return m
 }
 
@@ -54,13 +54,13 @@ type UserCertifyOpenCertify struct {
 	CertifyId    string `json:"certify_id"` // 必选 本次申请操作的唯一标识，由开放认证初始化接口调用后生成，后续的操作都需要用到
 }
 
-func (this UserCertifyOpenCertify) APIName() string {
+func (u UserCertifyOpenCertify) APIName() string {
 	return "alipay.user.certify.open.certify"
 }
 
-func (this UserCertifyOpenCertify) Params() map[string]string {
+func (u UserCertifyOpenCertify) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = u.AppAuthToken
 	return m
 }
 
@@ -76,13 +76,13 @@ type UserCertifyOpenQuery struct {
 	CertifyId    string `json:"certify_id"` // 必选 本次申请操作的唯一标识，由开放认证初始化接口调用后生成，后续的操作都需要用到
 }
 
-func (this UserCertifyOpenQuery) APIName() string {
+func (u UserCertifyOpenQuery) APIName() string {
 	return "alipay.user.certify.open.query"
 }
 
-func (this UserCertifyOpenQuery) Params() map[string]string {
+func (u UserCertifyOpenQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = u.AppAuthToken
 	return m
 }
 
@@ -106,13 +106,13 @@ type UserCertDocCertVerifyPreConsult struct {
 	ExtInfo      map[string]interface{} `json:"ext_info"`  // 拓展字段,JSON格式 可选
 }
 
-func (this UserCertDocCertVerifyPreConsult) APIName() string {
+func (u UserCertDocCertVerifyPreConsult) APIName() string {
 	return "alipay.user.certdoc.certverify.preconsult"
 }
 
-func (this UserCertDocCertVerifyPreConsult) Params() map[string]string {
+func (u UserCertDocCertVerifyPreConsult) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = u.AppAuthToken
 	return m
 }
 
@@ -129,13 +129,13 @@ type UserCertDocCertVerifyConsult struct {
 	VerifyId     string `json:"verify_id"` // 信息校验验证ID。通过alipay.user.certdoc.certverify.preconsult(实名证件信息比对验证预咨询)接口获取
 }
 
-func (this UserCertDocCertVerifyConsult) APIName() string {
+func (u UserCertDocCertVerifyConsult) APIName() string {
 	return "alipay.user.certdoc.certverify.consult"
 }
 
-func (this UserCertDocCertVerifyConsult) Params() map[string]string {
+func (u UserCertDocCertVerifyConsult) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = u.AppAuthToken
 	return m
 }
 

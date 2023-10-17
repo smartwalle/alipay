@@ -8,13 +8,13 @@ type BillDownloadURLQuery struct {
 	BillDate     string `json:"bill_date"` // 必选 账单时间：日账单格式为yyyy-MM-dd，最早可下载2016年1月1日开始的日账单；月账单格式为yyyy-MM，最早可下载2016年1月开始的月账单。
 }
 
-func (this BillDownloadURLQuery) APIName() string {
+func (b BillDownloadURLQuery) APIName() string {
 	return "alipay.data.dataservice.bill.downloadurl.query"
 }
 
-func (this BillDownloadURLQuery) Params() map[string]string {
+func (b BillDownloadURLQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = b.AppAuthToken
 	return m
 }
 
@@ -34,13 +34,13 @@ type BillAccountLogQuery struct {
 	BillUserId           string `json:"bill_user_id"`           // 可选 指定用户做账单查询	2088123456789012
 }
 
-func (this BillAccountLogQuery) APIName() string {
+func (b BillAccountLogQuery) APIName() string {
 	return "alipay.data.bill.accountlog.query"
 }
 
-func (this BillAccountLogQuery) Params() map[string]string {
+func (b BillAccountLogQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = b.AppAuthToken
 	return m
 }
 
@@ -84,13 +84,13 @@ type BillBalanceQuery struct {
 	AppAuthToken string `json:"-"` // 可选
 }
 
-func (this BillBalanceQuery) APIName() string {
+func (b BillBalanceQuery) APIName() string {
 	return "alipay.data.bill.balance.query"
 }
 
-func (this BillBalanceQuery) Params() map[string]string {
+func (b BillBalanceQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = b.AppAuthToken
 	return m
 }
 

@@ -8,15 +8,15 @@ type TradeWapPay struct {
 	TimeExpire string `json:"time_expire,omitempty"` // 绝对超时时间，格式为yyyy-MM-dd HH:mm。
 }
 
-func (this TradeWapPay) APIName() string {
+func (t TradeWapPay) APIName() string {
 	return "alipay.trade.wap.pay"
 }
 
-func (this TradeWapPay) Params() map[string]string {
+func (t TradeWapPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
-	m["return_url"] = this.ReturnURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
+	m["return_url"] = t.ReturnURL
 	return m
 }
 
@@ -27,12 +27,12 @@ type TradeWapMergePay struct {
 	PreOrderNo   string `json:"pre_order_no"` // 必选 预下单号。通过 alipay.trade.merge.precreate(统一收单合并支付预创建接口)返回。
 }
 
-func (this TradeWapMergePay) APIName() string {
+func (t TradeWapMergePay) APIName() string {
 	return "alipay.trade.wap.merge.pay"
 }
 
-func (this TradeWapMergePay) Params() map[string]string {
+func (t TradeWapMergePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
+	m["app_auth_token"] = t.AppAuthToken
 	return m
 }

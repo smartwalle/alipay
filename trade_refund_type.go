@@ -15,14 +15,14 @@ type TradeRefundAsync struct {
 	TerminalId   string `json:"terminal_id"`            // 可选 商户的终端编号
 }
 
-func (this TradeRefundAsync) APIName() string {
+func (t TradeRefundAsync) APIName() string {
 	return "alipay.trade.refund.apply"
 }
 
-func (this TradeRefundAsync) Params() map[string]string {
+func (t TradeRefundAsync) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = this.AppAuthToken
-	m["notify_url"] = this.NotifyURL
+	m["app_auth_token"] = t.AppAuthToken
+	m["notify_url"] = t.NotifyURL
 	return m
 }
 
