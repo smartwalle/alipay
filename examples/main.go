@@ -79,6 +79,7 @@ func callback(writer http.ResponseWriter, request *http.Request) {
 
 	log.Println("回调验证签名通过")
 
+	// 示例一：使用已有接口进行查询
 	var outTradeNo = request.Form.Get("out_trade_no")
 	var p = alipay.TradeQuery{}
 	p.OutTradeNo = outTradeNo
@@ -110,6 +111,7 @@ func notify(writer http.ResponseWriter, request *http.Request) {
 
 	log.Println("解析异步通知成功:", notification.NotifyId)
 
+	// 示例一：使用自定义请求进行查询
 	var p = alipay.NewPayload("alipay.trade.query")
 	p.AddBizField("out_trade_no", notification.OutTradeNo)
 
