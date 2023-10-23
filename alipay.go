@@ -59,6 +59,7 @@ type Client struct {
 	aliCertSN     string
 
 	// 签名和验签
+	encoder   nsign.Encoder
 	signer    Signer
 	verifiers map[string]Verifier
 }
@@ -150,7 +151,8 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClie
 	nClient.Client = http.DefaultClient
 	nClient.location = time.Local
 
-	nClient.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(&Encoder{}))
+	nClient.encoder = &Encoder{}
+	nClient.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(nClient.encoder))
 	nClient.verifiers = make(map[string]Verifier)
 
 	for _, opt := range opts {
@@ -187,7 +189,7 @@ func (c *Client) SetEncryptKey(key string) error {
 
 func (c *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
 	c.aliCertSN = sn
-	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)), nsign.WithEncoder(&Encoder{}))
+	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)), nsign.WithEncoder(c.encoder))
 	c.verifiers[c.aliCertSN] = verifier
 	return verifier
 }
