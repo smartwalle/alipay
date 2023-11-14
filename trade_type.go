@@ -426,8 +426,9 @@ type TradeOrderSettleRsp struct {
 type TradeCreate struct {
 	Trade
 	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
-	BuyerId            string             `json:"buyer_id"`
-	BuyerOpenId        string             `json:"buyer_open_id"` // 新版接口无法获取user_id, 这里只能传递openid值
+	BuyerId            string             `json:"buyer_id"`            // 买家支付宝用户ID。 2088开头的16位纯数字，小程序场景下获取用户ID请参考：用户授权; 其它场景下获取用户ID请参考：网页授权获取用户信息; 注：交易的买家与卖家不能相同。
+	BuyerOpenId        string             `json:"buyer_open_id"`       // 新版接口无法获取user_id, 这里只能传递openid值
+	OpAppId            string             `json:"op_app_id,omitempty"` // 小程序支付中，商户实际经营主体的小程序应用的appid, 注意事项:商户需要先在产品管理中心绑定该小程序appid，否则下单会失败
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"`
 	OperatorId         string             `json:"operator_id"`
 	TerminalId         string             `json:"terminal_id"`
