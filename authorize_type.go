@@ -48,6 +48,14 @@ type SystemOauthTokenRsp struct {
 	OpenId       string `json:"open_id"`
 }
 
+func (s *SystemOauthTokenRsp) IsSuccess() bool {
+	return s.AccessToken != "" && s.UserId != ""
+}
+
+func (s *SystemOauthTokenRsp) IsFailure() bool {
+	return s.AccessToken == "" || s.UserId == ""
+}
+
 // UserInfoShare 支付宝会员授权信息查询接口请求参数 https://docs.open.alipay.com/api_2/alipay.user.info.share
 type UserInfoShare struct {
 	AuxParam
