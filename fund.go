@@ -44,11 +44,7 @@ func (c *Client) FundAuthOperationDetailQuery(param FundAuthOperationDetailQuery
 
 // FundAuthOrderAppFreeze 线上资金授权冻结接口 https://docs.open.alipay.com/api_28/alipay.fund.auth.order.app.freeze
 func (c *Client) FundAuthOrderAppFreeze(param FundAuthOrderAppFreeze) (result string, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return "", err
-	}
-	return p.Encode(), err
+	return c.EncodeParam(param)
 }
 
 // FundTransUniTransfer 单笔转账接口 https://docs.open.alipay.com/api_28/alipay.fund.trans.uni.transfer/
@@ -71,9 +67,5 @@ func (c *Client) FundAccountQuery(param FundAccountQuery) (result *FundAccountQu
 
 // FundTransAppPay 现金红包无线支付接口 https://opendocs.alipay.com/open/03rbyf
 func (c *Client) FundTransAppPay(param FundTransAppPay) (result string, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return "", err
-	}
-	return p.Encode(), err
+	return c.EncodeParam(param)
 }

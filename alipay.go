@@ -574,8 +574,24 @@ func (c *Client) verify(certSN string, data, signature []byte) (err error) {
 	return nil
 }
 
-func (c *Client) Request(payload *Payload, result interface{}) (err error) {
-	return c.doRequest(http.MethodPost, payload, result)
+func (c *Client) Request(param Param, result interface{}) (err error) {
+	return c.doRequest(http.MethodPost, param, result)
+}
+
+func (c *Client) BuildURL(param Param) (*url.URL, error) {
+	p, err := c.URLValues(param)
+	if err != nil {
+		return nil, err
+	}
+	return url.Parse(c.host + "?" + p.Encode())
+}
+
+func (c *Client) EncodeParam(param Param) (string, error) {
+	p, err := c.URLValues(param)
+	if err != nil {
+		return "", err
+	}
+	return p.Encode(), nil
 }
 
 func (c *Client) OnReceivedData(fn func(method string, data []byte)) {

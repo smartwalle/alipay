@@ -63,14 +63,13 @@ var client, err = alipay.New(appID, privateKey, isProduction)
 
 支付宝提供了用于开发时测试的 sandbox 环境，对接的时候需要注意相关的 app id 和密钥是 sandbox 环境还是 production 环境的。如果是 sandbox 环境，本参数应该传 false，否则为 true。
 
-
 ### 公钥证书模式
 
 如果采用公钥证书方式进行验证签名，需要调用以下几个方法加载证书信息，所有证书都是从支付宝创建的应用处下载，参考 [https://docs.open.alipay.com/291/105971/](https://docs.open.alipay.com/291/105971/) 和 [https://docs.open.alipay.com/291/105972/](https://docs.open.alipay.com/291/105972/)
 
 ```go
 client.LoadAppCertPublicKeyFromFile("/路径/appCertPublicKey_2017011104995404.crt") // 加载应用公钥证书
-client.LoadAliPayRootCertFromFile("/路径/alipayRootCert.crt")             // 加载支付宝根证书
+client.LoadAliPayRootCertFromFile("/路径/alipayRootCert.crt")                // 加载支付宝根证书
 client.LoadAlipayCertPublicKeyFromFile("/路径/alipayCertPublicKey_RSA2.crt") // 加载支付宝公钥证书
 ```
 
@@ -117,13 +116,13 @@ p.ReturnURL = "http://xxx/return"
 
 ```go
 http.HandleFunc("/return", func (writer http.ResponseWriter, request *http.Request) {
-    request.ParseForm()
-    if err := client.VerifySign(request.Form); err != nil {
-        // 如果 err 不为空，则表示验签失败
-        fmt.Println(err)
-        return 
-    }
-    // 业务处理
+request.ParseForm()
+if err := client.VerifySign(request.Form); err != nil {
+// 如果 err 不为空，则表示验签失败
+fmt.Println(err)
+return
+}
+// 业务处理
 }
 ```
 
@@ -140,18 +139,18 @@ p.NotifyURL = "http://xxx/return"
 
 ```go
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
-    request.ParseForm()
+request.ParseForm()
 
-    // DecodeNotification 内部已调用 VerifySign 方法验证签名
-    var noti, err = client.DecodeNotification(request.Form)
-    if err != nil {
-        // 错误处理
-        fmt.Println(err)
-        return 
-    }
-    // 业务处理
-    // 如果通知消息没有问题，我们需要确认收到通知消息，不然支付宝后续会继续推送相同的消息
-    alipay.ACKNotification(writer) 
+// DecodeNotification 内部已调用 VerifySign 方法验证签名
+var noti, err = client.DecodeNotification(request.Form)
+if err != nil {
+// 错误处理
+fmt.Println(err)
+return
+}
+// 业务处理
+// 如果通知消息没有问题，我们需要确认收到通知消息，不然支付宝后续会继续推送相同的消息
+alipay.ACKNotification(writer)
 })
 ```
 
@@ -356,28 +355,28 @@ alipay.New(appId, privateKey, isProduction, alipay.WithPastSandboxGateway())
 var privateKey = "xxx" // 必须，上一步中使用 RSA签名验签工具 生成的私钥
 var client, err = alipay.New(appId, privateKey, false)
 if err != nil {
-    fmt.Println(err)
-    return
+fmt.Println(err)
+return
 }
 
 // 加载应用公钥证书
 if err = client.LoadAppCertPublicKeyFromFile("appCertPublicKey_2017011104995404.crt"); err != nil {
-    // 错误处理
+// 错误处理
 }
 
 // 加载支付宝根证书
 if err = client.LoadAliPayRootCertFromFile("alipayRootCert.crt"); err != nil {
-    // 错误处理
+// 错误处理
 }
 
 // 加载支付宝公钥证书
 if err = client.LoadAlipayCertPublicKeyFromFile("alipayCertPublicKey_RSA2.crt"); err != nil {
-    // 错误处理
+// 错误处理
 }
 
 // 加载内容密钥，可选
 if err = client.SetEncryptKey("FtVd5SgrsUzYQRAPBmejHQ=="); err != nil {
-    // 错误处理
+// 错误处理
 }
 
 var p = alipay.TradeWapPay{}
@@ -390,7 +389,7 @@ p.ProductCode = "QUICK_WAP_WAY"
 
 var url, err = client.TradeWapPay(p)
 if err != nil {
-    fmt.Println(err)
+fmt.Println(err)
 }
 
 // 这个 payURL 即是用于打开支付宝支付页面的 URL，可将输出的内容复制，到浏览器中访问该 URL 即可打开支付页面。
@@ -405,16 +404,25 @@ fmt.Println(payURL)
 ```go
 var p = alipay.NewPayload("这里是接口名称，如：alipay.trade.query")
 // 添加公共请求参数，如：app_auth_token
-p.AddParam("key", "value") 
+p.AddParam("key", "value")
 // 添加请求参数(业务相关)
 p.AddBizField("key", "value")
 
-var result map[string]interface{} 
+// 应用场景一：需要向支付宝服务器发起网络请求，如交易查询接口（alipay.trade.query）
+var result map[string]interface{}
 // result 也可以为结构体，可参照 alipay.TradeQueryRsp
 var err = client.Request(p, &result)
 if err != nil {
-    ...
+...
 }
+
+// 应用场景二：只需要生成 URL，如网页支付（alipay.trade.page.pay）
+var url, err = clietn.BuildURL(p)
+...
+
+// 应用场景三：只需要对参数进行签名，如 App 支付（alipay.trade.app.pay）
+var s, err = client.EncodeParam(p)
+...
 ```
 
 [更多信息](https://github.com/smartwalle/alipay/blob/master/trade_test.go#L104)

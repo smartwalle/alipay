@@ -6,25 +6,12 @@ import (
 
 // TradePagePay 统一收单下单并支付页面接口 https://docs.open.alipay.com/api_1/alipay.trade.page.pay
 func (c *Client) TradePagePay(param TradePagePay) (result *url.URL, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return nil, err
-	}
-
-	result, err = url.Parse(c.host + "?" + p.Encode())
-	if err != nil {
-		return nil, err
-	}
-	return result, err
+	return c.BuildURL(param)
 }
 
 // TradeAppPay App支付接口 https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 func (c *Client) TradeAppPay(param TradeAppPay) (result string, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return "", err
-	}
-	return p.Encode(), err
+	return c.EncodeParam(param)
 }
 
 // TradeFastPayRefundQuery 统一收单交易退款查询接口 https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
@@ -103,9 +90,5 @@ func (c *Client) TradeMergePreCreate(param TradeMergePreCreate) (result *TradeMe
 // TradeAppMergePay App合并支付接口 https://opendocs.alipay.com/open/028py8
 // TODO TradeAppMergePay 接口未经测试
 func (c *Client) TradeAppMergePay(param TradeAppPay) (result string, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return "", err
-	}
-	return p.Encode(), err
+	return c.EncodeParam(param)
 }

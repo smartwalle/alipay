@@ -6,16 +6,7 @@ import (
 
 // AgreementPageSign 支付宝个人协议页面签约接口 https://docs.open.alipay.com/api_2/alipay.user.agreement.page.sign
 func (c *Client) AgreementPageSign(param AgreementPageSign) (result *url.URL, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return nil, err
-	}
-
-	result, err = url.Parse(c.host + "?" + p.Encode())
-	if err != nil {
-		return nil, err
-	}
-	return result, err
+	return c.BuildURL(param)
 }
 
 // AgreementQuery 支付宝个人代扣协议查询接口 https://opendocs.alipay.com/open/02fkao?scene=8837b4183390497f84bb53783b488ecc

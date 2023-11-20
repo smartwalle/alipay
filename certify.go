@@ -10,17 +10,7 @@ func (c *Client) UserCertifyOpenInitialize(param UserCertifyOpenInitialize) (res
 
 // UserCertifyOpenCertify 身份认证开始认证接口 https://docs.open.alipay.com/api_2/alipay.user.certify.open.certify
 func (c *Client) UserCertifyOpenCertify(param UserCertifyOpenCertify) (result *url.URL, err error) {
-	p, err := c.URLValues(param)
-	if err != nil {
-		return nil, err
-	}
-
-	result, err = url.Parse(c.host + "?" + p.Encode())
-	if err != nil {
-		return nil, err
-	}
-
-	return result, err
+	return c.BuildURL(param)
 }
 
 // UserCertifyOpenQuery 身份认证记录查询接口 https://docs.open.alipay.com/api_2/alipay.user.certify.open.query/
