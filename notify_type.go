@@ -21,12 +21,16 @@ type Notification struct {
 	Sign                string      `json:"sign"`                  // 签名
 	TradeNo             string      `json:"trade_no"`              // 支付宝交易号
 	OutTradeNo          string      `json:"out_trade_no"`          // 商户订单号
+	OutRequestNo        string      `json:"out_request_no"`        // 退款请求编号
 	OutBizNo            string      `json:"out_biz_no"`            // 商户业务号
 	BuyerId             string      `json:"buyer_id"`              // 买家支付宝用户号
 	BuyerLogonId        string      `json:"buyer_logon_id"`        // 买家支付宝账号
 	SellerId            string      `json:"seller_id"`             // 卖家支付宝用户号
 	SellerEmail         string      `json:"seller_email"`          // 卖家支付宝账号
 	TradeStatus         TradeStatus `json:"trade_status"`          // 交易状态
+	RefundStatus        string      `json:"refund_status"`         // 退款状态
+	RefundReason        string      `json:"refund_reason"`         // 退款原因
+	RefundAmount        string      `json:"refund_amount"`         // 退款金额
 	TotalAmount         string      `json:"total_amount"`          // 订单金额
 	ReceiptAmount       string      `json:"receipt_amount"`        // 实收金额
 	InvoiceAmount       string      `json:"invoice_amount"`        // 开票金额
@@ -44,4 +48,7 @@ type Notification struct {
 	VoucherDetailList   string      `json:"voucher_detail_list"`   // 优惠券信息
 	AgreementNo         string      `json:"agreement_no"`          // 支付宝签约号
 	ExternalAgreementNo string      `json:"external_agreement_no"` // 商户自定义签约号
+	DBackStatus         string      `json:"dback_status"`          // 银行卡冲退状态
+	DBackAmount         string      `json:"dback_amount"`          // 银行卡冲退金额
+	BankAckTime         string      `json:"bank_ack_time"`         // 银行响应时间
 }
