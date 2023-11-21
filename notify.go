@@ -62,6 +62,9 @@ func (c *Client) DecodeNotification(values url.Values) (notification *Notificati
 	notification.NotifyTime = values.Get("notify_time")
 	notification.TradeNo = values.Get("trade_no")
 	notification.TradeStatus = TradeStatus(values.Get("trade_status"))
+	notification.RefundStatus = values.Get("refund_status")
+	notification.RefundReason = values.Get("refund_reason")
+	notification.RefundAmount = values.Get("refund_amount")
 	notification.TotalAmount = values.Get("total_amount")
 	notification.ReceiptAmount = values.Get("receipt_amount")
 	notification.InvoiceAmount = values.Get("invoice_amount")
@@ -74,6 +77,7 @@ func (c *Client) DecodeNotification(values url.Values) (notification *Notificati
 	notification.Charset = values.Get("charset")
 	notification.PointAmount = values.Get("point_amount")
 	notification.OutTradeNo = values.Get("out_trade_no")
+	notification.OutRequestNo = values.Get("out_request_no")
 	notification.OutBizNo = values.Get("out_biz_no")
 	notification.GmtCreate = values.Get("gmt_create")
 	notification.GmtPayment = values.Get("gmt_payment")
@@ -89,6 +93,9 @@ func (c *Client) DecodeNotification(values url.Values) (notification *Notificati
 	notification.VoucherDetailList = values.Get("voucher_detail_list")
 	notification.AgreementNo = values.Get("agreement_no")
 	notification.ExternalAgreementNo = values.Get("external_agreement_no")
+	notification.DBackStatus = values.Get("dback_status")
+	notification.DBackAmount = values.Get("dback_amount")
+	notification.BankAckTime = values.Get("bank_ack_time")
 	return notification, err
 }
 
