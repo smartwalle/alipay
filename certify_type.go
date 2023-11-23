@@ -126,6 +126,7 @@ type UserCertDocCertVerifyPreConsultRsp struct {
 type UserCertDocCertVerifyConsult struct {
 	AuxParam
 	AppAuthToken string `json:"-"`         // 可选
+	AuthToken    string `json:"-"`         // 必选
 	VerifyId     string `json:"verify_id"` // 信息校验验证ID。通过alipay.user.certdoc.certverify.preconsult(实名证件信息比对验证预咨询)接口获取
 }
 
@@ -136,6 +137,7 @@ func (u UserCertDocCertVerifyConsult) APIName() string {
 func (u UserCertDocCertVerifyConsult) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = u.AppAuthToken
+	m["auth_token"] = u.AuthToken
 	return m
 }
 
