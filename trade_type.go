@@ -688,13 +688,14 @@ type OrderDetail struct {
 }
 
 type ExtendParams struct {
-	SysServiceProviderId string `json:"sys_service_provider_id"` // 可选 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
-	HBFQNum              string `json:"hb_fq_num"`               // 可选 使用花呗分期要进行的分期数
-	HBFQSellerPercent    string `json:"hb_fq_seller_percent"`    // 可选 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
-	IndustryRefluxInfo   string `json:"industry_reflux_info"`    // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
-	CardType             string `json:"card_type"`               // 可选 卡类型
-	SpecifiedSellerName  string `json:"specified_seller_name"`   // 可选 特殊场景下，允许商户指定交易展示的卖家名称
-	OrigTotalAmount      string `json:"orig_total_amount"`       // 可选 外部订单金额。
+	SysServiceProviderId  string `json:"sys_service_provider_id"` // 可选 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
+	HBFQNum               string `json:"hb_fq_num"`               // 可选 使用花呗分期要进行的分期数
+	HBFQSellerPercent     string `json:"hb_fq_seller_percent"`    // 可选 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
+	IndustryRefluxInfo    string `json:"industry_reflux_info"`    // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
+	CardType              string `json:"card_type"`               // 可选 卡类型
+	SpecifiedSellerName   string `json:"specified_seller_name"`   // 可选 特殊场景下，允许商户指定交易展示的卖家名称
+	OrigTotalAmount       string `json:"orig_total_amount"`       // 可选 外部订单金额。
+  TradeComponentOrderId string `json:"trade_component_order_id"` // 可选 公域商品交易业务订单ID
 }
 
 type Merchant struct {
