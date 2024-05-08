@@ -205,3 +205,17 @@ func TestClient_TradeMergePreCreate(t *testing.T) {
 	}
 	t.Logf("%v", rsp)
 }
+func TestClient_OpenMiniOrderCreate(t *testing.T) {
+	t.Log("========== OpenMiniOrderCreate ==========")
+	var p = alipay.OpenMiniOrderCreate{}
+
+	rsp, err := client.OpenMiniOrderCreate(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if rsp.IsFailure() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
+}
