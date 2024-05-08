@@ -1,6 +1,9 @@
 package alipay
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type Trade struct {
 	AuxParam
@@ -688,14 +691,14 @@ type OrderDetail struct {
 }
 
 type ExtendParams struct {
-	SysServiceProviderId  string `json:"sys_service_provider_id"` // 可选 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
-	HBFQNum               string `json:"hb_fq_num"`               // 可选 使用花呗分期要进行的分期数
-	HBFQSellerPercent     string `json:"hb_fq_seller_percent"`    // 可选 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
-	IndustryRefluxInfo    string `json:"industry_reflux_info"`    // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
-	CardType              string `json:"card_type"`               // 可选 卡类型
-	SpecifiedSellerName   string `json:"specified_seller_name"`   // 可选 特殊场景下，允许商户指定交易展示的卖家名称
-	OrigTotalAmount       string `json:"orig_total_amount"`       // 可选 外部订单金额。
-  TradeComponentOrderId string `json:"trade_component_order_id"` // 可选 公域商品交易业务订单ID
+	SysServiceProviderId  string `json:"sys_service_provider_id"`  // 可选 系统商编号 该参数作为系统商返佣数据提取的依据，请填写系统商签约协议的PID
+	HBFQNum               string `json:"hb_fq_num"`                // 可选 使用花呗分期要进行的分期数
+	HBFQSellerPercent     string `json:"hb_fq_seller_percent"`     // 可选 使用花呗分期需要卖家承担的手续费比例的百分值，传入100代表100%
+	IndustryRefluxInfo    string `json:"industry_reflux_info"`     // 可选 行业数据回流信息, 详见：地铁支付接口参数补充说明
+	CardType              string `json:"card_type"`                // 可选 卡类型
+	SpecifiedSellerName   string `json:"specified_seller_name"`    // 可选 特殊场景下，允许商户指定交易展示的卖家名称
+	OrigTotalAmount       string `json:"orig_total_amount"`        // 可选 外部订单金额。
+	TradeComponentOrderId string `json:"trade_component_order_id"` // 可选 公域商品交易业务订单ID
 }
 
 type Merchant struct {
@@ -747,4 +750,182 @@ func (t TradeAppMergePay) Params() map[string]string {
 	var m = make(map[string]string)
 	m["app_auth_token"] = t.AppAuthToken
 	return m
+}
+
+// OpenMiniOrderCreate 小程序交易组件创建订单 https://opendocs.alipay.com/mini/54f80876_alipay.open.mini.order.create
+type OpenMiniOrderCreate struct {
+	AuxParam
+	AppAuthToken            string                      `json:"-"`                                   // 可选
+	OutOrderID              string                      `json:"out_order_id"`                        // 商户订单号，必选
+	Title                   string                      `json:"title"`                               // 订单标题，必选
+	SourceID                string                      `json:"source_id"`                           // 追踪ID，必选
+	MerchantBizType         string                      `json:"merchant_biz_type"`                   // 订单类型，必选
+	Path                    string                      `json:"path"`                                // 商家小程序对应的订单详情页路径地址，必选
+	OrderDetail             MiniOrderDetailDTO          `json:"order_detail"`                        // 订单信息，必选
+	SellerID                string                      `json:"seller_id"`                           // 商家小程序对应的卖家ID，必选
+	BuyerID                 string                      `json:"buyer_id"`                            // 用户ID，
+	BuyerLonginID           string                      `json:"buyer_longin_id"`                     // 用户登录ID，可选
+	TimeoutExpress          string                      `json:"timeout_express"`                     // 订单过期时间，可选
+	PromoDetailInfo         *PromoDetailInfoDTO         `json:"promo_detail_info"`                   // 营销信息，可选
+	DeliveryDetail          *LogisticsInfoDTO           `json:"delivery_detail"`                     // 物流信息，可选
+	DefaultReceivingAddress *MiniReceiverAddressInfoDTO `json:"default_receiving_address,omitempty"` // 默认退货地址，可选
+}
+
+// MiniOrderDetailDTO 定义订单详细信息的结构体
+type MiniOrderDetailDTO struct {
+	ItemInfos []MiniGoodsDetailInfoDTO `json:"item_infos"` // 商品详细信息，必选
+	PriceInfo PriceInfoDTO             `json:"price_info"` // 价格信息，必选
+}
+
+// MiniGoodsDetailInfoDTO 定义商品详细信息的结构体
+type MiniGoodsDetailInfoDTO struct {
+	GoodsName           string                  `json:"goods_name"`                // 商品名称，必选
+	ItemCnt             string                  `json:"item_cnt"`                  // 商品数量，必选
+	SalePrice           string                  `json:"sale_price"`                // 商品单价，必选
+	GoodsID             string                  `json:"goods_id"`                  // 商品的编号，必选
+	OutItemID           string                  `json:"out_item_id"`               // 商户商品ID，条件必选
+	OutSkuID            string                  `json:"out_sku_id"`                // 商户商品sku_id，条件必选
+	SaleRealPrice       string                  `json:"sale_real_price"`           // 商品实际单价，条件必选
+	ItemDiscount        string                  `json:"item_discount"`             // 商家商品优惠金额，条件必选
+	ImageMaterialID     string                  `json:"image_material_id"`         // 商家商品素材ID，条件必选
+	ItemInstallmentInfo *ItemInstallmentInfoDTO `json:"item_installment_info"`     // 商品分期信息，条件必选
+	RentInfo            *RentInfoDTO            `json:"rent_info,omitempty"`       // 租金信息，租赁商品特有,可选
+	EffectiveDates      *EffectiveDatesDTO      `json:"effective_dates,omitempty"` // 价格日历,可选
+	TicketInfo          *TicketInfoDTO          `json:"ticket_info,omitempty"`     // 演出票务信息,可选
+	ActivityInfo        *ActivityInfoDTO        `json:"activity_info,omitempty"`   // 活动信息,可选
+}
+
+// ItemInstallmentInfoDTO 定义商品分期信息的结构体
+type ItemInstallmentInfoDTO struct {
+	PeriodNum      int     `json:"period_num"`                 // 总分期数，必选
+	PeriodMaxPrice *string `json:"period_max_price,omitempty"` // 每期最大金额，可选
+	PeriodPrice    *string `json:"period_price,omitempty"`     // 每期金额，可选
+}
+
+// RentInfoDTO 定义租金信息的结构体
+type RentInfoDTO struct {
+	InitialRentPrice    string    `json:"initial_rent_price"`               // 首期租金，条件必选
+	PeriodRealRentPrice string    `json:"period_real_rent_price"`           // 每期租金，条件必选
+	PeriodNum           int       `json:"period_num"`                       // 期数，条件必选
+	BuyoutPrice         string    `json:"buyout_price"`                     // 买断价，条件必选
+	AddonPeriodNum      string    `json:"addon_period_num"`                 // 续租总期数，条件必选
+	AddonRealRentPrice  string    `json:"addon_real_rent_price"`            // 续租总金额，条件必选
+	RentStartTime       time.Time `json:"rent_start_time"`                  // 租期开始时间，条件必选
+	RentEndTime         time.Time `json:"rent_end_time"`                    // 租期结束时间，条件必选
+	FinishRealRentPrice *string   `json:"finish_real_rent_price,omitempty"` // 尾期租金，可选
+	DepositPrice        *string   `json:"deposit_price,omitempty"`          // 押金金额，可选
+}
+
+// EffectiveDatesDTO 定义价格日历的结构体
+type EffectiveDatesDTO struct {
+	Date  string `json:"date"`  // 价格日期，可选
+	Price string `json:"price"` // 商品单价，可选
+}
+
+// TicketInfoDTO 定义演出票务信息的结构体
+type TicketInfoDTO struct {
+	TicketID         string    `json:"ticket_id"`         // 票编码ID，必选
+	TicketType       string    `json:"ticket_type"`       // 票类型，必选
+	EventID          string    `json:"event_id"`          // 场次ID，必选
+	EventName        string    `json:"event_name"`        // 场次名称，必选
+	EventStartTime   time.Time `json:"event_start_time"`  // 场次开始时间，必选
+	LocationName     string    `json:"location_name"`     // 演出位置，必选
+	City             string    `json:"city"`              // 演出城市，必选
+	TicketLink       string    `json:"ticket_link"`       // 票据链接，可选
+	EventEndTime     time.Time `json:"event_end_time"`    // 场次结束时间，可选
+	PerformanceSeats string    `json:"performance_seats"` // 演出座位号，可选
+}
+
+// ActivityInfoDTO 定义活动信息的结构体
+type ActivityInfoDTO struct {
+	ActivityID   string    `json:"activity_id"`   // 活动ID，必选
+	ActivityName string    `json:"activity_name"` // 活动名称，必选
+	LocationName string    `json:"location_name"` // 活动地点，必选
+	City         string    `json:"city"`          // 活动所在的城市名，必选
+	StartTime    time.Time `json:"start_time"`    // 活动开始时间，可选
+	EndTime      time.Time `json:"end_time"`      // 活动结束时间，可选
+	Link         string    `json:"link"`          // 活动票链接，可选
+}
+
+// PriceInfoDTO 定义价格详细信息的结构体
+type PriceInfoDTO struct {
+	OrderPrice         string `json:"order_price"`          // 订单总价，必选
+	Freight            string `json:"freight"`              // 运费，可选
+	DiscountedPrice    string `json:"discounted_price"`     // 商家优惠金额，可选
+	MerchantValuePrice string `json:"merchant_value_price"` // 商家储值金额，可选
+}
+
+// ShopInfoDTO 定义门店信息的结构体
+type ShopInfoDTO struct {
+	Name           string `json:"name"`                       // 门店名称，必选
+	Address        string `json:"address"`                    // 门店地址，必选
+	MerchantShopID string `json:"merchant_shop_id,omitempty"` // 商家侧门店id，可选
+	AlipayShopID   string `json:"alipay_shop_id,omitempty"`   // 蚂蚁侧门店id，可选
+}
+
+// CreditInfoDTO 定义芝麻信用信息的结构体
+type CreditInfoDTO struct {
+	ZmServiceID    string `json:"zm_service_id"`    // 信用服务ID，必选
+	OutAgreementNo string `json:"out_agreement_no"` // 商户外部协议号，必选
+}
+
+// SubMerchantDTO 定义二级商户信息的结构体
+type SubMerchantDTO struct {
+	MerchantID   string `json:"merchant_id"`             // 二级商户编号，必选
+	MerchantType string `json:"merchant_type,omitempty"` // 二级商户编号类型，可选
+}
+
+// ContactInfoDTO 定义买家联系人信息的结构体
+type ContactInfoDTO struct {
+	PhoneNumber string `json:"phone_number,omitempty"` // 联系人手机号，可选
+	ContactName string `json:"contact_name,omitempty"` // 联系人姓名，可选
+}
+
+// MiniReceiverAddressInfoDTO 定义订单收货地址的结构体
+type MiniReceiverAddressInfoDTO struct {
+	ReceiverName         string `json:"receiver_name"`                    // 收货人姓名，必选
+	DetailedAddress      string `json:"detailed_address"`                 // 收货地址信息，必选
+	TelNumber            string `json:"tel_number"`                       // 收货人手机号，必选
+	ReceiverZip          string `json:"receiver_zip,omitempty"`           // 收货邮编地址，可选
+	ReceiverDivisionCode string `json:"receiver_division_code,omitempty"` // 标准城市域码，可选
+}
+
+// PromoDetailInfoDTO 定义订单优惠信息的结构体
+type PromoDetailInfoDTO struct {
+	ActivityConsultID string `json:"activity_consult_id,omitempty"` // 优惠活动咨询ID，可选
+}
+
+// MiniOrderExtInfoDTO 定义订单扩展字段的结构体
+type MiniOrderExtInfoDTO struct {
+	DoorTime                time.Time `json:"door_time,omitempty"`                  // 预约上门取件时间，可选
+	OrderStr                string    `json:"order_str"`                            // 芝麻租赁授权签名，条件必选
+	OrderTradeType          string    `json:"order_trade_type"`                     // 订单交易类型，条件必选
+	TradeNo                 string    `json:"trade_no"`                             // 交易号，条件必选
+	AdditionRebateBasePrice *string   `json:"addition_rebate_base_price,omitempty"` // 订单附加返佣金额基数，可选
+	DeductSignScene         string    `json:"deduct_sign_scene,omitempty"`          // 代扣协议签约场景，可选
+}
+
+// LogisticsInfoDTO 定义物流信息的结构体
+type LogisticsInfoDTO struct {
+	DeliveryType string    `json:"delivery_type,omitempty"` // 物流类型，可选
+	DeliveryTime time.Time `json:"delivery_time,omitempty"` // 配送时间，可选
+}
+
+func (t OpenMiniOrderCreate) APIName() string {
+	return "alipay.open.mini.order.create"
+}
+
+func (t OpenMiniOrderCreate) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = t.AppAuthToken
+	return m
+}
+
+type OpenMiniOrderCreateResponse struct {
+	Error
+	Code       string `json:"code"`
+	Msg        string `json:"msg"`
+	OrderID    string `json:"order_id"`
+	OutOrderID string `json:"out_order_id"`
+	Sign       string `json:"sign"`
 }

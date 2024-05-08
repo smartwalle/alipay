@@ -92,3 +92,9 @@ func (c *Client) TradeMergePreCreate(param TradeMergePreCreate) (result *TradeMe
 func (c *Client) TradeAppMergePay(param TradeAppPay) (result string, err error) {
 	return c.EncodeParam(param)
 }
+
+// OpenMiniOrderCreate 小程序交易组件业务单创建 https://opendocs.alipay.com/mini/54f80876_alipay.open.mini.order.create
+func (c *Client) OpenMiniOrderCreate(param OpenMiniOrderCreate) (result *OpenMiniOrderCreateResponse, err error) {
+	err = c.doRequest("POST", param, &result)
+	return result, err
+}
