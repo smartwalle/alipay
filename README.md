@@ -447,6 +447,27 @@ var result map[string]interface{}
 var err = client.Request(p, &result)
 ```
 
+## 链路跟踪
+
+```go
+// HTTP客户端
+httpClient := &http.Client{
+    Timeout: 30 * time.Second,
+    Transport: otelhttp.NewTransport(
+        http.DefaultTransport,
+        otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string {
+            return r.Method + " " + r.URL.Path
+        }),
+    ),
+}
+
+// 初始化支付宝客户端
+client, err := alipay.New(appId, privateKey, false, alipay.WithHTTPClient(httpClient))
+if err != nil {
+    fmt.Println(err)
+}
+```
+
 ## 示例
 
 [网页支付](https://github.com/smartwalle/alipay/blob/master/examples/main.go)
