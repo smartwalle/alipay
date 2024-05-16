@@ -10,8 +10,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"github.com/smartwalle/ngx"
-	"github.com/smartwalle/nsign"
 	"io"
 	"net/http"
 	"net/url"
@@ -21,6 +19,8 @@ import (
 	"time"
 
 	"github.com/smartwalle/ncrypto"
+	"github.com/smartwalle/ngx"
+	"github.com/smartwalle/nsign"
 )
 
 var (
@@ -46,6 +46,7 @@ type Client struct {
 	Client           *http.Client
 	location         *time.Location
 	onReceivedData   func(method string, data []byte)
+	ctx              context.Context
 
 	// 内容加密
 	needEncrypt    bool
@@ -387,7 +388,11 @@ func (c *Client) doRequest(method string, param Param, result interface{}) (err 
 		req.SetFileForm(param.FileParams())
 	}
 
-	rsp, err := req.Do(context.Background())
+	ctx := context.Background()
+	if c.ctx != nil {
+		ctx = c.ctx
+	}
+	rsp, err := req.Do(ctx)
 	if err != nil {
 		return err
 	}
@@ -596,6 +601,14 @@ func (c *Client) EncodeParam(param Param) (string, error) {
 
 func (c *Client) OnReceivedData(fn func(method string, data []byte)) {
 	c.onReceivedData = fn
+}
+
+// WithContext 设置请求的上下文
+func (c *Client) WithContext(ctx context.Context) *Client {
+	if ctx != nil {
+		c.ctx = ctx
+	}
+	return c
 }
 
 func base64decode(data []byte) ([]byte, error) {
