@@ -1,6 +1,7 @@
 package alipay_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -25,7 +26,7 @@ func init() {
 	var err error
 	client, err = alipay.New(appID, privateKey, false)
 
-	client.OnReceivedData(func(method string, data []byte) {
+	client.OnReceivedData(func(_ context.Context, method string, data []byte) {
 		log.Println(method, string(data))
 	})
 
@@ -54,7 +55,7 @@ func TestClient_CertDownload(t *testing.T) {
 	t.Log("========== CertDownload ==========")
 	var p = alipay.CertDownload{}
 	p.AliPayCertSN = ""
-	rsp, err := client.CertDownload(p)
+	rsp, err := client.CertDownload(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}

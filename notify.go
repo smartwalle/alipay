@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -11,12 +12,12 @@ var (
 	kSuccess = []byte("success")
 )
 
-func (c *Client) NotifyVerify(partnerId, notifyId string) bool {
+func (c *Client) NotifyVerify(ctx context.Context, partnerId, notifyId string) bool {
 	var values = url.Values{}
 	values.Add("service", "notify_verify")
 	values.Add("partner", partnerId)
 	values.Add("notify_id", notifyId)
-	req, err := http.NewRequest(http.MethodGet, c.notifyVerifyHost+"?"+values.Encode(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.notifyVerifyHost+"?"+values.Encode(), nil)
 	if err != nil {
 		return false
 	}
