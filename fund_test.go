@@ -1,6 +1,7 @@
 package alipay_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/smartwalle/alipay/v3"
@@ -13,7 +14,7 @@ func TestClient_FundTransToAccountTransfer(t *testing.T) {
 	p.PayeeType = "ALIPAY_LOGONID"
 	p.PayeeAccount = "xwmkjn7612@sandbox.com"
 	p.Amount = "100"
-	rsp, err := client.FundTransToAccountTransfer(p)
+	rsp, err := client.FundTransToAccountTransfer(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,7 +32,7 @@ func TestClient_FundAuthOrderVoucherCreate(t *testing.T) {
 	p.OutRequestNo = "222"
 	p.OrderTitle = "eee"
 	p.Amount = "1001"
-	rsp, err := client.FundAuthOrderVoucherCreate(p)
+	rsp, err := client.FundAuthOrderVoucherCreate(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +74,7 @@ func TestClient_FundTransUniTransfer(t *testing.T) {
 		},
 		Remark: "remark",
 	}
-	rsp, err := client.FundTransUniTransfer(param)
+	rsp, err := client.FundTransUniTransfer(context.Background(), param)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +92,7 @@ func TestClient_FundTransCommonQuery(t *testing.T) {
 		BizScene:    "DIRECT_TRANSFER",
 		OutBizNo:    "1111",
 	}
-	rsp, err := client.FundTransCommonQuery(param)
+	rsp, err := client.FundTransCommonQuery(context.Background(), param)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +108,7 @@ func TestClient_FundAccountQuery(t *testing.T) {
 	var param = alipay.FundAccountQuery{
 		AliPayUserId: "2088102169227503",
 	}
-	rsp, err := client.FundAccountQuery(param)
+	rsp, err := client.FundAccountQuery(context.Background(), param)
 	if err != nil {
 		t.Fatal(err)
 	}

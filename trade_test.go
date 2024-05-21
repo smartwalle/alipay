@@ -1,6 +1,7 @@
 package alipay_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/smartwalle/alipay/v3"
@@ -53,7 +54,7 @@ func TestClient_TradePreCreate(t *testing.T) {
 	p.Subject = "测试订单"
 	p.TotalAmount = "10.10"
 
-	rsp, err := client.TradePreCreate(p)
+	rsp, err := client.TradePreCreate(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +74,7 @@ func TestClient_TradePay(t *testing.T) {
 	p.Scene = "bar_code"
 	p.AuthCode = "扫描用户的支付码"
 
-	rsp, err := client.TradePay(p)
+	rsp, err := client.TradePay(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +91,7 @@ func TestClient_TradeQuery(t *testing.T) {
 	p.OutTradeNo = "trade_no_20170623021124"
 	p.QueryOptions = []string{"TRADE_SETTLE_INFO"}
 
-	rsp, err := client.TradeQuery(p)
+	rsp, err := client.TradeQuery(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -108,7 +109,7 @@ func TestClient_TradeQuery2(t *testing.T) {
 	p.AddBizField("query_options", []string{"TRADE_SETTLE_INFO"})
 
 	var rsp *alipay.TradeQueryRsp
-	var err = client.Request(p, &rsp)
+	var err = client.Request(context.Background(), p, &rsp)
 
 	if err != nil {
 		t.Fatal(err)
@@ -127,7 +128,7 @@ func TestClient_TradeQuery3(t *testing.T) {
 	p.AddBizField("query_options", []string{"TRADE_SETTLE_INFO"})
 
 	var rsp map[string]interface{}
-	var err = client.Request(p, &rsp)
+	var err = client.Request(context.Background(), p, &rsp)
 
 	if err != nil {
 		t.Fatal(err)
@@ -142,7 +143,7 @@ func TestClient_TradeRefund(t *testing.T) {
 	p.RefundAmount = "100"
 	p.OutTradeNo = "trade_no_20170623021124"
 	p.OutRequestNo = "111"
-	rsp, err := client.TradeRefund(p)
+	rsp, err := client.TradeRefund(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +161,7 @@ func TestClient_TradeFastPayRefundQuery(t *testing.T) {
 	p.OutRequestNo = "11"
 	p.QueryOptions = []string{"refund_detail_item_list"}
 
-	rsp, err := client.TradeFastPayRefundQuery(p)
+	rsp, err := client.TradeFastPayRefundQuery(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,7 +181,7 @@ func TestClient_TradeRefundAsync(t *testing.T) {
 	p.OutRequestNo = "20150320010101001uk"
 	p.NotifyURL = "http://127.0.0.1:9090/notify/ali-refund"
 
-	rsp, err := client.TradeRefundAsync(p)
+	rsp, err := client.TradeRefundAsync(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -195,7 +196,7 @@ func TestClient_TradeMergePreCreate(t *testing.T) {
 	t.Log("========== TradeMergePreCreate ==========")
 	var p = alipay.TradeMergePreCreate{}
 
-	rsp, err := client.TradeMergePreCreate(p)
+	rsp, err := client.TradeMergePreCreate(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,7 +210,7 @@ func TestClient_OpenMiniOrderCreate(t *testing.T) {
 	t.Log("========== OpenMiniOrderCreate ==========")
 	var p = alipay.OpenMiniOrderCreate{}
 
-	rsp, err := client.OpenMiniOrderCreate(p)
+	rsp, err := client.OpenMiniOrderCreate(context.Background(), p)
 	if err != nil {
 		t.Fatal(err)
 	}

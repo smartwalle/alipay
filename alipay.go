@@ -10,8 +10,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"github.com/smartwalle/ngx"
-	"github.com/smartwalle/nsign"
 	"io"
 	"net/http"
 	"net/url"
@@ -21,6 +19,8 @@ import (
 	"time"
 
 	"github.com/smartwalle/ncrypto"
+	"github.com/smartwalle/ngx"
+	"github.com/smartwalle/nsign"
 )
 
 var (
@@ -45,7 +45,7 @@ type Client struct {
 	notifyVerifyHost string
 	Client           *http.Client
 	location         *time.Location
-	onReceivedData   func(method string, data []byte)
+	onReceivedData   func(ctx context.Context, method string, data []byte)
 
 	// 内容加密
 	needEncrypt    bool
@@ -374,7 +374,7 @@ func (c *Client) URLValues(param Param) (value url.Values, err error) {
 	return values, nil
 }
 
-func (c *Client) doRequest(method string, param Param, result interface{}) (err error) {
+func (c *Client) doRequest(ctx context.Context, method string, param Param, result interface{}) (err error) {
 	var req = ngx.NewRequest(method, c.host, ngx.WithClient(c.Client))
 	req.SetContentType(kContentType)
 	if param != nil {
@@ -387,7 +387,7 @@ func (c *Client) doRequest(method string, param Param, result interface{}) (err 
 		req.SetFileForm(param.FileParams())
 	}
 
-	rsp, err := req.Do(context.Background())
+	rsp, err := req.Do(ctx)
 	if err != nil {
 		return err
 	}
@@ -401,10 +401,10 @@ func (c *Client) doRequest(method string, param Param, result interface{}) (err 
 	var apiName = param.APIName()
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
 
-	return c.decode(bodyBytes, bizFieldName, param.NeedVerify(), result)
+	return c.decode(ctx, bodyBytes, bizFieldName, param.NeedVerify(), result)
 }
 
-func (c *Client) decode(data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
 	var raw = make(map[string]json.RawMessage)
 	if err = json.Unmarshal(data, &raw); err != nil {
 		return err
@@ -442,7 +442,7 @@ func (c *Client) decode(data []byte, bizFieldName string, needVerifySign bool, r
 	// 验证签名
 	if needVerifySign {
 		if c.onReceivedData != nil {
-			c.onReceivedData(bizFieldName, plaintext)
+			c.onReceivedData(ctx, bizFieldName, plaintext)
 		}
 
 		if len(signBytes) == 0 {
@@ -524,15 +524,15 @@ func (c *Client) getVerifier(certSN string) (verifier Verifier, err error) {
 	return verifier, nil
 }
 
-func (c *Client) CertDownload(param CertDownload) (result *CertDownloadRsp, err error) {
-	err = c.doRequest(http.MethodPost, param, &result)
+func (c *Client) CertDownload(ctx context.Context, param CertDownload) (result *CertDownloadRsp, err error) {
+	err = c.doRequest(ctx, http.MethodPost, param, &result)
 	return result, err
 }
 
 func (c *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, err error) {
 	var param = CertDownload{}
 	param.AliPayCertSN = certSN
-	rsp, err := c.CertDownload(param)
+	rsp, err := c.CertDownload(context.Background(), param)
 	if err != nil {
 		return nil, err
 	}
@@ -574,8 +574,8 @@ func (c *Client) verify(certSN string, data, signature []byte) (err error) {
 	return nil
 }
 
-func (c *Client) Request(param Param, result interface{}) (err error) {
-	return c.doRequest(http.MethodPost, param, result)
+func (c *Client) Request(ctx context.Context, param Param, result interface{}) (err error) {
+	return c.doRequest(ctx, http.MethodPost, param, result)
 }
 
 func (c *Client) BuildURL(param Param) (*url.URL, error) {
@@ -594,7 +594,7 @@ func (c *Client) EncodeParam(param Param) (string, error) {
 	return p.Encode(), nil
 }
 
-func (c *Client) OnReceivedData(fn func(method string, data []byte)) {
+func (c *Client) OnReceivedData(fn func(ctx context.Context, method string, data []byte)) {
 	c.onReceivedData = fn
 }
 

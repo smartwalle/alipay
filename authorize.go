@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"context"
 	"net/url"
 	"strings"
 )
@@ -28,14 +29,14 @@ func (c *Client) PublicAppAuthorize(scopes []string, redirectURI, state string) 
 }
 
 // SystemOauthToken 换取授权访问令牌接口 https://docs.open.alipay.com/api_9/alipay.system.oauth.token
-func (c *Client) SystemOauthToken(param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
-	err = c.doRequest("POST", param, &result)
+func (c *Client) SystemOauthToken(ctx context.Context, param SystemOauthToken) (result *SystemOauthTokenRsp, err error) {
+	err = c.doRequest(ctx, "POST", param, &result)
 	return result, err
 }
 
 // UserInfoShare 支付宝会员授权信息查询接口 https://docs.open.alipay.com/api_2/alipay.user.info.share
-func (c *Client) UserInfoShare(param UserInfoShare) (result *UserInfoShareRsp, err error) {
-	err = c.doRequest("POST", param, &result)
+func (c *Client) UserInfoShare(ctx context.Context, param UserInfoShare) (result *UserInfoShareRsp, err error) {
+	err = c.doRequest(ctx, "POST", param, &result)
 	return result, err
 }
 
@@ -61,14 +62,14 @@ func (c *Client) AppToAppAuth(redirectURI, state string) (result *url.URL, err e
 }
 
 // OpenAuthTokenApp 换取应用授权令牌接口 https://docs.open.alipay.com/api_9/alipay.open.auth.token.app
-func (c *Client) OpenAuthTokenApp(param OpenAuthTokenApp) (result *OpenAuthTokenAppRsp, err error) {
-	err = c.doRequest("POST", param, &result)
+func (c *Client) OpenAuthTokenApp(ctx context.Context, param OpenAuthTokenApp) (result *OpenAuthTokenAppRsp, err error) {
+	err = c.doRequest(ctx, "POST", param, &result)
 	return result, err
 }
 
 // OpenAuthTokenAppQuery 查询某个应用授权AppAuthToken的授权信息 https://opendocs.alipay.com/isv/04hgcp?pathHash=7ea21afe
-func (c *Client) OpenAuthTokenAppQuery(param OpenAuthTokenAppQuery) (result *OpenAuthTokenAppQueryRsp, err error) {
-	err = c.doRequest("POST", param, &result)
+func (c *Client) OpenAuthTokenAppQuery(ctx context.Context, param OpenAuthTokenAppQuery) (result *OpenAuthTokenAppQueryRsp, err error) {
+	err = c.doRequest(ctx, "POST", param, &result)
 	return result, err
 }
 

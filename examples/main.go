@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/smartwalle/alipay/v3"
-	"github.com/smartwalle/xid"
 	"log"
 	"net/http"
+
+	"github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/xid"
 )
 
 var client *alipay.Client
@@ -84,7 +86,7 @@ func callback(writer http.ResponseWriter, request *http.Request) {
 	var p = alipay.TradeQuery{}
 	p.OutTradeNo = outTradeNo
 
-	rsp, err := client.TradeQuery(p)
+	rsp, err := client.TradeQuery(context.Background(), p)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte(fmt.Sprintf("验证订单 %s 信息发生错误: %s", outTradeNo, err.Error())))
@@ -116,7 +118,7 @@ func notify(writer http.ResponseWriter, request *http.Request) {
 	p.AddBizField("out_trade_no", notification.OutTradeNo)
 
 	var rsp *alipay.TradeQueryRsp
-	if err = client.Request(p, &rsp); err != nil {
+	if err = client.Request(context.Background(), p, &rsp); err != nil {
 		log.Printf("异步通知验证订单 %s 信息发生错误: %s \n", notification.OutTradeNo, err.Error())
 		return
 	}
