@@ -20,8 +20,14 @@ func (c *Client) FaceCertifyQuery(ctx context.Context, param FaceCertifyQuery) (
 	return result, err
 }
 
-// FaceVerificationInitialize 人脸核身初始化请求参数 https://opendocs.alipay.com/open/07260073_datadigital.fincloud.generalsaas.face.verification.initialize?scene=common&pathHash=0572cc86
+// FaceVerificationInitialize 人脸核身初始化 https://opendocs.alipay.com/open/07260073_datadigital.fincloud.generalsaas.face.verification.initialize?scene=common&pathHash=0572cc86
 func (c *Client) FaceVerificationInitialize(ctx context.Context, param FaceVerificationInitialize) (result *VerificationInitializeRsp, err error) {
+	err = c.doRequest(ctx, "POST", param, &result)
+	return result, err
+}
+
+// FaceVerificationQuery 人脸核身结果查询 https://opendocs.alipay.com/open/9438eff0_datadigital.fincloud.generalsaas.face.verification.query?scene=common&pathHash=1608a398
+func (c *Client) FaceVerificationQuery(ctx context.Context, param FaceVerificationQuery) (result *FaceVerificationQueryRsp, err error) {
 	err = c.doRequest(ctx, "POST", param, &result)
 	return result, err
 }

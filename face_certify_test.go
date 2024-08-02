@@ -27,3 +27,20 @@ func TestClient_FaceVerificationInitialize(t *testing.T) {
 	}
 	t.Logf("%v", rsp)
 }
+
+func TestClient_FaceVerificationQuery(t *testing.T) {
+	t.Log("========== FaceVerificationQuery ==========")
+	var p = alipay.FaceVerificationQuery{}
+
+	p.CertifyId = "xxxxxx"
+
+	rsp, err := client.FaceVerificationQuery(context.Background(), p)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if rsp.IsFailure() {
+		t.Fatal(rsp.Msg, rsp.SubMsg)
+	}
+	t.Logf("%v", rsp)
+}
