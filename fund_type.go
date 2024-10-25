@@ -346,9 +346,19 @@ func (f FundTransUniTransfer) Params() map[string]string {
 }
 
 type PayeeInfo struct {
-	Identity     string `json:"identity"`      // 必填 参与方的唯一标识
-	IdentityType string `json:"identity_type"` // 必填 参与方的标识类型，目前支持如下类型： 1、ALIPAY_USER_ID 支付宝的会员ID 2、ALIPAY_LOGON_ID：支付宝登录号，支持邮箱和手机号格式
-	Name         string `json:"name"`          // 可选 参与方真实姓名，如果非空，将校验收款支付宝账号姓名一致性。当identity_type=ALIPAY_LOGON_ID时，本字段必填。
+	Identity        string           `json:"identity"`                    // 必填 参与方的唯一标识
+	IdentityType    string           `json:"identity_type"`               // 必填 参与方的标识类型，目前支持如下类型： 1、ALIPAY_USER_ID 支付宝的会员ID 2、ALIPAY_LOGON_ID：支付宝登录号，支持邮箱和手机号格式
+	Name            string           `json:"name"`                        // 可选 参与方真实姓名，如果非空，将校验收款支付宝账号姓名一致性。当identity_type=ALIPAY_LOGON_ID时，本字段必填。
+	BankcardExtInfo *BankcardExtInfo `json:"bankcard_ext_info,omitempty"` // 收款方银行卡扩展信息  https://opendocs.alipay.com/open/021kx6#2.%20%E5%8D%95%E7%AC%94%E8%BD%AC%E8%B4%A6%E5%88%B0%E9%93%B6%E8%A1%8C%E5%8D%A1
+}
+
+type BankcardExtInfo struct {
+	InstName       string `json:"inst_name"`        // 可选	当收款账户为对公账户时，机构名称必填；当收款账户为对私账户时，机构名称可为空。机构名称参见 银行机构名称。
+	AccountType    string `json:"account_type"`     // 必选	收款账户类型。 1：对公（在金融机构开设的公司账户）,如果银行卡为对公，必须传递省市支行信息或者联行号 2：对私（在金融机构开设的个人账户）
+	InstProvince   string `json:"inst_province"`    // 可选	银行所在省份
+	InstCity       string `json:"inst_city"`        // 可选	收款银行所在市
+	InstBranchName string `json:"inst_branch_name"` // 可选	收款银行所属支行
+	BankCode       string `json:"bank_code"`        // 可选	银行支行联行号
 }
 
 // FundTransUniTransferRsp 单笔转账接口响应参数
