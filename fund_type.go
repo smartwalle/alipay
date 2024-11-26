@@ -121,7 +121,7 @@ type FundAuthOrderFreeze struct {
 }
 
 func (f FundAuthOrderFreeze) APIName() string {
-	return "alipay.fund.auth.order.app.freeze"
+	return "alipay.fund.auth.order.freeze"
 }
 
 func (f FundAuthOrderFreeze) Params() map[string]string {
