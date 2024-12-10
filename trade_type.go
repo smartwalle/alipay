@@ -131,6 +131,7 @@ type TradeQueryRsp struct {
 	TradeNo               string           `json:"trade_no"`                      // 支付宝交易号
 	OutTradeNo            string           `json:"out_trade_no"`                  // 商家订单号
 	BuyerLogonId          string           `json:"buyer_logon_id"`                // 买家支付宝账号
+	BuyerOpenId           string           `json:"buyer_open_id"`                 // 买家支付宝用户唯一标识
 	TradeStatus           TradeStatus      `json:"trade_status"`                  // 交易状态
 	TotalAmount           string           `json:"total_amount"`                  // 交易的订单金额
 	TransCurrency         string           `json:"trans_currency"`                // 标价币种

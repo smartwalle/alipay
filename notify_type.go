@@ -25,6 +25,7 @@ type Notification struct {
 	OutBizNo            string      `json:"out_biz_no"`            // 商户业务号
 	BuyerId             string      `json:"buyer_id"`              // 买家支付宝用户号
 	BuyerLogonId        string      `json:"buyer_logon_id"`        // 买家支付宝账号
+	BuyerOpenId         string      `json:"buyer_open_id"`         // 买家支付宝用户唯一标识
 	SellerId            string      `json:"seller_id"`             // 卖家支付宝用户号
 	SellerEmail         string      `json:"seller_email"`          // 卖家支付宝账号
 	TradeStatus         TradeStatus `json:"trade_status"`          // 交易状态
