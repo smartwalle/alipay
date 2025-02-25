@@ -97,6 +97,7 @@ func (c *Client) DecodeNotification(values url.Values) (notification *Notificati
 	notification.DBackStatus = values.Get("dback_status")
 	notification.DBackAmount = values.Get("dback_amount")
 	notification.BankAckTime = values.Get("bank_ack_time")
+	notification.SendBackFee = values.Get("send_back_fee")
 	return notification, err
 }
 
