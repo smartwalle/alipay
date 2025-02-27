@@ -52,4 +52,5 @@ type Notification struct {
 	DBackStatus         string      `json:"dback_status"`          // 银行卡冲退状态
 	DBackAmount         string      `json:"dback_amount"`          // 银行卡冲退金额
 	BankAckTime         string      `json:"bank_ack_time"`         // 银行响应时间
+	SendBackFee         string      `json:"send_back_fee"`         // 实际退款金额
 }
