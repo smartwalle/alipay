@@ -496,6 +496,11 @@ type AgreementParams struct {
 	ApplyToken    string `json:"apply_token,omitempty"`
 }
 
+type PayParams struct {
+	AsyncType string `json:"async_type,omitempty"`
+	RetryType string `json:"retry_type,omitempty"`
+}
+
 // TradePay 统一收单交易支付接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.pay/
 type TradePay struct {
 	Trade
@@ -513,6 +518,7 @@ type TradePay struct {
 	AuthConfirmMode    string             `json:"auth_confirm_mode,omitempty"`
 	TerminalParams     string             `json:"terminal_params,omitempty"`
 	AgreementParams    *AgreementParams   `json:"agreement_params,omitempty"`
+	PayParams          *PayParams         `json:"pay_params,omitempty"`
 }
 
 func (t TradePay) APIName() string {
