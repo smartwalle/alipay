@@ -1,9 +1,5 @@
 AliPay SDK for Golang
 
-## 鸣谢
-
-[![jetbrains.svg](jetbrains.svg)](https://www.jetbrains.com/?from=AliPay%20SDK%20for%20Go)
-
 ## 安装
 
 #### 启用 Go module
@@ -472,13 +468,12 @@ if err != nil {
 
 [网页支付](https://github.com/smartwalle/alipay/blob/master/examples/main.go)
 
-## 感谢你的支持
-
-如果对你有帮助，请我喝杯咖啡吧！
-
-![支付宝](https://i.imgs.ovh/2023/12/08/fMYl5.jpeg)
-![微信](https://i.imgs.ovh/2023/12/08/fMdbs.jpeg)
-
 ## License
 
 This project is licensed under the MIT License.
+
+## 鸣谢
+
+[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
+
+[![jetbrains.svg](jetbrains.svg)](https://www.jetbrains.com/?from=AliPay%20SDK%20for%20Go)
