@@ -598,6 +598,14 @@ func (c *Client) OnReceivedData(fn func(ctx context.Context, method string, data
 	c.onReceivedData = fn
 }
 
+func (c *Client) SignValues(values url.Values, opts ...nsign.SignOption) ([]byte, error) {
+	return c.signer.SignValues(values, opts...)
+}
+
+func (c *Client) SignBytes(data []byte, opts ...nsign.SignOption) ([]byte, error) {
+	return c.signer.SignBytes(data, opts...)
+}
+
 func base64decode(data []byte) ([]byte, error) {
 	var dBuf = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
 	n, err := base64.StdEncoding.Decode(dBuf, data)
