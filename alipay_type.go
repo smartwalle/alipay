@@ -74,7 +74,7 @@ type Param interface {
 	Params() map[string]string
 
 	// FileParams 文件参数
-	FileParams() ngx.FormFiles
+	FileParams() ngx.FileForm
 
 	// NeedEncrypt 该接口是否支持内容加密，有的接口不支持内容加密，比如文件上传接口：alipay.open.file.upload
 	NeedEncrypt() bool
@@ -87,7 +87,7 @@ type Param interface {
 type AuxParam struct {
 }
 
-func (aux AuxParam) FileParams() ngx.FormFiles {
+func (aux AuxParam) FileParams() ngx.FileForm {
 	return nil
 }
 
@@ -105,7 +105,7 @@ type Payload struct {
 	Verify  bool                   // 是否验证签名
 	param   map[string]string      // 请求参数
 	biz     map[string]interface{} // biz_content 请求参数
-	files   ngx.FormFiles          // 文件参数
+	files   ngx.FileForm           // 文件参数
 }
 
 func NewPayload(method string) *Payload {
@@ -126,7 +126,7 @@ func (p *Payload) Params() map[string]string {
 	return p.param
 }
 
-func (p *Payload) FileParams() ngx.FormFiles {
+func (p *Payload) FileParams() ngx.FileForm {
 	return p.files
 }
 
@@ -177,7 +177,7 @@ func (p *Payload) Set(key string, value interface{}) *Payload {
 // Deprecated: use AddFilePath instead.
 func (p *Payload) AddFile(name, filename, filepath string) {
 	if p.files == nil {
-		p.files = ngx.FormFiles{}
+		p.files = ngx.FileForm{}
 	}
 	p.files.AddFilePath(name, filename, filepath)
 }
@@ -191,14 +191,14 @@ func (p *Payload) AddFile(name, filename, filepath string) {
 // filepath: 本地文件完整路径。
 func (p *Payload) AddFilePath(name, filename, filepath string) {
 	if p.files == nil {
-		p.files = ngx.FormFiles{}
+		p.files = ngx.FileForm{}
 	}
 	p.files.AddFilePath(name, filename, filepath)
 }
 
 func (p *Payload) AddFileObject(name, filename string, file io.Reader) {
 	if p.files == nil {
-		p.files = ngx.FormFiles{}
+		p.files = ngx.FileForm{}
 	}
 	p.files.AddFileObject(name, filename, file)
 }
