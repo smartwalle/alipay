@@ -483,7 +483,7 @@ type GoodsDetailItem struct {
 	GoodsId       string `json:"goods_id"`
 	AliPayGoodsId string `json:"alipay_goods_id"`
 	GoodsName     string `json:"goods_name"`
-	Quantity      string `json:"quantity"`
+	Quantity      int    `json:"quantity"`
 	Price         string `json:"price"`
 	GoodsCategory string `json:"goods_category"`
 	Body          string `json:"body"`
