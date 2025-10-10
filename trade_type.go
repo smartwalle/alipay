@@ -67,9 +67,10 @@ type ExtUserInfo struct {
 // TradePagePay 统一收单下单并支付页面接口请求参数 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
 type TradePagePay struct {
 	Trade
-	AuthToken   string `json:"auth_token,omitempty"`   // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
-	QRPayMode   string `json:"qr_pay_mode,omitempty"`  // PC扫码支付的方式，支持前置模式和跳转模式。
-	QRCodeWidth string `json:"qrcode_width,omitempty"` // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
+	AuthToken       string `json:"auth_token,omitempty"`       // 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
+	QRPayMode       string `json:"qr_pay_mode,omitempty"`      // PC扫码支付的方式，支持前置模式和跳转模式。
+	QRCodeWidth     string `json:"qrcode_width,omitempty"`     // 商户自定义二维码宽度 注：qr_pay_mode=4时该参数生效
+	IntegrationType string `json:"integration_type,omitempty"` // 可选 请求后页面的集成方式。 枚举值： ALIAPP：支付宝钱包内 PCWEB：PC端访问 默认值为PCWEB。
 }
 
 type GoodsDetail struct {
@@ -429,10 +430,10 @@ type TradeOrderSettleRsp struct {
 // TradeCreate 统一收单交易创建接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.create/
 type TradeCreate struct {
 	Trade
-	DiscountableAmount string             `json:"discountable_amount"` // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
-	BuyerId            string             `json:"buyer_id"`            // 买家支付宝用户ID。 2088开头的16位纯数字，小程序场景下获取用户ID请参考：用户授权; 其它场景下获取用户ID请参考：网页授权获取用户信息; 注：交易的买家与卖家不能相同。
-	BuyerOpenId        string             `json:"buyer_open_id"`       // 新版接口无法获取user_id, 这里只能传递openid值
-	OpAppId            string             `json:"op_app_id,omitempty"` // 小程序支付中，商户实际经营主体的小程序应用的appid, 注意事项:商户需要先在产品管理中心绑定该小程序appid，否则下单会失败
+	DiscountableAmount string             `json:"discountable_amount"`        // 可打折金额. 参与优惠计算的金额，单位为元，精确到小数点后两位
+	BuyerId            string             `json:"buyer_id"`                   // 买家支付宝用户ID。 2088开头的16位纯数字，小程序场景下获取用户ID请参考：用户授权; 其它场景下获取用户ID请参考：网页授权获取用户信息; 注：交易的买家与卖家不能相同。
+	BuyerOpenId        string             `json:"buyer_open_id"`              // 新版接口无法获取user_id, 这里只能传递openid值
+	OpAppId            string             `json:"op_app_id,omitempty"`        // 小程序支付中，商户实际经营主体的小程序应用的appid, 注意事项:商户需要先在产品管理中心绑定该小程序appid，否则下单会失败
 	OpBuyerOpenId      string             `json:"op_buyer_open_id,omitempty"` // 当传入的 op_app_id 与发起调用的 APPID 不一致时使用，传 op_buyer_open_id 替换 buyer_open_id
 	GoodsDetail        []*GoodsDetailItem `json:"goods_detail,omitempty"`
 	OperatorId         string             `json:"operator_id"`
