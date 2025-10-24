@@ -27,7 +27,7 @@ type Trade struct {
 	ExtendParams        *ExtendParams `json:"extend_params,omitempty"`         // 可选 业务扩展参数，详见下面的“业务扩展参数说明”
 	AgreementSignParams *SignParams   `json:"agreement_sign_params,omitempty"` // 签约参数。如果希望在sdk中支付并签约，需要在这里传入签约信息。 周期扣款场景 product_code 为 CYCLE_PAY_AUTH 时必填。
 	GoodsType           string        `json:"goods_type,omitempty"`            // 商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
-	InvoiceInfo         string        `json:"invoice_info,omitempty"`          // 开票信息
+	InvoiceInfo         *InvoiceInfo  `json:"invoice_info,omitempty"`          // 开票信息
 	PassbackParams      string        `json:"passback_params,omitempty"`       // 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
 	PromoParams         string        `json:"promo_params,omitempty"`          // 优惠参数 注：仅与支付宝协商后可用
 	RoyaltyInfo         *RoyaltyInfo  `json:"royalty_info,omitempty"`          // 描述分账信息，json格式，详见分账参数说明
@@ -40,6 +40,17 @@ type Trade struct {
 	MerchantOrderNo     string        `json:"merchant_order_no,omitempty"`     // 可选 商户的原始订单号
 	ExtUserInfo         *ExtUserInfo  `json:"ext_user_info,omitempty"`         // 可选 外部指定买家
 	QueryOptions        []string      `json:"query_options,omitempty"`         // 可选 通知参数选项。 商户通过传递该参数来定制需要异步通知的额外字段，数组格式。包括但不限于：["hyb_amount","enterprise_pay_info"]
+}
+
+type InvoiceInfo struct {
+	KeyInfo *InvoiceKeyInfo `json:"key_info,omitempty"` // 【描述】开票关键信息
+	Details string          `json:"details,omitempty"`  // 【描述】开票内容 注：json数组格式
+}
+
+type InvoiceKeyInfo struct {
+	IsSupportInvoice    bool   `json:"is_support_invoice"`    // 【描述】该交易是否支持开票
+	InvoiceMerchantName string `json:"invoice_merchant_name"` // 【描述】开票商户名称：商户品牌简称|商户门店简称
+	TaxNum              string `json:"tax_num"`               // 【描述】税号
 }
 
 type SignParams struct {
