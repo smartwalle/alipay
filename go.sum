@@ -4,5 +4,7 @@ github.com/smartwalle/ngx v1.0.9 h1:pUXDvWRZJIHVrCKA1uZ15YwNti+5P4GuJGbpJ4WvpMw=
 github.com/smartwalle/ngx v1.0.9/go.mod h1:mx/nz2Pk5j+RBs7t6u6k22MPiBG/8CtOMpCnALIG8Y0=
 github.com/smartwalle/ngx v1.0.11 h1:cC+4WNKEUDf3wr7vW/GrbL+Cp2AJAk5svckPvQ3led8=
 github.com/smartwalle/ngx v1.0.11/go.mod h1:mx/nz2Pk5j+RBs7t6u6k22MPiBG/8CtOMpCnALIG8Y0=
+github.com/smartwalle/ngx v1.0.12 h1:jcoCyu/0HtQ1y/gbiSLzqOUZcHnVLlKOmm0awRF7Mcg=
+github.com/smartwalle/ngx v1.0.12/go.mod h1:mx/nz2Pk5j+RBs7t6u6k22MPiBG/8CtOMpCnALIG8Y0=
 github.com/smartwalle/nsign v1.0.9 h1:8poAgG7zBd8HkZy9RQDwasC6XZvJpDGQWSjzL2FZL6E=
 github.com/smartwalle/nsign v1.0.9/go.mod h1:eY6I4CJlyNdVMP+t6z1H6Jpd4m5/V+8xi44ufSTxXgc=

@@ -376,15 +376,15 @@ func (c *Client) URLValues(param Param) (value url.Values, err error) {
 
 func (c *Client) doRequest(ctx context.Context, method string, param Param, result interface{}) (err error) {
 	var req = ngx.NewRequest(method, c.host, ngx.WithClient(c.Client))
-	req.SetContentType(kContentType)
+	req.ContentType = kContentType
 	if param != nil {
 		var values url.Values
 		values, err = c.URLValues(param)
 		if err != nil {
 			return err
 		}
-		req.SetForm(values)
-		req.SetFileForm(param.FileParams())
+		req.Form = values
+		req.FileForm = param.FileParams()
 	}
 
 	rsp, err := req.Do(ctx)
