@@ -100,10 +100,13 @@ func WithSigner(signer Signer) OptionFunc {
 	}
 }
 
-func WithVerifiers(verifiers map[string]Verifier) OptionFunc {
+func WithVerifier(aliCertSN string, verifier Verifier) OptionFunc {
 	return func(c *Client) {
-		if verifiers != nil {
-			c.verifiers = verifiers
+		if aliCertSN != "" && verifier != nil {
+			c.aliCertSN = aliCertSN
+			c.verifiers = map[string]Verifier{
+				aliCertSN: verifier,
+			}
 		}
 	}
 }
