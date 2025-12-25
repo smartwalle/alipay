@@ -92,6 +92,22 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 	}
 }
 
+func WithSigner(signer Signer) OptionFunc {
+	return func(c *Client) {
+		if signer != nil {
+			c.signer = signer
+		}
+	}
+}
+
+func WithVerifiers(verifiers map[string]Verifier) OptionFunc {
+	return func(c *Client) {
+		if verifiers != nil {
+			c.verifiers = verifiers
+		}
+	}
+}
+
 func WithSandboxGateway(gateway string) OptionFunc {
 	return func(c *Client) {
 		if gateway == "" {
