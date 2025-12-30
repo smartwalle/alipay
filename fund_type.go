@@ -328,18 +328,18 @@ type TransferSceneReportInfo struct {
 // FundTransUniTransfer 单笔转账接口请求参数 https://docs.open.alipay.com/api_28/alipay.fund.trans.uni.transfer/
 type FundTransUniTransfer struct {
 	AuxParam
-	AppAuthToken            string                   `json:"-"`                                     // 可选
-	OutBizNo                string                   `json:"out_biz_no"`                            // 必选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
-	TransAmount             string                   `json:"trans_amount"`                          // 必选 订单总金额，单位为元，精确到小数点后两位，STD_RED_PACKET 产品取值范围[0.01,100000000]； TRANS_ACCOUNT_NO_PWD产品取值范围[0.1,100000000]
-	ProductCode             string                   `json:"product_code"`                          // 必选 业务产品码， 收发现金红包固定为：STD_RED_PACKET； 单笔无密转账到支付宝账户固定为：TRANS_ACCOUNT_NO_PWD； 单笔无密转账到银行卡固定为：TRANS_BANKCARD_NO_PWD
-	BizScene                string                   `json:"biz_scene"`                             // 可选 描述特定的业务场景，可传的参数如下： PERSONAL_COLLECTION：C2C现金红包-领红包； DIRECT_TRANSFER：B2C现金红包、单笔无密转账到支付宝/银行卡
-	OrderTitle              string                   `json:"order_title"`                           // 可选 转账业务的标题，用于在支付宝用户的账单里显示
-	OriginalOrderId         string                   `json:"original_order_id"`                     // 可选 原支付宝业务单号。C2C现金红包-红包领取时，传红包支付时返回的支付宝单号；B2C现金红包、单笔无密转账到支付宝/银行卡不需要该参数。
-	PayeeInfo               *PayeeInfo               `json:"payee_info"`                            // 必选 收款方信息
-	Remark                  string                   `json:"remark"`                                // 可选 业务备注
-	BusinessParams          string                   `json:"business_params"`                       // 可选 转账业务请求的扩展参数，支持传入的扩展参数如下： 1、sub_biz_scene 子业务场景，红包业务必传，取值REDPACKET，C2C现金红包、B2C现金红包均需传入； 2、withdraw_timeliness为转账到银行卡的预期到账时间，可选（不传入则默认为T1），取值T0表示预期T+0到账，取值T1表示预期T+1到账，因到账时效受银行机构处理影响，支付宝无法保证一定是T0或者T1到账；
-	TransferSceneName       string                   `json:"transfer_scene_name"`                   // 可选 转账场景名称【描述】该笔转账使用的转账场景，商户可前往【支付宝商家平台-资金管理-转账场景】中查看/申明转账场景。目前支持以下枚举值：现金营销、企业退款、佣金报酬、业务结算、二手回收、公益补助、行政补贴和退款、保险理赔
-	TransferSceneReportInfo *TransferSceneReportInfo `json:"transfer_scene_report_infos,omitempty"` // 可选 转账场景上报信息
+	AppAuthToken            string                     `json:"-"`                                     // 可选
+	OutBizNo                string                     `json:"out_biz_no"`                            // 必选 商户端的唯一订单号，对于同一笔转账请求，商户需保证该订单号唯一。
+	TransAmount             string                     `json:"trans_amount"`                          // 必选 订单总金额，单位为元，精确到小数点后两位，STD_RED_PACKET 产品取值范围[0.01,100000000]； TRANS_ACCOUNT_NO_PWD产品取值范围[0.1,100000000]
+	ProductCode             string                     `json:"product_code"`                          // 必选 业务产品码， 收发现金红包固定为：STD_RED_PACKET； 单笔无密转账到支付宝账户固定为：TRANS_ACCOUNT_NO_PWD； 单笔无密转账到银行卡固定为：TRANS_BANKCARD_NO_PWD
+	BizScene                string                     `json:"biz_scene"`                             // 可选 描述特定的业务场景，可传的参数如下： PERSONAL_COLLECTION：C2C现金红包-领红包； DIRECT_TRANSFER：B2C现金红包、单笔无密转账到支付宝/银行卡
+	OrderTitle              string                     `json:"order_title"`                           // 可选 转账业务的标题，用于在支付宝用户的账单里显示
+	OriginalOrderId         string                     `json:"original_order_id"`                     // 可选 原支付宝业务单号。C2C现金红包-红包领取时，传红包支付时返回的支付宝单号；B2C现金红包、单笔无密转账到支付宝/银行卡不需要该参数。
+	PayeeInfo               *PayeeInfo                 `json:"payee_info"`                            // 必选 收款方信息
+	Remark                  string                     `json:"remark"`                                // 可选 业务备注
+	BusinessParams          string                     `json:"business_params"`                       // 可选 转账业务请求的扩展参数，支持传入的扩展参数如下： 1、sub_biz_scene 子业务场景，红包业务必传，取值REDPACKET，C2C现金红包、B2C现金红包均需传入； 2、withdraw_timeliness为转账到银行卡的预期到账时间，可选（不传入则默认为T1），取值T0表示预期T+0到账，取值T1表示预期T+1到账，因到账时效受银行机构处理影响，支付宝无法保证一定是T0或者T1到账；
+	TransferSceneName       string                     `json:"transfer_scene_name"`                   // 可选 转账场景名称【描述】该笔转账使用的转账场景，商户可前往【支付宝商家平台-资金管理-转账场景】中查看/申明转账场景。目前支持以下枚举值：现金营销、企业退款、佣金报酬、业务结算、二手回收、公益补助、行政补贴和退款、保险理赔
+	TransferSceneReportInfo []*TransferSceneReportInfo `json:"transfer_scene_report_infos,omitempty"` // 可选 转账场景上报信息
 }
 
 func (f FundTransUniTransfer) APIName() string {
