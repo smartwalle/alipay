@@ -6,6 +6,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 var (
@@ -99,6 +103,63 @@ func (c *Client) DecodeNotification(values url.Values) (notification *Notificati
 	notification.BankAckTime = values.Get("bank_ack_time")
 	notification.SendBackFee = values.Get("send_back_fee")
 	return notification, err
+}
+
+// GetTradeNotificationWithCharset parses notification and decodes GBK fields to UTF-8.
+// It extracts charset from Content-Type header and converts GBK-encoded fields after signature verification.
+func (c *Client) GetTradeNotificationWithCharset(req *http.Request) (notification *Notification, err error) {
+	if req == nil {
+		return nil, errors.New("request is nil")
+	}
+	if err = req.ParseForm(); err != nil {
+		return nil, err
+	}
+	charset := parseCharsetFromContentType(req.Header.Get("Content-Type"))
+	return c.DecodeNotificationWithCharset(req.Form, charset)
+}
+
+// DecodeNotificationWithCharset decodes notification and converts GBK fields to UTF-8 based on charset.
+// If charset is GBK/GB2312/GB18030, it converts Subject, Body, BuyerLogonId, PassbackParams, RefundReason.
+func (c *Client) DecodeNotificationWithCharset(values url.Values, charset string) (notification *Notification, err error) {
+	notification, err = c.DecodeNotification(values)
+	if err != nil {
+		return nil, err
+	}
+
+	charset = strings.ToUpper(charset)
+	if charset == "GBK" || charset == "GB2312" || charset == "GB18030" {
+		notification.Subject = decodeGBK(notification.Subject)
+		notification.Body = decodeGBK(notification.Body)
+		notification.BuyerLogonId = decodeGBK(notification.BuyerLogonId)
+		notification.PassbackParams = decodeGBK(notification.PassbackParams)
+		notification.RefundReason = decodeGBK(notification.RefundReason)
+	}
+
+	return notification, nil
+}
+
+// parseCharsetFromContentType extracts charset from Content-Type header.
+func parseCharsetFromContentType(contentType string) string {
+	for _, part := range strings.Split(contentType, ";") {
+		part = strings.TrimSpace(part)
+		if strings.HasPrefix(strings.ToLower(part), "charset=") {
+			return strings.TrimPrefix(part, "charset=")
+		}
+	}
+	return ""
+}
+
+// decodeGBK converts GBK-encoded string to UTF-8.
+func decodeGBK(s string) string {
+	if s == "" {
+		return s
+	}
+	reader := transform.NewReader(strings.NewReader(s), simplifiedchinese.GBK.NewDecoder())
+	result, err := io.ReadAll(reader)
+	if err != nil {
+		return s
+	}
+	return string(result)
 }
 
 // AckNotification
