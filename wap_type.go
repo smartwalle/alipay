@@ -14,9 +14,9 @@ func (t TradeWapPay) APIName() string {
 
 func (t TradeWapPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
-	m["return_url"] = t.ReturnURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
+	m[kFieldReturnURL] = t.ReturnURL
 	return m
 }
 
@@ -33,6 +33,6 @@ func (t TradeWapMergePay) APIName() string {
 
 func (t TradeWapMergePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }

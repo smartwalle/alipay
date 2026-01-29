@@ -19,7 +19,7 @@ func (f FundTransToAccountTransfer) APIName() string {
 
 func (f FundTransToAccountTransfer) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -45,7 +45,7 @@ func (f FundTransOrderQuery) APIName() string {
 
 func (f FundTransOrderQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -87,8 +87,8 @@ func (f FundAuthOrderVoucherCreate) APIName() string {
 
 func (f FundAuthOrderVoucherCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
-	m["notify_url"] = f.NotifyURL
+	m[kFieldAppAuthToken] = f.AppAuthToken
+	m[kFieldNotifyURL] = f.NotifyURL
 	return m
 }
 
@@ -126,8 +126,8 @@ func (f FundAuthOrderFreeze) APIName() string {
 
 func (f FundAuthOrderFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
-	m["notify_url"] = f.NotifyURL
+	m[kFieldAppAuthToken] = f.AppAuthToken
+	m[kFieldNotifyURL] = f.NotifyURL
 	return m
 }
 
@@ -162,8 +162,8 @@ func (f FundAuthOrderUnfreeze) APIName() string {
 
 func (f FundAuthOrderUnfreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
-	m["notify_url"] = f.NotifyURL
+	m[kFieldAppAuthToken] = f.AppAuthToken
+	m[kFieldNotifyURL] = f.NotifyURL
 	return m
 }
 
@@ -199,8 +199,8 @@ func (f FundAuthOperationCancel) APIName() string {
 
 func (f FundAuthOperationCancel) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
-	m["notify_url"] = f.NotifyURL
+	m[kFieldAppAuthToken] = f.AppAuthToken
+	m[kFieldNotifyURL] = f.NotifyURL
 	return m
 }
 
@@ -230,7 +230,7 @@ func (f FundAuthOperationDetailQuery) APIName() string {
 
 func (f FundAuthOperationDetailQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -299,8 +299,8 @@ func (f FundAuthOrderAppFreeze) APIName() string {
 
 func (f FundAuthOrderAppFreeze) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
-	m["notify_url"] = f.NotifyURL
+	m[kFieldAppAuthToken] = f.AppAuthToken
+	m[kFieldNotifyURL] = f.NotifyURL
 	return m
 }
 
@@ -348,7 +348,7 @@ func (f FundTransUniTransfer) APIName() string {
 
 func (f FundTransUniTransfer) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -395,7 +395,7 @@ func (f FundTransCommonQuery) APIName() string {
 
 func (f FundTransCommonQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -430,7 +430,7 @@ func (f FundAccountQuery) APIName() string {
 
 func (f FundAccountQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }
 
@@ -463,6 +463,6 @@ func (f FundTransAppPay) APIName() string {
 
 func (f FundTransAppPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = f.AppAuthToken
+	m[kFieldAppAuthToken] = f.AppAuthToken
 	return m
 }

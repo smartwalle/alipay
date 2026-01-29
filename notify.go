@@ -47,11 +47,11 @@ func (c *Client) GetTradeNotification(req *http.Request) (notification *Notifica
 	if err = req.ParseForm(); err != nil {
 		return nil, err
 	}
-	return c.DecodeNotification(req.Form)
+	return c.DecodeNotification(context.Background(), req.Form)
 }
 
-func (c *Client) DecodeNotification(values url.Values) (notification *Notification, err error) {
-	if err = c.VerifySign(values); err != nil {
+func (c *Client) DecodeNotification(ctx context.Context, values url.Values) (notification *Notification, err error) {
+	if err = c.VerifySign(ctx, values); err != nil {
 		return nil, err
 	}
 

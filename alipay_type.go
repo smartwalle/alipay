@@ -1,10 +1,12 @@
 package alipay
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/smartwalle/ngx"
 	"io"
+
+	"github.com/smartwalle/ngx"
 )
 
 const (
@@ -33,13 +35,22 @@ const (
 	kFieldTimestamp        = "timestamp"
 	kFieldVersion          = "version"
 	kFieldBizContent       = "biz_content"
+	kFieldAppAuthToken     = "app_auth_token"
+	kFieldReturnURL        = "return_url"
+	kFieldNotifyURL        = "notify_url"
+	kFieldRedirectURI      = "redirect_uri"
+	kFieldState            = "state"
+	kFieldScope            = "scope"
+	kFieldAuthToken        = "auth_token"
 	kFieldAppCertSN        = "app_cert_sn"
 	kFieldEncryptType      = "encrypt_type"
 	kFieldAliPayRootCertSN = "alipay_root_cert_sn"
-	kFieldAlyPayCertSN     = "alipay_cert_sn"
+	kFieldAliPayCertSN     = "alipay_cert_sn"
 	kCertificateBegin      = "-----BEGIN CERTIFICATE-----"
 	kCertificateEnd        = "-----END CERTIFICATE-----"
 )
+
+type ReceivedDataHandler func(ctx context.Context, method string, data []byte)
 
 // Code 支付宝接口响应错误码 https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=105806&docType=1
 type Code string
@@ -239,7 +250,7 @@ func (c CertDownload) APIName() string {
 
 func (c CertDownload) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = c.AppAuthToken
+	m[kFieldAppAuthToken] = c.AppAuthToken
 	return m
 }
 

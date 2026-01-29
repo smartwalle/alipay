@@ -72,7 +72,7 @@ func pay(writer http.ResponseWriter, request *http.Request) {
 func callback(writer http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
 
-	if err := client.VerifySign(request.Form); err != nil {
+	if err := client.VerifySign(context.Background(), request.Form); err != nil {
 		log.Println("回调验证签名发生错误", err)
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte("回调验证签名发生错误"))
@@ -105,7 +105,7 @@ func callback(writer http.ResponseWriter, request *http.Request) {
 func notify(writer http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
 
-	var notification, err = client.DecodeNotification(request.Form)
+	var notification, err = client.DecodeNotification(context.Background(), request.Form)
 	if err != nil {
 		log.Println("解析异步通知发生错误", err)
 		return

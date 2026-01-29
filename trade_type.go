@@ -102,9 +102,9 @@ func (t TradePagePay) APIName() string {
 
 func (t TradePagePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
-	m["return_url"] = t.ReturnURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
+	m[kFieldReturnURL] = t.ReturnURL
 	return m
 }
 
@@ -133,7 +133,7 @@ func (t TradeQuery) APIName() string {
 
 func (t TradeQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -263,8 +263,8 @@ func (t TradeClose) APIName() string {
 
 func (t TradeClose) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -297,7 +297,7 @@ func (t TradeRefund) APIName() string {
 
 func (t TradeRefund) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -364,7 +364,7 @@ func (t TradeFastPayRefundQuery) APIName() string {
 
 func (t TradeFastPayRefundQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -420,7 +420,7 @@ func (t TradeOrderSettle) APIName() string {
 
 func (t TradeOrderSettle) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -457,8 +457,8 @@ func (t TradeCreate) APIName() string {
 
 func (t TradeCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -540,8 +540,8 @@ func (t TradePay) APIName() string {
 
 func (t TradePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -576,8 +576,8 @@ func (t TradeAppPay) APIName() string {
 
 func (t TradeAppPay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -600,8 +600,8 @@ func (t TradePreCreate) APIName() string {
 
 func (t TradePreCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -628,8 +628,8 @@ func (t TradeCancel) APIName() string {
 
 func (t TradeCancel) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -658,7 +658,7 @@ func (t TradeOrderInfoSync) APIName() string {
 
 func (t TradeOrderInfoSync) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -688,8 +688,8 @@ func (t TradeMergePreCreate) APIName() string {
 
 func (t TradeMergePreCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 
@@ -768,7 +768,7 @@ func (t TradeAppMergePay) APIName() string {
 
 func (t TradeAppMergePay) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -937,7 +937,7 @@ func (t OpenMiniOrderCreate) APIName() string {
 
 func (t OpenMiniOrderCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 

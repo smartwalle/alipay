@@ -37,7 +37,7 @@ func (u UserCertifyOpenInitialize) APIName() string {
 
 func (u UserCertifyOpenInitialize) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -60,7 +60,7 @@ func (u UserCertifyOpenCertify) APIName() string {
 
 func (u UserCertifyOpenCertify) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -82,7 +82,7 @@ func (u UserCertifyOpenQuery) APIName() string {
 
 func (u UserCertifyOpenQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -112,7 +112,7 @@ func (u UserCertDocCertVerifyPreConsult) APIName() string {
 
 func (u UserCertDocCertVerifyPreConsult) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -136,8 +136,8 @@ func (u UserCertDocCertVerifyConsult) APIName() string {
 
 func (u UserCertDocCertVerifyConsult) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
-	m["auth_token"] = u.AuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
+	m[kFieldAuthToken] = u.AuthToken
 	return m
 }
 

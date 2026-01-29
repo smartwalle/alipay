@@ -21,8 +21,8 @@ func (t TradeRefundAsync) APIName() string {
 
 func (t TradeRefundAsync) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
-	m["notify_url"] = t.NotifyURL
+	m[kFieldAppAuthToken] = t.AppAuthToken
+	m[kFieldNotifyURL] = t.NotifyURL
 	return m
 }
 

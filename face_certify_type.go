@@ -28,7 +28,7 @@ func (u FaceCertifyInitialize) APIName() string {
 
 func (u FaceCertifyInitialize) Params() map[string]string {
 	m := make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -57,7 +57,7 @@ func (u FaceCertifyVerify) APIName() string {
 
 func (u FaceCertifyVerify) Params() map[string]string {
 	m := make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -86,7 +86,7 @@ func (u FaceCertifyQuery) APIName() string {
 
 func (u FaceCertifyQuery) Params() map[string]string {
 	m := make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
 	return m
 }
 
@@ -117,7 +117,7 @@ func (t FaceVerificationInitialize) APIName() string {
 
 func (t FaceVerificationInitialize) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 
@@ -142,7 +142,7 @@ func (t FaceVerificationQuery) APIName() string {
 
 func (t FaceVerificationQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = t.AppAuthToken
+	m[kFieldAppAuthToken] = t.AppAuthToken
 	return m
 }
 

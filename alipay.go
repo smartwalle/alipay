@@ -30,22 +30,20 @@ var (
 )
 
 const (
-	kAliPayPublicKeySN = "alipay-public-key"
-	kAppAuthToken      = "app_auth_token"
-	kReturnURL         = "return_url"
-	kNotifyURL         = "notify_url"
-	kEmptyBizContent   = "{}"
+	kAliPayPublicKey = "alipay-public-key"
+	kEmptyBizContent = "{}"
 )
 
 type Client struct {
-	mu               sync.Mutex
-	isProduction     bool
-	appId            string
+	mu         sync.Mutex
+	production bool
+
 	host             string
 	notifyVerifyHost string
-	Client           *http.Client
-	location         *time.Location
-	onReceivedData   func(ctx context.Context, method string, data []byte)
+
+	Client              *http.Client
+	location            *time.Location
+	receivedDataHandler ReceivedDataHandler
 
 	// 内容加密
 	needEncrypt    bool
@@ -54,6 +52,8 @@ type Client struct {
 	encryptKey     []byte
 	encryptPadding ncrypto.Padding
 
+	// 应用相关信息
+	appId         string
 	appCertSN     string
 	aliRootCertSN string
 	aliCertSN     string
@@ -97,7 +97,7 @@ func WithSandboxGateway(gateway string) OptionFunc {
 		if gateway == "" {
 			gateway = kNewSandboxGateway
 		}
-		if !c.isProduction {
+		if !c.production {
 			c.host = gateway
 		}
 	}
@@ -108,7 +108,7 @@ func WithProductionGateway(gateway string) OptionFunc {
 		if gateway == "" {
 			gateway = kProductionGateway
 		}
-		if c.isProduction {
+		if c.production {
 			c.host = gateway
 		}
 	}
@@ -124,12 +124,11 @@ func WithPastSandboxGateway() OptionFunc {
 
 // New 初始化支付宝客户端
 //
-// appId - 支付宝应用 id
-//
-// privateKey - 应用私钥，开发者自己生成
-//
-// isProduction - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
-func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClient *Client, err error) {
+//	appId - 支付宝应用 id
+//	privateKey - 应用私钥，开发者自己生成
+//	production - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
+func New(appId, privateKey string, production bool, opts ...OptionFunc) (nClient *Client, err error) {
+	// 解析应用私钥
 	priKey, err := ncrypto.DecodePrivateKey([]byte(privateKey)).PKCS1().RSAPrivateKey()
 	if err != nil {
 		priKey, err = ncrypto.DecodePrivateKey([]byte(privateKey)).PKCS8().RSAPrivateKey()
@@ -138,10 +137,10 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClie
 		}
 	}
 	nClient = &Client{}
-	nClient.isProduction = isProduction
+	nClient.production = production
 	nClient.appId = appId
 
-	if nClient.isProduction {
+	if nClient.production {
 		nClient.host = kProductionGateway
 		nClient.notifyVerifyHost = kProductionMAPIGateway
 	} else {
@@ -164,8 +163,8 @@ func New(appId, privateKey string, isProduction bool, opts ...OptionFunc) (nClie
 	return nClient, nil
 }
 
-func (c *Client) IsProduction() bool {
-	return c.isProduction
+func (c *Client) Production() bool {
+	return c.production
 }
 
 // SetEncryptKey 接口内容加密密钥 https://opendocs.alipay.com/common/02mse3
@@ -196,20 +195,18 @@ func (c *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
 
 // LoadAliPayPublicKey 加载支付宝公钥
 func (c *Client) LoadAliPayPublicKey(s string) error {
-	var pub *rsa.PublicKey
-	var err error
 	if len(s) < 0 {
 		return ErrAliPublicKeyNotFound
 	}
 
-	pub, err = ncrypto.DecodePublicKey([]byte(s)).PKIX().RSAPublicKey()
+	var pub, err = ncrypto.DecodePublicKey([]byte(s)).PKIX().RSAPublicKey()
 	if err != nil {
 		return err
 	}
 
 	c.mu.Lock()
-	c.loadVerifier(kAliPayPublicKeySN, pub)
-	c.mu.Unlock()
+	defer c.mu.Unlock()
+	c.loadVerifier(kAliPayPublicKey, pub)
 	return nil
 }
 
@@ -228,7 +225,7 @@ func (c *Client) LoadAppPublicCertFromFile(filename string) error {
 }
 
 func (c *Client) loadAppCertPublicKey(b []byte) error {
-	cert, err := ncrypto.DecodeCertificate(b)
+	var cert, err = ncrypto.DecodeCertificate(b)
 	if err != nil {
 		return err
 	}
@@ -243,12 +240,11 @@ func (c *Client) LoadAppCertPublicKey(s string) error {
 
 // LoadAppCertPublicKeyFromFile 从文件加载应用公钥证书
 func (c *Client) LoadAppCertPublicKeyFromFile(filename string) error {
-	b, err := os.ReadFile(filename)
+	var certBytes, err = os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
-
-	return c.loadAppCertPublicKey(b)
+	return c.loadAppCertPublicKey(certBytes)
 }
 
 // LoadAliPayPublicCert 加载支付宝公钥证书
@@ -267,34 +263,34 @@ func (c *Client) LoadAliPayPublicCertFromFile(filename string) error {
 
 // loadAlipayCertPublicKey 加载支付宝公钥证书
 func (c *Client) loadAlipayCertPublicKey(b []byte) error {
-	cert, err := ncrypto.DecodeCertificate(b)
+	var cert, err = ncrypto.DecodeCertificate(b)
 	if err != nil {
 		return err
 	}
-	pub, ok := cert.PublicKey.(*rsa.PublicKey)
+	var pub, ok = cert.PublicKey.(*rsa.PublicKey)
 	if ok == false {
 		return nil
 	}
-
-	c.mu.Lock()
 	c.loadVerifier(getCertSN(cert), pub)
-	c.mu.Unlock()
 	return nil
 }
 
 // LoadAlipayCertPublicKey 支付宝公钥证书
 func (c *Client) LoadAlipayCertPublicKey(s string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.loadAlipayCertPublicKey([]byte(s))
 }
 
 // LoadAlipayCertPublicKeyFromFile 从文件支付宝公钥证书
 func (c *Client) LoadAlipayCertPublicKeyFromFile(filename string) error {
-	b, err := os.ReadFile(filename)
+	var certBytes, err = os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
-
-	return c.loadAlipayCertPublicKey(b)
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.loadAlipayCertPublicKey(certBytes)
 }
 
 // LoadAliPayRootCert 加载支付宝根证书
@@ -314,16 +310,14 @@ func (c *Client) LoadAliPayRootCert(s string) error {
 
 // LoadAliPayRootCertFromFile 加载支付宝根证书
 func (c *Client) LoadAliPayRootCertFromFile(filename string) error {
-	b, err := os.ReadFile(filename)
-
+	var certBytes, err = os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
-
-	return c.LoadAliPayRootCert(string(b))
+	return c.LoadAliPayRootCert(string(certBytes))
 }
 
-func (c *Client) URLValues(param Param) (value url.Values, err error) {
+func (c *Client) URLValues(param Param) (url.Values, error) {
 	var values = url.Values{}
 	values.Add(kFieldAppId, c.appId)
 	values.Add(kFieldMethod, param.APIName())
@@ -339,30 +333,30 @@ func (c *Client) URLValues(param Param) (value url.Values, err error) {
 		values.Add(kFieldAliPayRootCertSN, c.aliRootCertSN)
 	}
 
-	jsonBytes, err := json.Marshal(param)
+	bizBytes, err := json.Marshal(param)
 	if err != nil {
 		return nil, err
 	}
 
-	var content = string(jsonBytes)
-	if content != kEmptyBizContent {
+	var bizContent = string(bizBytes)
+	if bizContent != kEmptyBizContent {
 		if c.needEncrypt && param.NeedEncrypt() {
-			jsonBytes, err = ncrypto.AESCBCEncrypt(jsonBytes, c.encryptKey, c.encryptIV, c.encryptPadding)
+			bizBytes, err = ncrypto.AESCBCEncrypt(bizBytes, c.encryptKey, c.encryptIV, c.encryptPadding)
 			if err != nil {
 				return nil, err
 			}
-			content = base64.StdEncoding.EncodeToString(jsonBytes)
+			bizContent = base64.StdEncoding.EncodeToString(bizBytes)
 			values.Add(kFieldEncryptType, c.encryptType)
 		}
-		values.Add(kFieldBizContent, content)
+		values.Add(kFieldBizContent, bizContent)
 	}
 
 	var params = param.Params()
-	for k, v := range params {
-		if v == "" {
+	for key, value := range params {
+		if value == "" {
 			continue
 		}
-		values.Add(k, v)
+		values.Add(key, value)
 	}
 
 	signature, err := c.sign(values)
@@ -374,12 +368,11 @@ func (c *Client) URLValues(param Param) (value url.Values, err error) {
 	return values, nil
 }
 
-func (c *Client) doRequest(ctx context.Context, method string, param Param, result interface{}) (err error) {
+func (c *Client) doRequest(ctx context.Context, method string, param Param, dest interface{}) error {
 	var req = ngx.NewRequest(method, c.host, ngx.WithClient(c.Client))
 	req.ContentType = kContentType
 	if param != nil {
-		var values url.Values
-		values, err = c.URLValues(param)
+		values, err := c.URLValues(param)
 		if err != nil {
 			return err
 		}
@@ -387,13 +380,13 @@ func (c *Client) doRequest(ctx context.Context, method string, param Param, resu
 		req.FileForm = param.FileParams()
 	}
 
-	rsp, err := req.Do(ctx)
+	resp, err := req.Do(ctx)
 	if err != nil {
 		return err
 	}
-	defer rsp.Body.Close()
+	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(rsp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -401,17 +394,17 @@ func (c *Client) doRequest(ctx context.Context, method string, param Param, resu
 	var apiName = param.APIName()
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
 
-	return c.decode(ctx, bodyBytes, bizFieldName, param.NeedVerify(), result)
+	return c.decode(ctx, bodyBytes, bizFieldName, param.NeedVerify(), dest)
 }
 
-func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, needVerifySign bool, result interface{}) (err error) {
+func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, needVerifySign bool, dest interface{}) (err error) {
 	var raw = make(map[string]json.RawMessage)
 	if err = json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
 	var signBytes = raw[kFieldSign]
-	var certBytes = raw[kFieldAlyPayCertSN]
+	var certBytes = raw[kFieldAliPayCertSN]
 	var bizBytes = raw[bizFieldName]
 	var errBytes = raw[kErrorResponse]
 
@@ -439,12 +432,12 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 		return err
 	}
 
+	if c.receivedDataHandler != nil {
+		c.receivedDataHandler(ctx, bizFieldName, plaintext)
+	}
+
 	// 验证签名
 	if needVerifySign {
-		if c.onReceivedData != nil {
-			c.onReceivedData(ctx, bizFieldName, plaintext)
-		}
-
 		if len(signBytes) == 0 {
 			// 没有签名数据，返回的内容一般为错误信息
 			var rErr *Error
@@ -455,12 +448,12 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 		}
 
 		// 验证签名
-		if err = c.verify(string(certBytes), bizBytes, signBytes); err != nil {
+		if err = c.verify(ctx, string(certBytes), bizBytes, signBytes); err != nil {
 			return err
 		}
 	}
 
-	if err = json.Unmarshal(plaintext, result); err != nil {
+	if err = json.Unmarshal(plaintext, dest); err != nil {
 		return err
 	}
 	return nil
@@ -481,9 +474,9 @@ func (c *Client) decrypt(data []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-func (c *Client) VerifySign(values url.Values) (err error) {
+func (c *Client) VerifySign(ctx context.Context, values url.Values) (err error) {
 	var verifier Verifier
-	if verifier, err = c.getVerifier(values.Get(kFieldAlyPayCertSN)); err != nil {
+	if verifier, err = c.getVerifier(ctx, values.Get(kFieldAliPayCertSN)); err != nil {
 		return err
 	}
 
@@ -492,10 +485,10 @@ func (c *Client) VerifySign(values url.Values) (err error) {
 		return err
 	}
 
-	return verifier.VerifyValues(values, signBytes, nsign.WithIgnore(kFieldSign, kFieldSignType, kFieldAlyPayCertSN))
+	return verifier.VerifyValues(values, signBytes, nsign.WithIgnore(kFieldSign, kFieldSignType, kFieldAliPayCertSN))
 }
 
-func (c *Client) getVerifier(certSN string) (verifier Verifier, err error) {
+func (c *Client) getVerifier(ctx context.Context, certSN string) (verifier Verifier, err error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -506,11 +499,11 @@ func (c *Client) getVerifier(certSN string) (verifier Verifier, err error) {
 	verifier = c.verifiers[certSN]
 
 	if verifier == nil {
-		if !c.isProduction {
+		if !c.production {
 			return nil, ErrAliPublicKeyNotFound
 		}
 
-		cert, err := c.downloadAliPayCert(certSN)
+		cert, err := c.downloadAliPayCert(ctx, certSN)
 		if err != nil {
 			return nil, err
 		}
@@ -529,14 +522,14 @@ func (c *Client) CertDownload(ctx context.Context, param CertDownload) (result *
 	return result, err
 }
 
-func (c *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, err error) {
+func (c *Client) downloadAliPayCert(ctx context.Context, certSN string) (cert *x509.Certificate, err error) {
 	var param = CertDownload{}
 	param.AliPayCertSN = certSN
-	rsp, err := c.CertDownload(context.Background(), param)
+	resp, err := c.CertDownload(ctx, param)
 	if err != nil {
 		return nil, err
 	}
-	certBytes, err := base64.StdEncoding.DecodeString(rsp.AliPayCertContent)
+	certBytes, err := base64.StdEncoding.DecodeString(resp.AliPayCertContent)
 	if err != nil {
 		return nil, err
 	}
@@ -550,17 +543,17 @@ func (c *Client) downloadAliPayCert(certSN string) (cert *x509.Certificate, err 
 }
 
 func (c *Client) sign(values url.Values) (signature string, err error) {
-	sBytes, err := c.signer.SignValues(values)
+	signBytes, err := c.signer.SignValues(values)
 	if err != nil {
 		return "", err
 	}
-	signature = base64.StdEncoding.EncodeToString(sBytes)
+	signature = base64.StdEncoding.EncodeToString(signBytes)
 	return signature, nil
 }
 
-func (c *Client) verify(certSN string, data, signature []byte) (err error) {
+func (c *Client) verify(ctx context.Context, certSN string, data, signature []byte) (err error) {
 	var verifier Verifier
-	if verifier, err = c.getVerifier(certSN); err != nil {
+	if verifier, err = c.getVerifier(ctx, certSN); err != nil {
 		return err
 	}
 
@@ -579,23 +572,23 @@ func (c *Client) Request(ctx context.Context, param Param, result interface{}) (
 }
 
 func (c *Client) BuildURL(param Param) (*url.URL, error) {
-	p, err := c.URLValues(param)
+	value, err := c.URLValues(param)
 	if err != nil {
 		return nil, err
 	}
-	return url.Parse(c.host + "?" + p.Encode())
+	return url.Parse(c.host + "?" + value.Encode())
 }
 
 func (c *Client) EncodeParam(param Param) (string, error) {
-	p, err := c.URLValues(param)
+	value, err := c.URLValues(param)
 	if err != nil {
 		return "", err
 	}
-	return p.Encode(), nil
+	return value.Encode(), nil
 }
 
-func (c *Client) OnReceivedData(fn func(ctx context.Context, method string, data []byte)) {
-	c.onReceivedData = fn
+func (c *Client) OnReceivedData(handler ReceivedDataHandler) {
+	c.receivedDataHandler = handler
 }
 
 func (c *Client) SignValues(values url.Values, opts ...nsign.SignOption) ([]byte, error) {
@@ -607,9 +600,9 @@ func (c *Client) SignBytes(data []byte, opts ...nsign.SignOption) ([]byte, error
 }
 
 func base64decode(data []byte) ([]byte, error) {
-	var dBuf = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
-	n, err := base64.StdEncoding.Decode(dBuf, data)
-	return dBuf[:n], err
+	var buffer = make([]byte, base64.StdEncoding.DecodedLen(len(data)))
+	n, err := base64.StdEncoding.Decode(buffer, data)
+	return buffer[:n], err
 }
 
 func getCertSN(cert *x509.Certificate) string {
