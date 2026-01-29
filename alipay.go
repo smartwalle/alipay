@@ -282,7 +282,7 @@ func (c *Client) LoadAlipayCertPublicKey(s string) error {
 	return c.loadAlipayCertPublicKey([]byte(s))
 }
 
-// LoadAlipayCertPublicKeyFromFile 从文件支付宝公钥证书
+// LoadAlipayCertPublicKeyFromFile 从文件加载支付宝公钥证书
 func (c *Client) LoadAlipayCertPublicKeyFromFile(filename string) error {
 	var certBytes, err = os.ReadFile(filename)
 	if err != nil {
