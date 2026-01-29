@@ -24,9 +24,9 @@ import (
 )
 
 var (
-	ErrBadResponse          = errors.New("alipay: bad response")
-	ErrSignNotFound         = errors.New("alipay: sign content not found")
-	ErrAliPublicKeyNotFound = errors.New("alipay: alipay public key not found")
+	ErrBadResponse          = errors.New("bad response")
+	ErrSignNotFound         = errors.New("sign content not found")
+	ErrAliPublicKeyNotFound = errors.New("alipay public key not found")
 )
 
 const (
@@ -59,7 +59,6 @@ type Client struct {
 	aliCertSN     string
 
 	// 签名和验签
-	encoder   nsign.Encoder
 	signer    Signer
 	verifiers map[string]Verifier
 }
@@ -147,6 +146,23 @@ func New(appId, privateKey string, production bool, opts ...OptionFunc) (client 
 			return nil, err
 		}
 	}
+	var signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(Encoder{}))
+	return NewWithSigner(appId, signer, production, opts...)
+}
+
+// NewWithSigner 创建一个使用自定义签名的支付宝客户端
+//
+//	适用于私钥由第三方托管，无法直接获取的场景
+//
+//	  - appId: 支付宝分配的应用ID
+//	  - signer: 自定义签名器，不能为空
+//	  - production: 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
+//	  - opts: 可选配置函数
+func NewWithSigner(appId string, signer nsign.Signer, production bool, opts ...OptionFunc) (client *Client, err error) {
+	if signer == nil {
+		return nil, errors.New("signer cannot be nil")
+	}
+
 	client = &Client{}
 	client.production = production
 	client.appId = appId
@@ -161,8 +177,7 @@ func New(appId, privateKey string, production bool, opts ...OptionFunc) (client 
 	client.Client = http.DefaultClient
 	client.location = time.Local
 
-	client.encoder = &Encoder{}
-	client.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(client.encoder))
+	client.signer = signer
 	client.verifiers = make(map[string]Verifier)
 
 	for _, opt := range opts {
@@ -172,45 +187,6 @@ func New(appId, privateKey string, production bool, opts ...OptionFunc) (client 
 	}
 
 	return client, nil
-}
-
-// NewWithCustomSigner 创建一个使用自定义签名器的支付宝客户端
-// 适用于私钥由第三方托管，无法直接获取的场景
-// 参数:
-//   - appId: 支付宝分配的应用ID
-//   - isProduction: true 为生产环境，false 为沙箱环境
-//   - signer: 自定义签名器，不能为 nil
-//   - opts: 可选配置函数
-func NewWithCustomSigner(appId string, isProduction bool, signer nsign.Signer, opts ...OptionFunc) (nClient *Client, err error) {
-	if signer == nil {
-		return nil, errors.New("signer cannot be nil")
-	}
-
-	nClient = &Client{}
-	nClient.isProduction = isProduction
-	nClient.appId = appId
-
-	if nClient.isProduction {
-		nClient.host = kProductionGateway
-		nClient.notifyVerifyHost = kProductionMAPIGateway
-	} else {
-		nClient.host = kNewSandboxGateway
-		nClient.notifyVerifyHost = kNewSandboxGateway
-	}
-	nClient.Client = http.DefaultClient
-	nClient.location = time.Local
-
-	nClient.encoder = &Encoder{}
-	nClient.signer = signer
-	nClient.verifiers = make(map[string]Verifier)
-
-	for _, opt := range opts {
-		if opt != nil {
-			opt(nClient)
-		}
-	}
-
-	return nClient, nil
 }
 
 func (c *Client) Production() bool {
@@ -238,7 +214,7 @@ func (c *Client) SetEncryptKey(key string) error {
 
 func (c *Client) loadVerifier(sn string, pub *rsa.PublicKey) Verifier {
 	c.aliCertSN = sn
-	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)), nsign.WithEncoder(c.encoder))
+	var verifier = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, nil, pub)), nsign.WithEncoder(Encoder{}))
 	c.verifiers[c.aliCertSN] = verifier
 	return verifier
 }
