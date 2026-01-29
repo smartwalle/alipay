@@ -14,15 +14,15 @@ func (c *Client) PublicAppAuthorize(scopes []string, redirectURI, state string) 
 		domain = kProductionPublicAppAuthorize
 	}
 
-	var p = url.Values{}
-	p.Set(kFieldAppId, c.appId)
-	p.Set(kFieldScope, strings.Join(scopes, ","))
-	p.Set(kFieldRedirectURI, redirectURI)
+	var values = url.Values{}
+	values.Set(kFieldAppId, c.appId)
+	values.Set(kFieldScope, strings.Join(scopes, ","))
+	values.Set(kFieldRedirectURI, redirectURI)
 	if state != "" {
-		p.Set(kFieldState, state)
+		values.Set(kFieldState, state)
 	}
 
-	result, err = url.Parse(domain + "?" + p.Encode())
+	result, err = url.Parse(domain + "?" + values.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -48,14 +48,14 @@ func (c *Client) AppToAppAuth(redirectURI, state string) (result *url.URL, err e
 		domain = kProductionAppToAppAuth
 	}
 
-	var p = url.Values{}
-	p.Set(kFieldAppId, c.appId)
-	p.Set(kFieldRedirectURI, redirectURI)
+	var values = url.Values{}
+	values.Set(kFieldAppId, c.appId)
+	values.Set(kFieldRedirectURI, redirectURI)
 	if state != "" {
-		p.Set(kFieldState, state)
+		values.Set(kFieldState, state)
 	}
 
-	result, err = url.Parse(domain + "?" + p.Encode())
+	result, err = url.Parse(domain + "?" + values.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +80,9 @@ func (c *Client) AccountAuth(param AccountAuth) (result string, err error) {
 	values.Add(kFieldAppId, c.appId)
 	values.Add(kFieldMethod, param.APIName())
 
-	var ps = param.Params()
-	if ps != nil {
-		for key, value := range ps {
+	var params = param.Params()
+	if params != nil {
+		for key, value := range params {
 			values.Add(key, value)
 		}
 	}

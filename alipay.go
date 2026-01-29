@@ -432,12 +432,12 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 		return err
 	}
 
-	if c.receivedDataHandler != nil {
-		c.receivedDataHandler(ctx, bizFieldName, plaintext)
-	}
-
 	// 验证签名
 	if needVerifySign {
+		if c.receivedDataHandler != nil {
+			c.receivedDataHandler(ctx, bizFieldName, plaintext)
+		}
+
 		if len(signBytes) == 0 {
 			// 没有签名数据，返回的内容一般为错误信息
 			var rErr *Error
