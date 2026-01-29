@@ -92,6 +92,17 @@ func WithHTTPClient(client *http.Client) OptionFunc {
 	}
 }
 
+// WithVerifier 创建一个自定义的验签器
+// 适用于支付宝公钥由第三方托管，无法直接获取的场景
+func WithVerifier(aliCertSN string, verifier Verifier) OptionFunc {
+	return func(c *Client) {
+		if aliCertSN != "" && verifier != nil {
+			c.aliCertSN = aliCertSN
+			c.verifiers[aliCertSN] = verifier
+		}
+	}
+}
+
 func WithSandboxGateway(gateway string) OptionFunc {
 	return func(c *Client) {
 		if gateway == "" {
@@ -161,6 +172,45 @@ func New(appId, privateKey string, production bool, opts ...OptionFunc) (client 
 	}
 
 	return client, nil
+}
+
+// NewWithCustomSigner 创建一个使用自定义签名器的支付宝客户端
+// 适用于私钥由第三方托管，无法直接获取的场景
+// 参数:
+//   - appId: 支付宝分配的应用ID
+//   - isProduction: true 为生产环境，false 为沙箱环境
+//   - signer: 自定义签名器，不能为 nil
+//   - opts: 可选配置函数
+func NewWithCustomSigner(appId string, isProduction bool, signer nsign.Signer, opts ...OptionFunc) (nClient *Client, err error) {
+	if signer == nil {
+		return nil, errors.New("signer cannot be nil")
+	}
+
+	nClient = &Client{}
+	nClient.isProduction = isProduction
+	nClient.appId = appId
+
+	if nClient.isProduction {
+		nClient.host = kProductionGateway
+		nClient.notifyVerifyHost = kProductionMAPIGateway
+	} else {
+		nClient.host = kNewSandboxGateway
+		nClient.notifyVerifyHost = kNewSandboxGateway
+	}
+	nClient.Client = http.DefaultClient
+	nClient.location = time.Local
+
+	nClient.encoder = &Encoder{}
+	nClient.signer = signer
+	nClient.verifiers = make(map[string]Verifier)
+
+	for _, opt := range opts {
+		if opt != nil {
+			opt(nClient)
+		}
+	}
+
+	return nClient, nil
 }
 
 func (c *Client) Production() bool {
