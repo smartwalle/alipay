@@ -127,7 +127,7 @@ func WithPastSandboxGateway() OptionFunc {
 //	appId - 支付宝应用 id
 //	privateKey - 应用私钥，开发者自己生成
 //	production - 是否为生产环境，传 false 的时候为沙箱环境，用于开发测试，正式上线的时候需要改为 true
-func New(appId, privateKey string, production bool, opts ...OptionFunc) (nClient *Client, err error) {
+func New(appId, privateKey string, production bool, opts ...OptionFunc) (client *Client, err error) {
 	// 解析应用私钥
 	priKey, err := ncrypto.DecodePrivateKey([]byte(privateKey)).PKCS1().RSAPrivateKey()
 	if err != nil {
@@ -136,31 +136,31 @@ func New(appId, privateKey string, production bool, opts ...OptionFunc) (nClient
 			return nil, err
 		}
 	}
-	nClient = &Client{}
-	nClient.production = production
-	nClient.appId = appId
+	client = &Client{}
+	client.production = production
+	client.appId = appId
 
-	if nClient.production {
-		nClient.host = kProductionGateway
-		nClient.notifyVerifyHost = kProductionMAPIGateway
+	if client.production {
+		client.host = kProductionGateway
+		client.notifyVerifyHost = kProductionMAPIGateway
 	} else {
-		nClient.host = kNewSandboxGateway
-		nClient.notifyVerifyHost = kNewSandboxGateway
+		client.host = kNewSandboxGateway
+		client.notifyVerifyHost = kNewSandboxGateway
 	}
-	nClient.Client = http.DefaultClient
-	nClient.location = time.Local
+	client.Client = http.DefaultClient
+	client.location = time.Local
 
-	nClient.encoder = &Encoder{}
-	nClient.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(nClient.encoder))
-	nClient.verifiers = make(map[string]Verifier)
+	client.encoder = &Encoder{}
+	client.signer = nsign.New(nsign.WithMethod(nsign.NewRSAMethod(crypto.SHA256, priKey, nil)), nsign.WithEncoder(client.encoder))
+	client.verifiers = make(map[string]Verifier)
 
 	for _, opt := range opts {
 		if opt != nil {
-			opt(nClient)
+			opt(client)
 		}
 	}
 
-	return nClient, nil
+	return client, nil
 }
 
 func (c *Client) Production() bool {
