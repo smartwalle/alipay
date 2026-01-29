@@ -69,7 +69,7 @@ func (req SecurityRiskComplaintInfoBatchQueryReq) APIName() string {
 
 func (req SecurityRiskComplaintInfoBatchQueryReq) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = req.AppAuthToken
+	m[kFieldAppAuthToken] = req.AppAuthToken
 	return m
 }
 
@@ -92,7 +92,7 @@ func (req SecurityRiskComplaintInfoQueryReq) APIName() string {
 
 func (req SecurityRiskComplaintInfoQueryReq) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = req.AppAuthToken
+	m[kFieldAppAuthToken] = req.AppAuthToken
 	return m
 }
 
@@ -124,6 +124,6 @@ func (req SecurityRiskComplaintProcessFinishReq) APIName() string {
 
 func (req SecurityRiskComplaintProcessFinishReq) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = req.AppAuthToken
+	m[kFieldAppAuthToken] = req.AppAuthToken
 	return m
 }

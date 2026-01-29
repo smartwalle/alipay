@@ -25,7 +25,7 @@ func (s SystemOauthToken) APIName() string {
 
 func (s SystemOauthToken) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = s.AppAuthToken
+	m[kFieldAppAuthToken] = s.AppAuthToken
 	m["grant_type"] = s.GrantType
 	if s.Code != "" {
 		m["code"] = s.Code
@@ -70,8 +70,8 @@ func (u UserInfoShare) APIName() string {
 
 func (u UserInfoShare) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = u.AppAuthToken
-	m["auth_token"] = u.AuthToken
+	m[kFieldAppAuthToken] = u.AppAuthToken
+	m[kFieldAuthToken] = u.AuthToken
 	return m
 }
 
@@ -200,6 +200,6 @@ func (o OpenAuthAppAuthInviteCreate) APIName() string {
 
 func (o OpenAuthAppAuthInviteCreate) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = o.AppAuthToken
+	m[kFieldAppAuthToken] = o.AppAuthToken
 	return m
 }

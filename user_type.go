@@ -92,9 +92,9 @@ func (ag AgreementPageSign) APIName() string {
 
 func (ag AgreementPageSign) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = ag.AppAuthToken
-	m["notify_url"] = ag.NotifyURL
-	m["return_url"] = ag.ReturnURL
+	m[kFieldAppAuthToken] = ag.AppAuthToken
+	m[kFieldNotifyURL] = ag.NotifyURL
+	m[kFieldReturnURL] = ag.ReturnURL
 	return m
 }
 
@@ -141,7 +141,7 @@ func (ag AgreementQuery) APIName() string {
 
 func (ag AgreementQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = ag.AppAuthToken
+	m[kFieldAppAuthToken] = ag.AppAuthToken
 	return m
 }
 
@@ -167,8 +167,8 @@ func (ag AgreementUnsign) APIName() string {
 
 func (ag AgreementUnsign) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = ag.AppAuthToken
-	m["notify_url"] = ag.NotifyURL
+	m[kFieldAppAuthToken] = ag.AppAuthToken
+	m[kFieldNotifyURL] = ag.NotifyURL
 	return m
 }
 
@@ -193,8 +193,8 @@ func (ag AgreementExecutionPlanModify) APIName() string {
 
 func (ag AgreementExecutionPlanModify) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = ag.AppAuthToken
-	m["notify_url"] = ag.NotifyURL
+	m[kFieldAppAuthToken] = ag.AppAuthToken
+	m[kFieldNotifyURL] = ag.NotifyURL
 	return m
 }
 

@@ -14,7 +14,7 @@ func (b BillDownloadURLQuery) APIName() string {
 
 func (b BillDownloadURLQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = b.AppAuthToken
+	m[kFieldAppAuthToken] = b.AppAuthToken
 	return m
 }
 
@@ -40,7 +40,7 @@ func (b BillAccountLogQuery) APIName() string {
 
 func (b BillAccountLogQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = b.AppAuthToken
+	m[kFieldAppAuthToken] = b.AppAuthToken
 	return m
 }
 
@@ -90,7 +90,7 @@ func (b BillBalanceQuery) APIName() string {
 
 func (b BillBalanceQuery) Params() map[string]string {
 	var m = make(map[string]string)
-	m["app_auth_token"] = b.AppAuthToken
+	m[kFieldAppAuthToken] = b.AppAuthToken
 	return m
 }
 
