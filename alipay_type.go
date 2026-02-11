@@ -179,39 +179,21 @@ func (p *Payload) Set(key string, value interface{}) *Payload {
 
 // AddFile 添加需要上传的文件。
 //
-// name: 参数名称。
-//
-// filename: 文件名称。
-//
-// filepath: 本地文件完整路径。
-//
-// Deprecated: use AddFilePath instead.
-func (p *Payload) AddFile(name, filename, filepath string) {
+//	key: 参数名称。
+//	filename: 文件名称。
+//	filepath: 本地文件完整路径。
+func (p *Payload) AddFile(key, filename, filepath string) {
 	if p.files == nil {
 		p.files = ngx.FileForm{}
 	}
-	p.files.AddFilePath(name, filename, filepath)
+	p.files.AddFile(key, filename, filepath)
 }
 
-// AddFilePath 添加需要上传的文件。
-//
-// name: 参数名称。
-//
-// filename: 文件名称。
-//
-// filepath: 本地文件完整路径。
-func (p *Payload) AddFilePath(name, filename, filepath string) {
+func (p *Payload) AddObject(key, filename string, file io.Reader) {
 	if p.files == nil {
 		p.files = ngx.FileForm{}
 	}
-	p.files.AddFilePath(name, filename, filepath)
-}
-
-func (p *Payload) AddFileObject(name, filename string, file io.Reader) {
-	if p.files == nil {
-		p.files = ngx.FileForm{}
-	}
-	p.files.AddFileObject(name, filename, file)
+	p.files.AddObject(key, filename, file)
 }
 
 func (p *Payload) MarshalJSON() ([]byte, error) {

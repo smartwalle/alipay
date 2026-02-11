@@ -403,7 +403,7 @@ func (c *Client) doRequest(ctx context.Context, method string, param Param, dest
 			return err
 		}
 		req.Form = values
-		req.FileForm = param.FileParams()
+		req.File = param.FileParams()
 	}
 
 	resp, err := req.Do(ctx)
