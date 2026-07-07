@@ -4,6 +4,6 @@ go 1.18
 
 require (
 	github.com/smartwalle/ncrypto v1.0.4
-	github.com/smartwalle/ngx v1.1.0
+	github.com/smartwalle/ngx v1.1.1
 	github.com/smartwalle/nsign v1.0.9
 )

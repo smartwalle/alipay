@@ -186,14 +186,14 @@ func (p *Payload) AddFile(key, filename, filepath string) {
 	if p.files == nil {
 		p.files = ngx.FileForm{}
 	}
-	p.files.AddFile(key, filename, filepath)
+	p.files.AddFilePath(key, filename, filepath)
 }
 
 func (p *Payload) AddObject(key, filename string, file io.Reader) {
 	if p.files == nil {
 		p.files = ngx.FileForm{}
 	}
-	p.files.AddObject(key, filename, file)
+	p.files.AddFileReader(key, filename, file)
 }
 
 func (p *Payload) MarshalJSON() ([]byte, error) {
