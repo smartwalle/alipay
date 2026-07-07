@@ -74,6 +74,7 @@ func (c *Client) DecodeNotification(ctx context.Context, values url.Values) (not
 	notification.SellerEmail = values.Get("seller_email")
 	notification.BuyerId = values.Get("buyer_id")
 	notification.BuyerLogonId = values.Get("buyer_logon_id")
+	notification.BuyerOpenId = values.Get("buyer_open_id")
 	notification.FundBillList = values.Get("fund_bill_list")
 	notification.Charset = values.Get("charset")
 	notification.PointAmount = values.Get("point_amount")
