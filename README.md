@@ -137,8 +137,10 @@ p.NotifyURL = "http://xxx/return"
 http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
 request.ParseForm()
 
-// DecodeNotification 内部已调用 VerifySign 方法验证签名
-var noti, err = client.DecodeNotification(request.Form)
+// DecodeNotification 内部已调用 VerifySign 方法验证签名。
+// 如果已签名的 charset 参数为 GBK/GB2312/GB18030，会在验签成功后
+// 自动将通知字段转换为 UTF-8。
+var noti, err = client.DecodeNotification(request.Context(), request.Form)
 if err != nil {
 // 错误处理
 fmt.Println(err)
@@ -149,6 +151,19 @@ return
 alipay.ACKNotification(writer)
 })
 ```
+
+如果通知表单中没有 `charset` 参数，但 HTTP `Content-Type` 明确声明了
+GBK 编码，可以在解析请求头后显式传入：
+
+```go
+_, params, _ := mime.ParseMediaType(request.Header.Get("Content-Type"))
+var noti, err = client.DecodeNotificationWithCharset(
+request.Context(), request.Form, params["charset"],
+)
+```
+
+字符集转换不会修改原始 `request.Form`；SDK 始终先使用原始字节验签，
+仅在验签成功后转换返回的 `Notification` 字段。
 
 #### 支持 RSA2 签名及验证
 
@@ -471,4 +486,3 @@ if err != nil {
 ## License
 
 This project is licensed under the MIT License.
-
