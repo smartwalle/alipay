@@ -6,4 +6,5 @@ require (
 	github.com/smartwalle/ncrypto v1.0.4
 	github.com/smartwalle/ngx v1.1.1
 	github.com/smartwalle/nsign v1.0.9
+	golang.org/x/text v0.22.0
 )
