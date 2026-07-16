@@ -2,8 +2,10 @@ package alipay
 
 import (
 	"encoding/json"
+	"strings"
 	"unicode/utf8"
 
+	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
@@ -24,4 +26,15 @@ func unmarshalResponseJSON(data []byte, dest interface{}) error {
 		data = decoded
 	}
 	return json.Unmarshal(data, dest)
+}
+
+func decoderForCharset(charset string) *encoding.Decoder {
+	switch strings.ToLower(strings.TrimSpace(charset)) {
+	case "gbk", "gb2312":
+		return simplifiedchinese.GBK.NewDecoder()
+	case "gb18030":
+		return simplifiedchinese.GB18030.NewDecoder()
+	default:
+		return nil
+	}
 }
