@@ -444,7 +444,7 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 	if len(bizBytes) == 0 {
 		if len(errBytes) > 0 {
 			var rErr *Error
-			if err = json.Unmarshal(errBytes, &rErr); err != nil {
+			if err = unmarshalResponseJSON(errBytes, &rErr); err != nil {
 				return err
 			}
 			return rErr
@@ -467,7 +467,7 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 		if len(signBytes) == 0 {
 			// 没有签名数据，返回的内容一般为错误信息
 			var rErr *Error
-			if err = json.Unmarshal(plaintext, &rErr); err != nil {
+			if err = unmarshalResponseJSON(plaintext, &rErr); err != nil {
 				return err
 			}
 			return rErr
@@ -479,7 +479,7 @@ func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, n
 		}
 	}
 
-	if err = json.Unmarshal(plaintext, dest); err != nil {
+	if err = unmarshalResponseJSON(plaintext, dest); err != nil {
 		return err
 	}
 	return nil

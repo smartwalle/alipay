@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 )
@@ -39,7 +40,7 @@ func (c *Client) NotifyVerify(ctx context.Context, partnerId, notifyId string) b
 }
 
 // GetTradeNotification
-// Deprecated: use DecodeNotification instead.
+// Deprecated: use DecodeNotification or DecodeNotificationWithCharset instead.
 func (c *Client) GetTradeNotification(req *http.Request) (notification *Notification, err error) {
 	if req == nil {
 		return nil, errors.New("request 参数不能为空")
@@ -47,11 +48,29 @@ func (c *Client) GetTradeNotification(req *http.Request) (notification *Notifica
 	if err = req.ParseForm(); err != nil {
 		return nil, err
 	}
-	return c.DecodeNotification(context.Background(), req.Form)
+	return c.DecodeNotificationWithCharset(
+		context.Background(),
+		req.Form,
+		charsetFromContentType(req.Header.Get("Content-Type")),
+	)
 }
 
 func (c *Client) DecodeNotification(ctx context.Context, values url.Values) (notification *Notification, err error) {
+	return c.DecodeNotificationWithCharset(ctx, values, "")
+}
+
+// DecodeNotificationWithCharset 解析并验签支付宝异步通知，并按声明的字符集
+// 在验签成功后将通知字段转换为 UTF-8。values 中已签名的 charset
+// 优先于显式传入的 charset，避免未签名的 HTTP 请求头改变解码方式。
+func (c *Client) DecodeNotificationWithCharset(ctx context.Context, values url.Values, charset string) (notification *Notification, err error) {
 	if err = c.VerifySign(ctx, values); err != nil {
+		return nil, err
+	}
+
+	if signedCharset := values.Get("charset"); signedCharset != "" {
+		charset = signedCharset
+	}
+	if values, err = decodeNotificationValues(values, charset); err != nil {
 		return nil, err
 	}
 
@@ -100,6 +119,35 @@ func (c *Client) DecodeNotification(ctx context.Context, values url.Values) (not
 	notification.BankAckTime = values.Get("bank_ack_time")
 	notification.SendBackFee = values.Get("send_back_fee")
 	return notification, err
+}
+
+func decodeNotificationValues(values url.Values, charset string) (url.Values, error) {
+	decoder := decoderForCharset(charset)
+	if decoder == nil {
+		return values, nil
+	}
+
+	decodedValues := make(url.Values, len(values))
+	for key, valueList := range values {
+		decodedList := make([]string, len(valueList))
+		for index, value := range valueList {
+			decoded, err := decoder.Bytes([]byte(value))
+			if err != nil {
+				return nil, err
+			}
+			decodedList[index] = string(decoded)
+		}
+		decodedValues[key] = decodedList
+	}
+	return decodedValues, nil
+}
+
+func charsetFromContentType(contentType string) string {
+	_, params, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		return ""
+	}
+	return params["charset"]
 }
 
 // AckNotification
