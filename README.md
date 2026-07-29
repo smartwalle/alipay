@@ -150,6 +150,39 @@ alipay.ACKNotification(writer)
 })
 ```
 
+#### 处理 GBK 编码的通知
+
+支付宝异步通知的 Content-Type 可能是 `charset=GBK`，当通知中包含中文字段时（如商品标题、用户昵称等），这些字段会是 GBK 编码。
+
+**重要：不要在调用 SDK 前对请求体做任何字符集转换，否则会导致验签失败。**
+
+如果需要正确处理 GBK 编码的中文字段，请使用 `GetTradeNotificationWithCharset` 方法，它会根据 HTTP 请求头 Content-Type 中的 charset 参数判断编码格式，在验签通过后自动将 GBK 编码的字段转换为 UTF-8：
+
+```go
+http.HandleFunc("/notify", func (writer http.ResponseWriter, request *http.Request) {
+// GetTradeNotificationWithCharset 会根据 Content-Type header 中的 charset 自动解码 GBK
+var noti, err = client.GetTradeNotificationWithCharset(request)
+if err != nil {
+// 错误处理
+fmt.Println(err)
+return
+}
+// 此时 noti.Subject、noti.Body 等中文字段已经是 UTF-8 编码
+// 业务处理
+alipay.ACKNotification(writer)
+})
+```
+
+如果你已经解析了 Form，也可以直接使用 `DecodeNotificationWithCharset` 方法并传入 charset：
+
+```go
+request.ParseForm()
+charset := parseCharsetFromHeader(request.Header.Get("Content-Type")) // 自行解析 charset
+var noti, err = client.DecodeNotificationWithCharset(request.Form, charset)
+```
+
+会自动解码的字段包括：`Subject`、`Body`、`BuyerLogonId`、`PassbackParams`、`RefundReason`。
+
 #### 支持 RSA2 签名及验证
 
 采用 RSA2 签名，不再提供 RSA 的支持。
