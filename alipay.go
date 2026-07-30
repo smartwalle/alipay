@@ -395,12 +395,17 @@ func (c *Client) URLValues(param Param) (url.Values, error) {
 }
 
 func (c *Client) doRequest(ctx context.Context, method string, param Param, dest interface{}) error {
+	_, err := c.doRequestRaw(ctx, method, param, dest)
+	return err
+}
+
+func (c *Client) doRequestRaw(ctx context.Context, method string, param Param, dest interface{}) ([]byte, error) {
 	var req = ngx.NewRequest(method, c.host, ngx.WithClient(c.Client))
 	req.ContentType = kContentType
 	if param != nil {
 		values, err := c.URLValues(param)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		req.Form = values
 		req.File = param.FileParams()
@@ -408,19 +413,22 @@ func (c *Client) doRequest(ctx context.Context, method string, param Param, dest
 
 	resp, err := req.Do(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var apiName = param.APIName()
 	var bizFieldName = strings.Replace(apiName, ".", "_", -1) + kResponseSuffix
 
-	return c.decode(ctx, bodyBytes, bizFieldName, param.NeedVerify(), dest)
+	if err := c.decode(ctx, bodyBytes, bizFieldName, param.NeedVerify(), dest); err != nil {
+		return nil, err
+	}
+	return bodyBytes, nil
 }
 
 func (c *Client) decode(ctx context.Context, data []byte, bizFieldName string, needVerifySign bool, dest interface{}) (err error) {
@@ -595,6 +603,9 @@ func (c *Client) verify(ctx context.Context, certSN string, data, signature []by
 
 func (c *Client) Request(ctx context.Context, param Param, result interface{}) (err error) {
 	return c.doRequest(ctx, http.MethodPost, param, result)
+}
+func (c *Client) RequestRaw(ctx context.Context, param Param, result interface{}) (bodyBytes []byte, err error) {
+	return c.doRequestRaw(ctx, http.MethodPost, param, result)
 }
 
 func (c *Client) BuildURL(param Param) (*url.URL, error) {
